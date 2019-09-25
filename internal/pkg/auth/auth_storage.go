@@ -2,66 +2,84 @@ package auth
 
 import (
 	"fmt"
+	. "hh_workspace/2019_2_IBAT/internal/pkg/interfaces"
 	"math/rand"
 	"strings"
+	"sync"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 const TimeFormat = time.RFC3339
+const CookieLength = 10
 
 var Loc *time.Location
 
 func init() {
-	Loc, _ = time.LoadLocation("Europe/Moscow") //should remove
+	Loc, _ = time.LoadLocation("Europe/Moscow")
 }
 
 type MapAuthStorage struct {
-	Storage map[string]StorageValue
+	Storage map[string]AuthStorageValue
+	Mu      *sync.Mutex
 }
 
-func (st MapAuthStorage) Get(cookie string) (StorageValue, bool) { //pointer receiver?
+func (st MapAuthStorage) Get(cookie string) (AuthStorageValue, bool) {
+	st.Mu.Lock()
 	record, ok := st.Storage[cookie]
+	st.Mu.Unlock()
+
 	if !ok {
 		fmt.Println("No such session error")
-		return StorageValue{}, false
+		return AuthStorageValue{}, false
 	}
 
 	expiresAt, err := time.Parse(TimeFormat, record.Expires)
 
 	if err != nil {
 		fmt.Println("Parse error")
-		return StorageValue{}, false
+		return AuthStorageValue{}, false
 	} //cannot be error
 
 	now := time.Now().In(Loc)
 	diff := expiresAt.Sub(now)
 
 	if diff < 0 {
+		st.Mu.Lock()
 		delete(st.Storage, cookie)
-		return StorageValue{}, false
+		st.Mu.Unlock()
+
+		return AuthStorageValue{}, false
 	}
 
 	return record, true
 }
 
-func (st MapAuthStorage) Set(id uint64) string {
-	//id collision should be solved
+func (st MapAuthStorage) Set(id uuid.UUID, class string) string {
 	expires := time.Now().In(Loc).Add(24 * time.Hour)
 
-	record := StorageValue{
+	record := AuthStorageValue{
 		ID:      id,
 		Expires: expires.Format(TimeFormat),
+		Class:   class,
 	}
 
 	cookie := generateCookie()
+	st.Mu.Lock()
 	st.Storage[cookie] = record
-	fmt.Println(st.Storage)
+	st.Mu.Unlock()
+
+	// fmt.Println(st.Storage)
 	return cookie
 }
 
 func (st MapAuthStorage) Delete(cookie string) string {
 	expires := time.Now().In(Loc).Format(TimeFormat)
+	st.Mu.Lock()
 	delete(st.Storage, cookie)
+	st.Mu.Unlock()
+
 	return expires
 }
 
@@ -70,9 +88,9 @@ func generateCookie() string {
 	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
 		"abcdefghijklmnopqrstuvwxyz" +
 		"0123456789")
-	length := 5
+
 	var b strings.Builder
-	for i := 0; i < length; i++ {
+	for i := 0; i < CookieLength; i++ {
 		b.WriteRune(chars[rand.Intn(len(chars))])
 	}
 	return b.String()

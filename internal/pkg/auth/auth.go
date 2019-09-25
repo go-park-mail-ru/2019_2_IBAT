@@ -2,78 +2,55 @@ package auth
 
 import (
 	"encoding/json"
-	"fmt"
+	. "hh_workspace/2019_2_IBAT/internal/pkg/interfaces"
+
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"sync"
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/pkg/errors"
 )
 
-type AuthStorage interface {
-	// Check(cookie string)
-	Get(cookie string) (StorageValue, bool)
-	Set(id uint64) string
-	Delete(cookie string) string
-}
-
-type StorageValue struct {
-	ID      uuid.UUID
-	Expires string
-}
-
-type UserAuthInput struct {
-	Login    string `json:"login"`
-	Password string `json:"password"`
-}
-
-type Handlers struct {
+type Handler struct {
 	Storage AuthStorage
-	Mu      *sync.Mutex
 }
 
 const CookieName = "session-id"
 
-func (h *Handlers) CreateSession(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	bytes, err := ioutil.ReadAll(r.Body)
+func (h *Handler) CreateSession(body io.ReadCloser, usS UserStorage) (http.Cookie, error) {
+	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
-		log.Printf("error while reading body: %s", err)
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("{}"))
-		return
+		// log.Printf("error while reading body: %s", err)
+		err = errors.Wrap(err, "reading body error")
+		return http.Cookie{}, err
 	}
 
 	userAuthInput := new(UserAuthInput)
 	err = json.Unmarshal(bytes, userAuthInput)
 	if err != nil {
-		log.Printf("Error while unmarshaling: %s", err)
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("{}"))
-		return
+		// log.Printf("Error while unmarshaling: %s", err)
+		err = errors.Wrap(err, "Error while unmarshaling")
+		return http.Cookie{}, err
 	}
 
-	h.Mu.Lock()
-	var id uuid.UUID = 1             //should get id from users struct
-	cookieValue := h.Storage.Set(id) //possible return authInfo
-	h.Mu.Unlock()
-
-	authInfo, ok := h.Storage.Get(cookieValue) //impossible error, should use only Set method
+	id, class, ok := usS.CheckUser(userAuthInput.Login, userAuthInput.Password)
 	if !ok {
-		log.Printf("Error: %s", err)
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("{}"))
-		return
+		// log.Printf("No such user error")
+		return http.Cookie{}, errors.New("No such user error")
 	}
+
+	cookieValue := h.Storage.Set(id, class) //possible return authInfo
+
+	authInfo, _ := h.Storage.Get(cookieValue) //impossible error, should use only Set method
 
 	expiresAt, err := time.Parse(TimeFormat, authInfo.Expires)
+
 	if err != nil {
 		log.Printf("Error while time conversing: %s", err)
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("{}"))
-		return
+		err = errors.Wrap(err, "Error while time conversing")
+		return http.Cookie{}, err
 	} //impossible error
 
 	cookie := http.Cookie{
@@ -81,30 +58,19 @@ func (h *Handlers) CreateSession(w http.ResponseWriter, r *http.Request) {
 		Value:   cookieValue,
 		Expires: expiresAt,
 	}
-	http.SetCookie(w, &cookie)
-	w.Write([]byte("{}"))
+
+	return cookie, nil
 }
 
-func (h *Handlers) DeleteSession(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	cookie, err := r.Cookie(CookieName)
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No correct session cookie detected"))
-		return
-	}
-
-	fmt.Printf("cookie value: %s\n", cookie.Value)
-	_, ok := h.Storage.Get(cookie.Value) //is there need in this
+func (h *Handler) DeleteSession(cookie *http.Cookie) bool {
+	_, ok := h.Storage.Get(cookie.Value)
 	if !ok {
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No session detected"))
-		return
+		log.Printf("No such session")
+		return false
 	}
 
 	h.Storage.Delete(cookie.Value)
 	cookie.Expires = time.Now().AddDate(0, 0, -1)
 
-	http.SetCookie(w, cookie)
-	w.Write([]byte("Cookie deleted"))
+	return true
 }
