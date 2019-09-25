@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"sync"
 	"testing"
 	"time"
 
@@ -14,6 +15,7 @@ func TestMapAuthStorage_Get(t *testing.T) {
 
 	type fields struct {
 		Storage map[string]AuthStorageValue
+		Mu      *sync.Mutex
 	}
 	type args struct {
 		cookie string
@@ -28,7 +30,7 @@ func TestMapAuthStorage_Get(t *testing.T) {
 		{
 			name: "GetTest1",
 			fields: fields{
-				map[string]AuthStorageValue{
+				Storage: map[string]AuthStorageValue{
 					"werwe": {
 						ID:      uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
 						Expires: time.Now().In(Loc).Add(-1 * time.Hour).Format(TimeFormat),
@@ -38,6 +40,7 @@ func TestMapAuthStorage_Get(t *testing.T) {
 						Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
 					},
 				},
+				Mu: &sync.Mutex{},
 			},
 			args: args{
 				cookie: "werre",
@@ -51,7 +54,7 @@ func TestMapAuthStorage_Get(t *testing.T) {
 		{
 			name: "GetTest2",
 			fields: fields{
-				map[string]AuthStorageValue{
+				Storage: map[string]AuthStorageValue{
 					"werwe": {
 						ID:      uuid.MustParse("6aa7b810-9dad-11d1-80b1-00c04fd430c8"),
 						Expires: time.Now().In(Loc).Format(TimeFormat),
@@ -61,6 +64,7 @@ func TestMapAuthStorage_Get(t *testing.T) {
 						Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
 					},
 				},
+				Mu: &sync.Mutex{},
 			},
 			args: args{
 				cookie: "werwe",
@@ -71,7 +75,7 @@ func TestMapAuthStorage_Get(t *testing.T) {
 		{
 			name: "GetTest3",
 			fields: fields{
-				map[string]AuthStorageValue{
+				Storage: map[string]AuthStorageValue{
 					"werwe": {
 						ID:      uuid.MustParse("6aa7b810-9dad-11d1-80b1-00c04fd430c8"),
 						Expires: time.Now().In(Loc).Format(TimeFormat),
@@ -81,6 +85,7 @@ func TestMapAuthStorage_Get(t *testing.T) {
 						Expires: time.Now().In(Loc).Add(48 * time.Hour).Format(TimeFormat),
 					},
 				},
+				Mu: &sync.Mutex{},
 			},
 			args: args{
 				cookie: "value",
@@ -94,7 +99,7 @@ func TestMapAuthStorage_Get(t *testing.T) {
 		{
 			name: "GetTest4",
 			fields: fields{
-				map[string]AuthStorageValue{
+				Storage: map[string]AuthStorageValue{
 					"werwe": {
 						ID:      uuid.MustParse("6ba7b810-9dad-11d1-80b4-00c04fd430c8"),
 						Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
@@ -104,6 +109,7 @@ func TestMapAuthStorage_Get(t *testing.T) {
 						Expires: time.Now().In(Loc).Add(-24 * time.Hour).Format(TimeFormat),
 					},
 				},
+				Mu: &sync.Mutex{},
 			},
 			args: args{
 				cookie: "werre",
@@ -116,6 +122,7 @@ func TestMapAuthStorage_Get(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			st := &MapAuthStorage{
 				Storage: tt.fields.Storage,
+				Mu:      &sync.Mutex{},
 			}
 			got, got1 := st.Get(tt.args.cookie)
 
@@ -131,6 +138,7 @@ func TestMapAuthStorage_Get(t *testing.T) {
 func TestMapAuthStorage_Set(t *testing.T) {
 	type fields struct {
 		Storage map[string]AuthStorageValue
+		Mu      *sync.Mutex
 	}
 	type args struct {
 		id    uuid.UUID
@@ -145,7 +153,7 @@ func TestMapAuthStorage_Set(t *testing.T) {
 		{
 			name: "SetTest1",
 			fields: fields{
-				map[string]AuthStorageValue{
+				Storage: map[string]AuthStorageValue{
 					"werwe": {
 						ID:      uuid.New(),
 						Class:   SeekerStr,
@@ -157,6 +165,7 @@ func TestMapAuthStorage_Set(t *testing.T) {
 						Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
 					},
 				},
+				Mu: &sync.Mutex{},
 			},
 			args: args{
 				id:    uuid.New(),
@@ -169,6 +178,7 @@ func TestMapAuthStorage_Set(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			st := &MapAuthStorage{
 				Storage: tt.fields.Storage,
+				Mu:      &sync.Mutex{},
 			}
 			got := st.Set(tt.args.id, tt.args.class)
 
@@ -184,6 +194,7 @@ func TestMapAuthStorage_Set(t *testing.T) {
 func TestMapAuthStorage_Delete(t *testing.T) {
 	type fields struct {
 		Storage map[string]AuthStorageValue
+		Mu      *sync.Mutex
 	}
 	type args struct {
 		cookie string
@@ -197,7 +208,7 @@ func TestMapAuthStorage_Delete(t *testing.T) {
 		{
 			name: "DeleteTest1",
 			fields: fields{
-				map[string]AuthStorageValue{
+				Storage: map[string]AuthStorageValue{
 					"werwe": {
 						ID:      uuid.New(),
 						Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
@@ -207,6 +218,7 @@ func TestMapAuthStorage_Delete(t *testing.T) {
 						Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
 					},
 				},
+				Mu: &sync.Mutex{},
 			},
 			args: args{"werre"},
 			want: "any string",
@@ -214,7 +226,7 @@ func TestMapAuthStorage_Delete(t *testing.T) {
 		{
 			name: "DeleteTest2",
 			fields: fields{
-				map[string]AuthStorageValue{
+				Storage: map[string]AuthStorageValue{
 					"werwe": {
 						ID:      uuid.New(),
 						Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
@@ -224,6 +236,7 @@ func TestMapAuthStorage_Delete(t *testing.T) {
 						Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
 					},
 				},
+				Mu: &sync.Mutex{},
 			},
 			args: args{"werwe"},
 			want: "any string",
@@ -233,6 +246,7 @@ func TestMapAuthStorage_Delete(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			st := MapAuthStorage{
 				Storage: tt.fields.Storage,
+				Mu:      tt.fields.Mu,
 			}
 			st.Delete(tt.args.cookie)
 			authData, ok := st.Get(tt.args.cookie)
