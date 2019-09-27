@@ -1,7 +1,8 @@
 package users
 
 import (
-	. "hh_workspace/2019_2_IBAT/internal/pkg/interfaces"
+	"fmt"
+	. "hh_workspace/HH_mirror/internal/pkg/interfaces"
 	"sync"
 
 	"github.com/google/uuid"
@@ -11,10 +12,12 @@ type MapUserStorage struct {
 	SekMu  *sync.Mutex
 	EmplMu *sync.Mutex
 	ResMu  *sync.Mutex
+	VacMu  *sync.Mutex
 
 	SeekerStorage   map[uuid.UUID]Seeker
 	EmployerStorage map[uuid.UUID]Employer
 	ResumeStorage   map[uuid.UUID]Resume
+	VacancyStorage  map[uuid.UUID]Vacancy
 }
 
 func (m *MapUserStorage) CreateSeeker(seekerInput SeekerReg) (uuid.UUID, bool) {
@@ -116,37 +119,19 @@ func (m MapUserStorage) CreateEmployer(employerInput EmployerReg) (uuid.UUID, bo
 func (m MapUserStorage) DeleteEmployer(id uuid.UUID) {
 	m.EmplMu.Lock()
 	delete(m.EmployerStorage, id)
-
-	// fmt.Print("Deleted\nEmployers:\n")
-	// for i, item := range m.EmployerStorage { //to remove
-	// 	fmt.Printf("uuid: %s  value: %s\n", i, item)
-	// }
-	// fmt.Println()
-
 	m.EmplMu.Unlock()
-
 }
 
 func (m MapUserStorage) DeleteSeeker(id uuid.UUID) {
 	m.SekMu.Lock()
 	delete(m.SeekerStorage, id)
-
-	// fmt.Print("Deleted\nUsers:\n")
-	// for i, item := range m.SeekerStorage { //to remove
-	// 	fmt.Printf("uuid: %s  value: %s\n", i, item)
-	// }
-	// fmt.Println()
-
 	m.SekMu.Unlock()
 }
 
-func (m MapUserStorage) GetSeekers() []Seeker {
-	res := make([]Seeker, 0)
+func (m MapUserStorage) GetSeekers() map[uuid.UUID]Seeker {
 
 	m.SekMu.Lock()
-	for _, seeker := range m.SeekerStorage {
-		res = append(res, seeker)
-	}
+	res := m.SeekerStorage
 	m.SekMu.Unlock()
 
 	return res
@@ -228,6 +213,48 @@ func (m MapUserStorage) CreateResume(resumeReg Resume, userId uuid.UUID) (uuid.U
 	return id, true
 }
 
+func (m MapUserStorage) CreateVacancy(vacancyReg Vacancy, userId uuid.UUID) (uuid.UUID, bool) {
+
+	id := uuid.New()
+	vacancyReg.OwnerID = userId
+
+	m.VacMu.Lock()
+	m.VacancyStorage[id] = vacancyReg
+	m.VacMu.Unlock()
+
+	//what if user were deleted on this line?
+	//should use two locks in the same time?
+
+	flag := true
+	m.EmplMu.Lock()
+	newEmployer, ok := m.EmployerStorage[userId]
+
+	if !ok {
+		flag = false
+		m.ResMu.Lock()
+		delete(m.ResumeStorage, id)
+		m.ResMu.Unlock()
+	} else {
+		newEmployer.Vacancies = append(newEmployer.Vacancies, id)
+		m.EmployerStorage[userId] = newEmployer
+	}
+
+	m.EmplMu.Unlock()
+
+	if !flag {
+		return id, false
+	}
+
+	// m.ResMu.Lock()
+	// for i, item := range m.ResumeStorage { //to remove
+	// 	fmt.Printf("uuid: %s\nvalue: %s\n", i, item)
+	// }
+	// fmt.Println()
+	// m.ResMu.Unlock()
+
+	return id, true
+}
+
 func (m MapUserStorage) GetResume(id uuid.UUID) (Resume, bool) {
 	m.ResMu.Lock()
 	result, ok := m.ResumeStorage[id]
@@ -241,33 +268,33 @@ func (m MapUserStorage) GetResume(id uuid.UUID) (Resume, bool) {
 
 func (m MapUserStorage) DeleteResume(id uuid.UUID) bool {
 	m.ResMu.Lock()
-	// fmt.Println("Resume deleted")
+	fmt.Println("Resume deleted")
 
 	delete(m.ResumeStorage, id)
 
-	// for i, item := range m.ResumeStorage { //to remove
-	// 	fmt.Printf("uuid: %s\nvalue: %s\n", i, item)
-	// }
-	// fmt.Println()
+	for i, item := range m.ResumeStorage { //to remove
+		fmt.Printf("uuid: %s\nvalue: %s\n", i, item)
+	}
+	fmt.Println()
 
 	m.ResMu.Unlock()
 	return true //make false case
 }
 
-func (m MapUserStorage) GetSeeker(id uuid.UUID) Seeker {
+func (m MapUserStorage) GetSeeker(id uuid.UUID) (Seeker, bool) {
 	m.SekMu.Lock()
-	res := m.SeekerStorage[id]
+	res, ok := m.SeekerStorage[id]
 	m.SekMu.Unlock()
 
-	return res
+	return res, ok
 }
 
-func (m MapUserStorage) GetEmployer(id uuid.UUID) Employer {
+func (m MapUserStorage) GetEmployer(id uuid.UUID) (Employer, bool) {
 	m.EmplMu.Lock()
-	res := m.EmployerStorage[id]
+	res, ok := m.EmployerStorage[id]
 	m.EmplMu.Unlock()
 
-	return res
+	return res, ok
 }
 
 func (m MapUserStorage) PutSeeker(seekerInput SeekerReg, id uuid.UUID) bool {
@@ -395,4 +422,79 @@ func (m MapUserStorage) PutResume(resume Resume, userId uuid.UUID, resumeId uuid
 	m.ResMu.Unlock()
 
 	return true
+}
+
+func (m MapUserStorage) GetEmployers() map[uuid.UUID]Employer {
+	m.EmplMu.Lock()
+	res := m.EmployerStorage
+	m.EmplMu.Unlock()
+
+	return res
+}
+
+func (m MapUserStorage) GetResumes() map[uuid.UUID]Resume {
+	m.ResMu.Lock()
+	res := m.ResumeStorage
+	m.ResMu.Unlock()
+
+	return res
+}
+
+func (m MapUserStorage) GetVacancy(id uuid.UUID) (Vacancy, bool) {
+	m.VacMu.Lock()
+	result, ok := m.VacancyStorage[id]
+	m.VacMu.Unlock()
+
+	if !ok {
+		return Vacancy{}, false
+	}
+	return result, true
+}
+
+func (m MapUserStorage) DeleteVacancy(id uuid.UUID) bool {
+	m.VacMu.Lock()
+	fmt.Println("Vacancy deleted")
+
+	delete(m.VacancyStorage, id)
+
+	// for i, item := range m.ResumeStorage { //to remove
+	// 	fmt.Printf("uuid: %s\nvalue: %s\n", i, item)
+	// }
+	// fmt.Println()
+
+	m.VacMu.Unlock()
+	return true //make false case
+}
+
+func (m MapUserStorage) PutVacancy(vacancy Vacancy, userId uuid.UUID, vacancyId uuid.UUID) bool {
+	flag := false
+
+	m.EmplMu.Lock()
+	user := m.EmployerStorage[userId]
+	for _, vac := range user.Vacancies {
+		if vac == vacancyId {
+			flag = true
+			break
+		}
+	}
+	m.EmplMu.Unlock()
+
+	if !flag {
+		return false
+	}
+
+	vacancy.OwnerID = userId
+	m.VacMu.Lock()
+	m.VacancyStorage[vacancyId] = vacancy
+	m.VacMu.Unlock()
+
+	return true
+}
+
+func (m MapUserStorage) GetVacancies() map[uuid.UUID]Vacancy {
+	m.ResMu.Lock()
+	vac := m.VacancyStorage
+	m.ResMu.Unlock()
+
+	return vac
 }
