@@ -3,9 +3,9 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"hh_workspace/2019_2_IBAT/internal/pkg/auth"
-	. "hh_workspace/2019_2_IBAT/internal/pkg/interfaces"
-	"hh_workspace/2019_2_IBAT/internal/pkg/users"
+	"hh_workspace/HH_mirror/internal/pkg/auth"
+	. "hh_workspace/HH_mirror/internal/pkg/interfaces"
+	"hh_workspace/HH_mirror/internal/pkg/users"
 
 	"log"
 	"net/http"
@@ -27,7 +27,7 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Start creating session")
 	cookie, err := h.AuthHandler.CreateSession(r.Body, h.UserControler.Storage)
 	if err != nil {
-		// log.Printf("error while creatig session: %s", err)
+		log.Printf("error while creatig session: %s", err)
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("error while creatig session"))
 		return
@@ -61,7 +61,7 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	uuid, err := h.UserControler.HandleCreateSeeker(r.Body)
 	if err != nil {
-		// log.Printf("here: %s", err)
+		log.Printf("here: %s", err)
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(err.Error()))
 		return
@@ -71,14 +71,14 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) {
 
 	authInfo, ok := h.AuthHandler.Storage.Get(cookieValue) //impossible error, should use only Set method
 	if !ok {
-		// log.Printf("Error: %s", err)
+		log.Printf("Error: %s", err)
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	expiresAt, err := time.Parse(auth.TimeFormat, authInfo.Expires)
 	if err != nil {
-		// log.Printf("Error while time conversing: %s", err)
+		log.Printf("Error while time conversing: %s", err)
 		w.WriteHeader(http.StatusNotFound)
 		return
 	} //impossible error
@@ -97,7 +97,7 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) {
 
 	uuid, err := h.UserControler.HandleCreateEmployer(r.Body)
 	if err != nil {
-		// log.Printf("Error %s", err)
+		log.Printf("Error %s", err)
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("Error while creating employer"))
 		return
@@ -107,7 +107,7 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) {
 
 	authInfo, ok := h.AuthHandler.Storage.Get(cookieValue) //impossible error, should use only Set method
 	if !ok {
-		// log.Printf("Error: %s", err)
+		log.Printf("Error: %s", err)
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("Session error"))
 		return
@@ -115,7 +115,7 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) {
 
 	expiresAt, err := time.Parse(auth.TimeFormat, authInfo.Expires)
 	if err != nil {
-		// log.Printf("Error while time conversing: %s", err)
+		log.Printf("Error while time conversing: %s", err)
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("Error while time conversing"))
 		return
@@ -152,7 +152,6 @@ func (h *Handler) CreateResume(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
 	w.Header().Set("Content-Type", "application/json")
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
@@ -180,7 +179,6 @@ func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetResume(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
 	w.Header().Set("Content-Type", "application/json")
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
@@ -238,18 +236,11 @@ func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetSeeker(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
 	w.Header().Set("Content-Type", "application/json")
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("No correct session cookie detected"))
-		return
-	}
-
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Invalid id"))
 		return
 	}
 
@@ -273,7 +264,6 @@ func (h *Handler) GetSeeker(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
 	w.Header().Set("Content-Type", "application/json")
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
@@ -304,19 +294,11 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetEmployer(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
 	w.Header().Set("Content-Type", "application/json")
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("No correct session cookie detected"))
-		return
-	}
-
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		errJSON, _ := json.Marshal(Error{"Invalid id"})
-		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -372,25 +354,216 @@ func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// func (h *Handler) HandleCreateVacancy(w http.ResponseWriter, r *http.Request) {
-// 	defer r.Body.Close()
-// 	w.Header().Set("Content-Type", "application/json")
-// 	cookie, err := r.Cookie(auth.CookieName) //two checks!
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusNotFound)
-// 		w.Write([]byte("No correct session cookie detected"))
-// 		return
-// 	}
+//should test method
+func (h *Handler) GetSeekerById(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
-// 	id, err := h.UserControler.HandleCreateVacancy(r.Body, cookie.Value, h.AuthHandler.Storage)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusNotFound)
-// 		w.Write([]byte("Error while creating resume"))
-// 		return
-// 	}
+	seekId, err := uuid.Parse(mux.Vars(r)["id"])
 
-// 	jsonString := `{ "name":` + `"` + id.String() + `"` + "}" //change
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Invalid id"))
+		return
+	}
 
-// 	w.Write([]byte(jsonString))
-// 	// w.Write([]byte("{}"))
-// }
+	seeker, _ := h.UserControler.Storage.GetSeeker(seekId)
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	seeker.Password = "" //danger
+	seekerJSON, err := json.Marshal(seeker)
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Write([]byte(seekerJSON))
+}
+
+func (h *Handler) GetEmployerById(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	emplId, err := uuid.Parse(mux.Vars(r)["id"])
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Invalid id"))
+		return
+	}
+
+	employer, _ := h.UserControler.Storage.GetEmployer(emplId)
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	employer.Password = "" //danger
+	employerJSON, err := json.Marshal(employer)
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Write([]byte(employerJSON))
+}
+
+func (h *Handler) GetEmployers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	employers := h.UserControler.Storage.GetEmployers()
+
+	for i, item := range employers {
+		item.Password = ""
+		employers[i] = item
+	}
+
+	employerJSON, err := json.Marshal(employers)
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		errJSON, _ := json.Marshal(Error{
+			Body: err.Error(),
+		})
+		w.Write([]byte(errJSON))
+		return
+	}
+
+	w.Write([]byte(employerJSON))
+}
+
+func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	resumes := h.UserControler.Storage.GetResumes()
+
+	resumesJSON, _ := json.Marshal(resumes)
+
+	w.Write([]byte(resumesJSON))
+
+}
+
+func (h *Handler) GetVacancies(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	vacancies := h.UserControler.Storage.GetVacancies()
+
+	vacanciesJSON, _ := json.Marshal(vacancies)
+
+	w.Write([]byte(vacanciesJSON))
+
+}
+
+func (h *Handler) CreateVacancy(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	w.Header().Set("Content-Type", "application/json")
+	cookie, err := r.Cookie(auth.CookieName)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("No correct session cookie detected"))
+		return
+	}
+
+	id, err := h.UserControler.HandleCreateVacancy(r.Body, cookie.Value, h.AuthHandler.Storage)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Error while creating resume"))
+		return
+	}
+
+	jsonString := `{ "name":` + `"` + id.String() + `"` + "}" //change
+
+	w.Write([]byte(jsonString))
+}
+
+func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	cookie, err := r.Cookie(auth.CookieName)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("No correct session cookie detected"))
+		return
+	}
+
+	vacId, err := uuid.Parse(mux.Vars(r)["id"])
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Invalid id"))
+		return
+	}
+
+	vacancy, err := h.UserControler.HandleGetVacancy(vacId, cookie.Value, h.AuthHandler.Storage)
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	vacancyJSON, err := json.Marshal(vacancy)
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Write([]byte(vacancyJSON))
+}
+
+func (h *Handler) DeleteVacancy(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	cookie, err := r.Cookie(auth.CookieName)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("No correct session cookie detected"))
+		return
+	}
+
+	vacId, err := uuid.Parse(mux.Vars(r)["id"])
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Invalid id"))
+		return
+	}
+
+	err = h.UserControler.HandleDeleteVacancy(vacId, cookie.Value, h.AuthHandler.Storage)
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(err.Error()))
+		return
+	}
+}
+
+func (h *Handler) PutVacancy(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	w.Header().Set("Content-Type", "application/json")
+	cookie, err := r.Cookie(auth.CookieName)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("No correct session cookie detected"))
+		return
+	}
+
+	vacId, err := uuid.Parse(mux.Vars(r)["id"])
+
+	err = h.UserControler.HandlePutVacancy(vacId, r.Body, cookie.Value, h.AuthHandler.Storage)
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Error while creating vacancy"))
+		return
+	}
+}
