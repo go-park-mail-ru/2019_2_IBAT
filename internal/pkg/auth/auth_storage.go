@@ -1,7 +1,8 @@
 package auth
 
 import (
-	. "hh_workspace/2019_2_IBAT/internal/pkg/interfaces"
+	"fmt"
+	. "hh_workspace/HH_mirror/internal/pkg/interfaces"
 	"math/rand"
 	"strings"
 	"sync"
@@ -30,14 +31,14 @@ func (st MapAuthStorage) Get(cookie string) (AuthStorageValue, bool) {
 	st.Mu.Unlock()
 
 	if !ok {
-		// fmt.Println("No such session error")
+		fmt.Println("No such session error")
 		return AuthStorageValue{}, false
 	}
 
 	expiresAt, err := time.Parse(TimeFormat, record.Expires)
 
 	if err != nil {
-		// fmt.Println("Parse error")
+		fmt.Println("Parse error")
 		return AuthStorageValue{}, false
 	} //cannot be error
 

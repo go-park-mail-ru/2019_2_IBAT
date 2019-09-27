@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	. "hh_workspace/2019_2_IBAT/internal/pkg/interfaces"
+	. "hh_workspace/HH_mirror/internal/pkg/interfaces"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
@@ -246,7 +246,7 @@ func TestMapAuthStorage_Delete(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			st := MapAuthStorage{
 				Storage: tt.fields.Storage,
-				Mu:      tt.fields.Mu,
+				Mu:      &sync.Mutex{},
 			}
 			st.Delete(tt.args.cookie)
 			authData, ok := st.Get(tt.args.cookie)
