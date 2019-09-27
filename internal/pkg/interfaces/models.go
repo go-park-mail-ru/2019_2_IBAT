@@ -29,7 +29,7 @@ type Seeker struct {
 	FirstName  string      `json:"first_name"`
 	SecondName string      `json:"second_name"`
 	Password   string      `json:"password"`
-	Resumes    []uuid.UUID `json:"resumes"`
+	Resumes    []uuid.UUID `json:"resumes"` //should be fixed
 } //add extra fields
 
 type Employer struct {
@@ -47,47 +47,43 @@ type Employer struct {
 } //add extra fields
 
 type Resume struct {
-	OwnerID     uuid.UUID `json:"-"`
-	FirstName   string    `json:"first_name"`
-	SecondName  string    `json:"second_name"`
-	City        string    `json:"city"`
-	Number      string    `json:"number"`
-	BirthDate   string    `json:"birth_date"`
-	Sex         string    `json:"sex"`
-	Citizenship string    `json:"citizenship"`
-	Experience  string    `json:"experience"`
-	Profession  string    `json:"profession"`
-	Position    string    `json:"position"`
-	Wage        string    `json:"wage"`
-	Education   string    `json:"education"`
-	About       string    `json:"About"`
+	OwnerID uuid.UUID `json:"-"`
+	// ID uuid.UUID
+	FirstName   string `json:"first_name"`
+	SecondName  string `json:"second_name"`
+	City        string `json:"city"`
+	Number      string `json:"number"`
+	BirthDate   string `json:"birth_date"`
+	Sex         string `json:"sex"`
+	Citizenship string `json:"citizenship"`
+	Experience  string `json:"experience"`
+	Profession  string `json:"profession"`
+	Position    string `json:"position"`
+	Wage        string `json:"wage"`
+	Education   string `json:"education"`
+	About       string `json:"about"`
 }
 
 type Message struct {
-	Message string `json:"message"`
+	Body string `json:"message"`
 }
 
 type Error struct {
-	Error string `json:"error"`
+	Body string `json:"error"`
 }
 
-// type Vacancy struct {
-// 	OwnerID uuid.UUID `json:"-"`
-// 	// ID uuid.UUID
-// 	FirstName   string `json:"first_name"`
-// 	SecondName  string `json:"second_name"`
-// 	City        string `json:"city"`
-// 	Number      string `json:"number"`
-// 	BirthDate   string `json:"birth_date"`
-// 	Sex         string `json:"sex"`
-// 	Citizenship string `json:"citizenship"`
-// 	Experience  string `json:"experience"`
-// 	Profession  string `json:"profession"`
-// 	Position    string `json:"position"`
-// 	Wage        string `json:"wage"`
-// 	Education   string `json:"education"`
-// 	About       string `json:"About"`
-// }
+type Vacancy struct {
+	OwnerID      uuid.UUID `json:"-"`
+	CompanyName  string    `json:"company_name"`
+	Experience   string    `json:"experience"`
+	Profession   string    `json:"profession"`
+	Position     string    `json:"position"`
+	Tasks        string    `json:"task"`
+	Requirements string    `json:"requirements"`
+	Wage         string    `json:"wage"`
+	Conditions   string    `json:"conditions"`
+	About        string    `json:"about"`
+}
 
 type AuthStorageValue struct {
 	ID      uuid.UUID
