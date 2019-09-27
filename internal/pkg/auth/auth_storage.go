@@ -2,7 +2,7 @@ package auth
 
 import (
 	"fmt"
-	. "hh_workspace/HH_mirror/internal/pkg/interfaces"
+	. "hh_workspace/2019_2_IBAT/internal/pkg/interfaces"
 	"math/rand"
 	"strings"
 	"sync"
