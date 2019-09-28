@@ -38,6 +38,6 @@ type UserStorage interface {
 
 type AuthStorage interface {
 	Get(cookie string) (AuthStorageValue, bool)
-	Set(id uuid.UUID, class string) string
-	Delete(cookie string) string
+	Set(id uuid.UUID, class string) (AuthStorageValue, string)
+	Delete(cookie string) bool
 }

@@ -56,7 +56,7 @@ func (st MapAuthStorage) Get(cookie string) (AuthStorageValue, bool) {
 	return record, true
 }
 
-func (st MapAuthStorage) Set(id uuid.UUID, class string) string {
+func (st MapAuthStorage) Set(id uuid.UUID, class string) (AuthStorageValue, string) {
 	expires := time.Now().In(Loc).Add(24 * time.Hour)
 
 	record := AuthStorageValue{
@@ -71,16 +71,20 @@ func (st MapAuthStorage) Set(id uuid.UUID, class string) string {
 	st.Mu.Unlock()
 
 	// fmt.Println(st.Storage)
-	return cookie
+	return record, cookie
 }
 
-func (st MapAuthStorage) Delete(cookie string) string {
-	expires := time.Now().In(Loc).Format(TimeFormat)
+func (st MapAuthStorage) Delete(cookie string) bool {
 	st.Mu.Lock()
 	delete(st.Storage, cookie)
 	st.Mu.Unlock()
 
-	return expires
+	_, ok := st.Storage[cookie]
+	if !ok {
+		return false
+	}
+
+	return true
 }
 
 func generateCookie() string {

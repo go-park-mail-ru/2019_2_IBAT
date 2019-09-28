@@ -180,12 +180,12 @@ func TestMapAuthStorage_Set(t *testing.T) {
 				Storage: tt.fields.Storage,
 				Mu:      &sync.Mutex{},
 			}
-			got := st.Set(tt.args.id, tt.args.class)
+			authData, _ := st.Set(tt.args.id, tt.args.class)
 
-			authData, ok := st.Get(got)
-			if !ok {
-				t.Errorf("Error during setting a cookie")
-			}
+			// authData, ok := st.Get(got)
+			// if !ok {
+			// 	t.Errorf("Error during setting a cookie")
+			// }
 			require.Equal(t, tt.args.id, authData.ID, "The two values should be the same.")
 		})
 	}

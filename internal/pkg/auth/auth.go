@@ -2,7 +2,7 @@ package auth
 
 import (
 	"encoding/json"
-	. "hh_workspace/HH_mirror/internal/pkg/interfaces"
+	. "hh_workspace/2019_2_IBAT/internal/pkg/interfaces"
 
 	"io"
 	"io/ioutil"
@@ -41,9 +41,9 @@ func (h *Handler) CreateSession(body io.ReadCloser, usS UserStorage) (http.Cooki
 		return http.Cookie{}, errors.New("No such user error")
 	}
 
-	cookieValue := h.Storage.Set(id, class) //possible return authInfo
+	authInfo, cookieValue := h.Storage.Set(id, class) //possible return authInfo
 
-	authInfo, _ := h.Storage.Get(cookieValue) //impossible error, should use only Set method
+	// authInfo, _ := h.Storage.Get(cookieValue) //impossible error, should use only Set method
 
 	expiresAt, err := time.Parse(TimeFormat, authInfo.Expires)
 
@@ -69,7 +69,10 @@ func (h *Handler) DeleteSession(cookie *http.Cookie) bool {
 		return false
 	}
 
-	h.Storage.Delete(cookie.Value)
+	ok = h.Storage.Delete(cookie.Value)
+	if !ok {
+		return false
+	}
 	cookie.Expires = time.Now().AddDate(0, 0, -1)
 
 	return true

@@ -2,12 +2,10 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"hh_workspace/2019_2_IBAT/internal/pkg/auth"
 	. "hh_workspace/2019_2_IBAT/internal/pkg/interfaces"
 	"hh_workspace/2019_2_IBAT/internal/pkg/users"
 
-	"log"
 	"net/http"
 	"time"
 
@@ -22,14 +20,13 @@ type Handler struct {
 
 func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 
-	fmt.Println("Start creating session")
 	cookie, err := h.AuthHandler.CreateSession(r.Body, h.UserControler.Storage)
 	if err != nil {
-		log.Printf("error while creatig session: %s", err)
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("error while creatig session"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -37,49 +34,44 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteSession(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No correct session cookie detected"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
 	ok := h.AuthHandler.DeleteSession(cookie)
 	if !ok {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No session detected"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
 	http.SetCookie(w, cookie)
-	w.Write([]byte("Cookie deleted"))
 }
 
 func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 	uuid, err := h.UserControler.HandleCreateSeeker(r.Body)
 	if err != nil {
-		log.Printf("here: %s", err)
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(err.Error()))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
-	cookieValue := h.AuthHandler.Storage.Set(uuid, SeekerStr) //possible return authInfo
-
-	authInfo, ok := h.AuthHandler.Storage.Get(cookieValue) //impossible error, should use only Set method
-	if !ok {
-		log.Printf("Error: %s", err)
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
+	authInfo, cookieValue := h.AuthHandler.Storage.Set(uuid, SeekerStr) //possible return authInfo
 
 	expiresAt, err := time.Parse(auth.TimeFormat, authInfo.Expires)
 	if err != nil {
-		log.Printf("Error while time conversing: %s", err)
 		w.WriteHeader(http.StatusNotFound)
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	} //impossible error
 
@@ -93,31 +85,23 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 
 	uuid, err := h.UserControler.HandleCreateEmployer(r.Body)
 	if err != nil {
-		log.Printf("Error %s", err)
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Error while creating employer"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
-	cookieValue := h.AuthHandler.Storage.Set(uuid, EmployerStr) //possible return authInfo
-
-	authInfo, ok := h.AuthHandler.Storage.Get(cookieValue) //impossible error, should use only Set method
-	if !ok {
-		log.Printf("Error: %s", err)
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Session error"))
-		return
-	}
+	authInfo, cookieValue := h.AuthHandler.Storage.Set(uuid, EmployerStr) //possible return authInfo
 
 	expiresAt, err := time.Parse(auth.TimeFormat, authInfo.Expires)
 	if err != nil {
-		log.Printf("Error while time conversing: %s", err)
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Error while time conversing"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	} //impossible error
 
@@ -131,32 +115,35 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreateResume(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No correct session cookie detected"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
 	id, err := h.UserControler.HandleCreateResume(r.Body, cookie.Value, h.AuthHandler.Storage)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Error while creating resume"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
-	jsonString := `{ "name":` + `"` + id.String() + `"` + "}" //change
+	idJSON, _ := json.Marshal(Message{id.String()})
 
-	w.Write([]byte(jsonString))
+	w.Write([]byte(idJSON))
 }
 
 func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No correct session cookie detected"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -165,7 +152,8 @@ func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Invalid id"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -173,17 +161,19 @@ func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(err.Error()))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 }
 
 func (h *Handler) GetResume(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No correct session cookie detected"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -191,7 +181,8 @@ func (h *Handler) GetResume(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Invalid id"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -199,7 +190,8 @@ func (h *Handler) GetResume(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(err.Error()))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -207,7 +199,8 @@ func (h *Handler) GetResume(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(err.Error()))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -216,11 +209,12 @@ func (h *Handler) GetResume(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No correct session cookie detected"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -230,17 +224,19 @@ func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Error while creating resume"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 }
 
 func (h *Handler) GetSeeker(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No correct session cookie detected"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -248,7 +244,8 @@ func (h *Handler) GetSeeker(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(err.Error()))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -256,7 +253,8 @@ func (h *Handler) GetSeeker(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(err.Error()))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -264,7 +262,7 @@ func (h *Handler) GetSeeker(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -285,20 +283,21 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	ok := h.AuthHandler.DeleteSession(cookie)
 	if !ok {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No session detected"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
 	http.SetCookie(w, cookie)
-	// w.Write([]byte("Cookie deleted"))
 }
 
 func (h *Handler) GetEmployer(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No correct session cookie detected"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -306,7 +305,8 @@ func (h *Handler) GetEmployer(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(err.Error()))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -314,7 +314,8 @@ func (h *Handler) GetEmployer(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(err.Error()))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -323,19 +324,18 @@ func (h *Handler) GetEmployer(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		errJSON, _ := json.Marshal(Error{"No correct session cookie detected"})
+		errJSON, _ := json.Marshal(Error{err.Error()})
 		w.Write([]byte(errJSON))
 		return
 	}
 
 	authInfo, ok := h.AuthHandler.Storage.Get(cookie.Value) //impossible error, should use only Set method
 	if !ok {
-		log.Printf("Error: %s", err)
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
@@ -348,7 +348,7 @@ func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		errJSON, _ := json.Marshal(Error{"Change failed"})
+		errJSON, _ := json.Marshal(Error{err.Error()})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -356,13 +356,14 @@ func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 
 //should test method
 func (h *Handler) GetSeekerById(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 
 	seekId, err := uuid.Parse(mux.Vars(r)["id"])
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Invalid id"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -370,7 +371,8 @@ func (h *Handler) GetSeekerById(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(err.Error()))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -379,7 +381,8 @@ func (h *Handler) GetSeekerById(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(err.Error()))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -387,13 +390,14 @@ func (h *Handler) GetSeekerById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetEmployerById(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 
 	emplId, err := uuid.Parse(mux.Vars(r)["id"])
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Invalid id"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -401,7 +405,8 @@ func (h *Handler) GetEmployerById(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(err.Error()))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -410,7 +415,8 @@ func (h *Handler) GetEmployerById(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(err.Error()))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -418,7 +424,7 @@ func (h *Handler) GetEmployerById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetEmployers(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 
 	employers := h.UserControler.Storage.GetEmployers()
 
@@ -431,9 +437,7 @@ func (h *Handler) GetEmployers(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		errJSON, _ := json.Marshal(Error{
-			Body: err.Error(),
-		})
+		errJSON, _ := json.Marshal(Error{err.Error()})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -442,7 +446,7 @@ func (h *Handler) GetEmployers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 
 	resumes := h.UserControler.Storage.GetResumes()
 
@@ -453,7 +457,7 @@ func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetVacancies(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 
 	vacancies := h.UserControler.Storage.GetVacancies()
 
@@ -465,32 +469,35 @@ func (h *Handler) GetVacancies(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreateVacancy(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No correct session cookie detected"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
 	id, err := h.UserControler.HandleCreateVacancy(r.Body, cookie.Value, h.AuthHandler.Storage)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Error while creating resume"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
-	jsonString := `{ "name":` + `"` + id.String() + `"` + "}" //change
+	idJSON, _ := json.Marshal(Message{id.String()})
 
-	w.Write([]byte(jsonString))
+	w.Write([]byte(idJSON))
 }
 
 func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No correct session cookie detected"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -498,7 +505,8 @@ func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Invalid id"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -506,7 +514,8 @@ func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(err.Error()))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -514,7 +523,8 @@ func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(err.Error()))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -522,11 +532,12 @@ func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteVacancy(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No correct session cookie detected"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -534,7 +545,8 @@ func (h *Handler) DeleteVacancy(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Invalid id"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -542,18 +554,20 @@ func (h *Handler) DeleteVacancy(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(err.Error()))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 }
 
 func (h *Handler) PutVacancy(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	w.Header().Set("Content-Type", "application/json")
+	setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("No correct session cookie detected"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 
@@ -563,7 +577,8 @@ func (h *Handler) PutVacancy(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Error while creating vacancy"))
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
 		return
 	}
 }
