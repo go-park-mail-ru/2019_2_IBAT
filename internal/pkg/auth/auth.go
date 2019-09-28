@@ -13,13 +13,13 @@ import (
 	"github.com/pkg/errors"
 )
 
-type Handler struct {
+type AuthService struct {
 	Storage AuthStorage
 }
 
 const CookieName = "session-id"
 
-func (h *Handler) CreateSession(body io.ReadCloser, usS UserStorage) (http.Cookie, error) {
+func (h *AuthService) CreateSession(body io.ReadCloser, usS UserStorage) (http.Cookie, error) {
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		// log.Printf("error while reading body: %s", err)
@@ -62,7 +62,7 @@ func (h *Handler) CreateSession(body io.ReadCloser, usS UserStorage) (http.Cooki
 	return cookie, nil
 }
 
-func (h *Handler) DeleteSession(cookie *http.Cookie) bool {
+func (h *AuthService) DeleteSession(cookie *http.Cookie) bool {
 	_, ok := h.Storage.Get(cookie.Value)
 	if !ok {
 		log.Printf("No such session")

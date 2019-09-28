@@ -13,11 +13,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-type Controler struct {
+type UserService struct {
 	Storage UserStorage
 }
 
-func (h *Controler) HandleCreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
+func (h *UserService) CreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		log.Printf("error while reading body: %s", err)
@@ -43,7 +43,7 @@ func (h *Controler) HandleCreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
 	return id, nil
 }
 
-func (h *Controler) HandleCreateEmployer(body io.ReadCloser) (uuid.UUID, error) { //should do this part by one handler with if?
+func (h *UserService) CreateEmployer(body io.ReadCloser) (uuid.UUID, error) { //should do this part by one r with if?
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		log.Printf("error while reading body: %s", err)
@@ -69,7 +69,7 @@ func (h *Controler) HandleCreateEmployer(body io.ReadCloser) (uuid.UUID, error) 
 	return id, nil
 }
 
-func (h *Controler) HandleCreateResume(body io.ReadCloser, cookie string, authStor AuthStorage) (uuid.UUID, error) { //should do this part by one handler with if?
+func (h *UserService) CreateResume(body io.ReadCloser, cookie string, authStor AuthStorage) (uuid.UUID, error) { //should do this part by one r with if?
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		log.Printf("error while reading body: %s", err)
@@ -101,7 +101,7 @@ func (h *Controler) HandleCreateResume(body io.ReadCloser, cookie string, authSt
 	return id, nil
 }
 
-func (h *Controler) HandleDeleteResume(resumeId uuid.UUID, cookie string, authStor AuthStorage) error {
+func (h *UserService) DeleteResume(resumeId uuid.UUID, cookie string, authStor AuthStorage) error {
 	record, ok := authStor.Get(cookie)
 	if !ok || record.Class != SeekerStr {
 		return errors.New("Invalid action")
@@ -122,7 +122,7 @@ func (h *Controler) HandleDeleteResume(resumeId uuid.UUID, cookie string, authSt
 	return nil
 }
 
-func (h *Controler) HandleGetResume(resumeId uuid.UUID, cookie string, authStor AuthStorage) (Resume, error) {
+func (h *UserService) GetResume(resumeId uuid.UUID, cookie string, authStor AuthStorage) (Resume, error) {
 	resume, ok := h.Storage.GetResume(resumeId)
 
 	if !ok {
@@ -132,7 +132,7 @@ func (h *Controler) HandleGetResume(resumeId uuid.UUID, cookie string, authStor 
 	return resume, nil
 }
 
-func (h *Controler) HandlePutResume(resumeId uuid.UUID, body io.ReadCloser,
+func (h *UserService) PutResume(resumeId uuid.UUID, body io.ReadCloser,
 	cookie string, authStor AuthStorage) error {
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
@@ -163,7 +163,7 @@ func (h *Controler) HandlePutResume(resumeId uuid.UUID, body io.ReadCloser,
 	return nil
 }
 
-func (h *Controler) HandleGetSeeker(cookie string, authStor AuthStorage) (Seeker, error) {
+func (h *UserService) GetSeeker(cookie string, authStor AuthStorage) (Seeker, error) {
 
 	record, ok := authStor.Get(cookie)
 	if !ok {
@@ -175,7 +175,7 @@ func (h *Controler) HandleGetSeeker(cookie string, authStor AuthStorage) (Seeker
 	return res, nil
 }
 
-func (h *Controler) HandleGetEmployer(cookie string, authStor AuthStorage) (Employer, error) {
+func (h *UserService) GetEmployer(cookie string, authStor AuthStorage) (Employer, error) {
 
 	record, ok := authStor.Get(cookie)
 	if !ok {
@@ -187,7 +187,7 @@ func (h *Controler) HandleGetEmployer(cookie string, authStor AuthStorage) (Empl
 	return res, nil
 }
 
-func (h *Controler) HandleDeleteUser(cookie string, authStor AuthStorage) error {
+func (h *UserService) DeleteUser(cookie string, authStor AuthStorage) error {
 	record, ok := authStor.Get(cookie)
 	if !ok {
 		return errors.New("Invalid action")
@@ -202,7 +202,7 @@ func (h *Controler) HandleDeleteUser(cookie string, authStor AuthStorage) error 
 	return nil
 }
 
-func (h *Controler) HandlePutSeeker(body io.ReadCloser, id uuid.UUID) error {
+func (h *UserService) PutSeeker(body io.ReadCloser, id uuid.UUID) error {
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		// log.Printf("error while reading body: %s", err)
@@ -226,7 +226,7 @@ func (h *Controler) HandlePutSeeker(body io.ReadCloser, id uuid.UUID) error {
 	return nil
 }
 
-func (h *Controler) HandlePutEmployer(body io.ReadCloser, id uuid.UUID) error {
+func (h *UserService) PutEmployer(body io.ReadCloser, id uuid.UUID) error {
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		// log.Printf("error while reading body: %s", err)
@@ -250,7 +250,7 @@ func (h *Controler) HandlePutEmployer(body io.ReadCloser, id uuid.UUID) error {
 	return nil
 }
 
-func (h *Controler) HandleCreateVacancy(body io.ReadCloser, cookie string, authStor AuthStorage) (uuid.UUID, error) { //should do this part by one handler with if?
+func (h *UserService) CreateVacancy(body io.ReadCloser, cookie string, authStor AuthStorage) (uuid.UUID, error) { //should do this part by one r with if?
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		log.Printf("error while reading body: %s", err)
@@ -282,7 +282,7 @@ func (h *Controler) HandleCreateVacancy(body io.ReadCloser, cookie string, authS
 	return id, nil
 }
 
-func (h *Controler) HandleGetVacancy(vacancyId uuid.UUID, cookie string, authStor AuthStorage) (Vacancy, error) {
+func (h *UserService) GetVacancy(vacancyId uuid.UUID, cookie string, authStor AuthStorage) (Vacancy, error) {
 	vacancy, ok := h.Storage.GetVacancy(vacancyId)
 
 	if !ok {
@@ -292,7 +292,7 @@ func (h *Controler) HandleGetVacancy(vacancyId uuid.UUID, cookie string, authSto
 	return vacancy, nil
 }
 
-func (h *Controler) HandleDeleteVacancy(vacancyId uuid.UUID, cookie string, authStor AuthStorage) error {
+func (h *UserService) DeleteVacancy(vacancyId uuid.UUID, cookie string, authStor AuthStorage) error {
 	record, ok := authStor.Get(cookie)
 	if !ok || record.Class != EmployerStr {
 		return errors.New("Invalid action")
@@ -313,7 +313,7 @@ func (h *Controler) HandleDeleteVacancy(vacancyId uuid.UUID, cookie string, auth
 	return nil
 }
 
-func (h *Controler) HandlePutVacancy(vacancyId uuid.UUID, body io.ReadCloser,
+func (h *UserService) PutVacancy(vacancyId uuid.UUID, body io.ReadCloser,
 	cookie string, authStor AuthStorage) error {
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {

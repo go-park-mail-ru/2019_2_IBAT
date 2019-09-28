@@ -23,7 +23,7 @@ func NewServer() (*Server, error) {
 
 	router := mux.NewRouter()
 
-	ah := auth.Handler{
+	ah := auth.AuthService{
 		Storage: auth.MapAuthStorage{
 			Storage: make(map[string]AuthStorageValue),
 			Mu:      &sync.Mutex{},
@@ -31,8 +31,8 @@ func NewServer() (*Server, error) {
 	}
 
 	h := handler.Handler{
-		AuthHandler: ah,
-		UserControler: users.Controler{
+		AuthService: ah,
+		UserService: users.UserService{
 			Storage: &users.MapUserStorage{
 				SekMu:           &sync.Mutex{},
 				EmplMu:          &sync.Mutex{},

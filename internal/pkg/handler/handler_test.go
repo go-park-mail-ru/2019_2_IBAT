@@ -19,7 +19,7 @@ import (
 )
 
 func TestHandler_GetResumes(t *testing.T) {
-	ah := auth.Handler{
+	ah := auth.AuthService{
 		Storage: auth.MapAuthStorage{
 			Storage: make(map[string]AuthStorageValue),
 			Mu:      &sync.Mutex{},
@@ -27,8 +27,8 @@ func TestHandler_GetResumes(t *testing.T) {
 	}
 
 	h := &Handler{
-		AuthHandler: ah,
-		UserControler: users.Controler{
+		AuthService: ah,
+		UserService: users.UserService{
 			Storage: &users.MapUserStorage{
 				SekMu:  &sync.Mutex{},
 				EmplMu: &sync.Mutex{},
@@ -92,7 +92,7 @@ func TestHandler_GetResumes(t *testing.T) {
 	r := httptest.NewRequest("GET", "/resumes/", nil)
 	w := httptest.NewRecorder()
 
-	expectedJSON, _ := json.Marshal(h.UserControler.Storage.GetResumes())
+	expectedJSON, _ := json.Marshal(h.UserService.Storage.GetResumes())
 
 	tests := []struct {
 		name     string
@@ -120,7 +120,7 @@ func TestHandler_GetResumes(t *testing.T) {
 }
 
 func TestHandler_GetEmployers(t *testing.T) {
-	ah := auth.Handler{
+	ah := auth.AuthService{
 		Storage: auth.MapAuthStorage{
 			Storage: make(map[string]AuthStorageValue),
 			Mu:      &sync.Mutex{},
@@ -128,8 +128,8 @@ func TestHandler_GetEmployers(t *testing.T) {
 	}
 
 	h := &Handler{
-		AuthHandler: ah,
-		UserControler: users.Controler{
+		AuthService: ah,
+		UserService: users.UserService{
 			Storage: &users.MapUserStorage{
 				SekMu:         &sync.Mutex{},
 				EmplMu:        &sync.Mutex{},
@@ -170,7 +170,7 @@ func TestHandler_GetEmployers(t *testing.T) {
 	r := httptest.NewRequest("GET", "/employers/", nil)
 	w := httptest.NewRecorder()
 
-	expectedEmployers := h.UserControler.Storage.GetEmployers()
+	expectedEmployers := h.UserService.Storage.GetEmployers()
 
 	for i, item := range expectedEmployers {
 		item.Password = ""
@@ -204,7 +204,7 @@ func TestHandler_GetEmployers(t *testing.T) {
 }
 
 func TestHandler_GetEmployerById(t *testing.T) {
-	ah := auth.Handler{
+	ah := auth.AuthService{
 		Storage: auth.MapAuthStorage{
 			Storage: make(map[string]AuthStorageValue),
 			Mu:      &sync.Mutex{},
@@ -212,8 +212,8 @@ func TestHandler_GetEmployerById(t *testing.T) {
 	}
 
 	h := &Handler{
-		AuthHandler: ah,
-		UserControler: users.Controler{
+		AuthService: ah,
+		UserService: users.UserService{
 			Storage: &users.MapUserStorage{
 				SekMu:         &sync.Mutex{},
 				EmplMu:        &sync.Mutex{},
@@ -252,7 +252,7 @@ func TestHandler_GetEmployerById(t *testing.T) {
 		},
 	}
 
-	expectedEmployers := h.UserControler.Storage.GetEmployers()
+	expectedEmployers := h.UserService.Storage.GetEmployers()
 
 	for i, item := range expectedEmployers {
 		item.Password = ""
@@ -304,7 +304,7 @@ func TestHandler_GetEmployerById(t *testing.T) {
 }
 
 func TestHandler_GetSeekerById(t *testing.T) {
-	ah := auth.Handler{
+	ah := auth.AuthService{
 		Storage: auth.MapAuthStorage{
 			Storage: make(map[string]AuthStorageValue),
 			Mu:      &sync.Mutex{},
@@ -312,8 +312,8 @@ func TestHandler_GetSeekerById(t *testing.T) {
 	}
 
 	h := &Handler{
-		AuthHandler: ah,
-		UserControler: users.Controler{
+		AuthService: ah,
+		UserService: users.UserService{
 			Storage: &users.MapUserStorage{
 				SekMu:  &sync.Mutex{},
 				EmplMu: &sync.Mutex{},
@@ -385,7 +385,7 @@ func TestHandler_GetSeekerById(t *testing.T) {
 		},
 	}
 
-	expectedSeekers := h.UserControler.Storage.GetSeekers()
+	expectedSeekers := h.UserService.Storage.GetSeekers()
 
 	for i, item := range expectedSeekers {
 		item.Password = ""
@@ -437,7 +437,7 @@ func TestHandler_GetSeekerById(t *testing.T) {
 }
 
 func TestHandler_GetEmployer(t *testing.T) {
-	ah := auth.Handler{
+	ah := auth.AuthService{
 		Storage: auth.MapAuthStorage{
 			Storage: map[string]AuthStorageValue{
 				"aaaaaaaaaa": {
@@ -456,8 +456,8 @@ func TestHandler_GetEmployer(t *testing.T) {
 	}
 
 	h := &Handler{
-		AuthHandler: ah,
-		UserControler: users.Controler{
+		AuthService: ah,
+		UserService: users.UserService{
 			Storage: &users.MapUserStorage{
 				SekMu:         &sync.Mutex{},
 				EmplMu:        &sync.Mutex{},
@@ -496,7 +496,7 @@ func TestHandler_GetEmployer(t *testing.T) {
 		},
 	}
 
-	expectedEmployers := h.UserControler.Storage.GetEmployers()
+	expectedEmployers := h.UserService.Storage.GetEmployers()
 
 	emplJSON1, _ := json.Marshal(expectedEmployers[uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8")])
 	emplJSON2, _ := json.Marshal(expectedEmployers[uuid.MustParse("6ba7b811-9dab-11d1-80b1-00c04fd430c8")])
