@@ -12,16 +12,16 @@ type SeekerReg struct {
 }
 
 type EmployerReg struct {
-	CompanyName string `json:"company_name"`
-	Site        string `json:"site"`
-	FirstName   string `json:"first_name"`
-	SecondName  string `json:"second_name"`
-	Email       string `json:"email"`
-	Number      string `json:"number"`
-	ExtraNumber string `json:"extra_number"`
-	Password    string `json:"password"`
-	City        string `json:"city"`
-	EmplNum     int    `json:"empl_num"`
+	CompanyName      string `json:"company_name"`
+	Site             string `json:"site"`
+	FirstName        string `json:"first_name"`
+	SecondName       string `json:"second_name"`
+	Email            string `json:"email"`
+	PhoneNumber      string `json:"phone_number"`
+	ExtraPhoneNumber string `json:"extra_phone_number"`
+	Password         string `json:"password"`
+	City             string `json:"city"`
+	EmplNum          int    `json:"empl_num"`
 }
 
 type Seeker struct {
@@ -34,18 +34,18 @@ type Seeker struct {
 } //add extra fields
 
 type Employer struct {
-	CompanyName string      `json:"company_name"`
-	Site        string      `json:"site"`
-	FirstName   string      `json:"first_name"`
-	SecondName  string      `json:"second_name"`
-	Email       string      `json:"email"`
-	Number      string      `json:"number"`
-	ExtraNumber string      `json:"extra_number"`
-	Password    string      `json:"password"`
-	City        string      `json:"city"`
-	EmplNum     int         `json:"empl_num"`
-	PathToImg   string      `json:"path_to_img"`
-	Vacancies   []uuid.UUID `json:"-"`
+	CompanyName      string      `json:"company_name"`
+	Site             string      `json:"site"`
+	FirstName        string      `json:"first_name"`
+	SecondName       string      `json:"second_name"`
+	Email            string      `json:"email"`
+	PhoneNumber      string      `json:"number"`
+	ExtraPhoneNumber string      `json:"extra_number"`
+	Password         string      `json:"password"`
+	City             string      `json:"city"`
+	EmplNum          int         `json:"empl_num"`
+	PathToImg        string      `json:"path_to_img"`
+	Vacancies        []uuid.UUID `json:"-"`
 } //add extra fields
 
 type Resume struct {
@@ -54,7 +54,7 @@ type Resume struct {
 	FirstName   string `json:"first_name"`
 	SecondName  string `json:"second_name"`
 	City        string `json:"city"`
-	Number      string `json:"number"`
+	PhoneNumber string `json:"phone_number"`
 	BirthDate   string `json:"birth_date"`
 	Sex         string `json:"sex"`
 	Citizenship string `json:"citizenship"`

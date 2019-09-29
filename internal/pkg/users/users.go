@@ -20,24 +20,24 @@ type UserService struct {
 func (h *UserService) CreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
-		log.Printf("error while reading body: %s", err)
-		err = errors.Wrap(err, "reading body error")
-		return uuid.UUID{}, err
+		// log.Printf("error while reading body: %s", err)
+		// err = errors.Wrap(err, "reading body error")
+		return uuid.UUID{}, errors.New("Invalid body, transfer error")
 	}
 
 	var newSeekerReg SeekerReg
 	err = json.Unmarshal(bytes, &newSeekerReg)
 	if err != nil {
-		log.Printf("Error while unmarshaling: %s", err)
-		err = errors.Wrap(err, "unmarshaling error")
-		return uuid.UUID{}, err
+		// log.Printf("Error while unmarshaling: %s", err)
+		// err = errors.Wrap(err, "unmarshaling error")
+		return uuid.UUID{}, errors.New("Invalid json")
 	}
 
 	id, ok := h.Storage.CreateSeeker(newSeekerReg)
 	if !ok {
-		log.Println("Here inside users")
-		log.Printf("Error while creating seeker: %s", err)
-		return uuid.UUID{}, errors.New("Error while creating seeker")
+		// log.Println("Here inside users")
+		// log.Printf("Error while creating seeker: %s", err)
+		return uuid.UUID{}, errors.New("Error while creating seeker: invalid email")
 	}
 
 	return id, nil
@@ -46,24 +46,24 @@ func (h *UserService) CreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
 func (h *UserService) CreateEmployer(body io.ReadCloser) (uuid.UUID, error) { //should do this part by one r with if?
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
-		log.Printf("error while reading body: %s", err)
-		err = errors.Wrap(err, "reading body error")
-		return uuid.UUID{}, err
+		// log.Printf("error while reading body: %s", err)
+		// err = errors.Wrap(err, "reading body error")
+		return uuid.UUID{}, errors.New("Invalid body, transfer error")
 	}
 
 	var newEmployerReg EmployerReg
 	err = json.Unmarshal(bytes, &newEmployerReg)
 	if err != nil {
-		log.Printf("Error while unmarshaling: %s", err)
-		err = errors.Wrap(err, "unmarshaling error")
-		return uuid.UUID{}, err
+		// log.Printf("Error while unmarshaling: %s", err)
+		// err = errors.Wrap(err, "unmarshaling error")
+		return uuid.UUID{}, errors.New("Invalid json")
 	}
 
 	id, ok := h.Storage.CreateEmployer(newEmployerReg)
 
 	if !ok {
-		log.Printf("Error while creating employer: %s", err)
-		return uuid.UUID{}, errors.New("Error while creating employer")
+		// log.Printf("Error while creating employer: %s", err)
+		return uuid.UUID{}, errors.New("Error while creating employer: invalid email")
 	}
 
 	return id, nil
@@ -72,30 +72,30 @@ func (h *UserService) CreateEmployer(body io.ReadCloser) (uuid.UUID, error) { //
 func (h *UserService) CreateResume(body io.ReadCloser, cookie string, authStor AuthStorage) (uuid.UUID, error) { //should do this part by one r with if?
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
-		log.Printf("error while reading body: %s", err)
-		err = errors.Wrap(err, "reading body error")
-		return uuid.UUID{}, err
+		// log.Printf("error while reading body: %s", err)
+		// err = errors.Wrap(err, "reading body error")
+		return uuid.UUID{}, errors.New("Invalid body, transfer error")
 	}
 
 	var resumeReg Resume
 	err = json.Unmarshal(bytes, &resumeReg)
 	if err != nil {
-		log.Printf("Error while unmarshaling: %s", err)
-		err = errors.Wrap(err, "unmarshaling error")
-		return uuid.UUID{}, err
+		// log.Printf("Error while unmarshaling: %s", err)
+		// err = errors.Wrap(err, "unmarshaling error")
+		return uuid.UUID{}, errors.New("Invalid json")
 	}
 
 	record, ok := authStor.Get(cookie)
 	if !ok || record.Class != SeekerStr {
-		log.Printf("Invalid action: %s", err)
-		return uuid.UUID{}, errors.New("Invalid action")
+		// log.Printf("Invalid action: %s", err)
+		return uuid.UUID{}, errors.New("Forbidden")
 	}
 
 	id, ok := h.Storage.CreateResume(resumeReg, record.ID)
 
 	if !ok {
-		log.Printf("Error while creating resume: %s", err)
-		return uuid.UUID{}, errors.New("Error while creating resume")
+		// log.Printf("Error while creating resume: %s", err)
+		return uuid.UUID{}, errors.New("Something went wrong. Error while creating resume")
 	}
 
 	return id, nil
@@ -110,13 +110,13 @@ func (h *UserService) DeleteResume(resumeId uuid.UUID, cookie string, authStor A
 	resume, ok := h.Storage.GetResume(resumeId)
 
 	if resume.OwnerID != record.ID || !ok {
-		return errors.New("Error while deleting resume")
+		return errors.New("Invalid action")
 	}
 
 	ok = h.Storage.DeleteResume(resumeId)
 
 	if !ok {
-		return errors.New("Error while deleting resume")
+		return errors.New("Internal server error")
 	}
 
 	return nil

@@ -23,35 +23,27 @@ func (h *AuthService) CreateSession(body io.ReadCloser, usS UserStorage) (http.C
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		// log.Printf("error while reading body: %s", err)
-		err = errors.Wrap(err, "reading body error")
-		return http.Cookie{}, "", err
+		// err = errors.Wrap(err, "reading body error")
+		return http.Cookie{}, "", errors.New("Invalid body, transfer error")
 	}
 
 	userAuthInput := new(UserAuthInput)
 	err = json.Unmarshal(bytes, userAuthInput)
 	if err != nil {
 		// log.Printf("Error while unmarshaling: %s", err)
-		err = errors.Wrap(err, "Error while unmarshaling")
-		return http.Cookie{}, "", err
+		// err = errors.Wrap(err, "error while unmarshaling")
+		return http.Cookie{}, "", errors.New("Invalid json")
 	}
 
 	id, class, ok := usS.CheckUser(userAuthInput.Login, userAuthInput.Password)
 	if !ok {
 		// log.Printf("No such user error")
-		return http.Cookie{}, "", errors.New("No such user error")
+		return http.Cookie{}, "", errors.New("Invalid password or login")
 	}
 
 	authInfo, cookieValue := h.Storage.Set(id, class) //possible return authInfo
 
-	// authInfo, _ := h.Storage.Get(cookieValue) //impossible error, should use only Set method
-
-	expiresAt, err := time.Parse(TimeFormat, authInfo.Expires)
-
-	if err != nil {
-		log.Printf("Error while time conversing: %s", err)
-		err = errors.Wrap(err, "Error while time conversing")
-		return http.Cookie{}, "", err
-	} //impossible error
+	expiresAt, _ := time.Parse(TimeFormat, authInfo.Expires)
 
 	cookie := http.Cookie{
 		Name:    CookieName,

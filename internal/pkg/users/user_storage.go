@@ -96,17 +96,17 @@ func (m MapUserStorage) CreateEmployer(employerInput EmployerReg) (uuid.UUID, bo
 
 	id := uuid.New()
 	newEmployer := Employer{
-		CompanyName: employerInput.CompanyName,
-		Site:        employerInput.Site,
-		FirstName:   employerInput.FirstName,
-		SecondName:  employerInput.SecondName,
-		Email:       employerInput.Email,
-		Number:      employerInput.Number,
-		ExtraNumber: employerInput.ExtraNumber,
-		Password:    employerInput.Password,
-		City:        employerInput.City,
-		EmplNum:     employerInput.EmplNum,
-		Vacancies:   make([]uuid.UUID, 0),
+		CompanyName:      employerInput.CompanyName,
+		Site:             employerInput.Site,
+		FirstName:        employerInput.FirstName,
+		SecondName:       employerInput.SecondName,
+		Email:            employerInput.Email,
+		PhoneNumber:      employerInput.PhoneNumber,
+		ExtraPhoneNumber: employerInput.ExtraPhoneNumber,
+		Password:         employerInput.Password,
+		City:             employerInput.City,
+		EmplNum:          employerInput.EmplNum,
+		Vacancies:        make([]uuid.UUID, 0),
 	}
 
 	m.EmplMu.Lock()
@@ -381,17 +381,17 @@ func (m MapUserStorage) PutEmployer(employerInput EmployerReg, id uuid.UUID) boo
 	vacancies := m.EmployerStorage[id].Vacancies
 
 	m.EmployerStorage[id] = Employer{
-		CompanyName: employerInput.CompanyName,
-		Site:        employerInput.Site,
-		FirstName:   employerInput.FirstName,
-		SecondName:  employerInput.SecondName,
-		Email:       employerInput.Email,
-		Number:      employerInput.Number,
-		ExtraNumber: employerInput.ExtraNumber,
-		Password:    employerInput.Password,
-		City:        employerInput.City,
-		EmplNum:     employerInput.EmplNum,
-		Vacancies:   vacancies,
+		CompanyName:      employerInput.CompanyName,
+		Site:             employerInput.Site,
+		FirstName:        employerInput.FirstName,
+		SecondName:       employerInput.SecondName,
+		Email:            employerInput.Email,
+		PhoneNumber:      employerInput.PhoneNumber,
+		ExtraPhoneNumber: employerInput.ExtraPhoneNumber,
+		Password:         employerInput.Password,
+		City:             employerInput.City,
+		EmplNum:          employerInput.EmplNum,
+		Vacancies:        vacancies,
 	}
 
 	m.EmplMu.Unlock()
@@ -519,18 +519,18 @@ func (m MapUserStorage) SetImage(id uuid.UUID, class string, imageName string) b
 		employer := m.EmployerStorage[id]
 
 		m.EmployerStorage[id] = Employer{
-			CompanyName: employer.CompanyName,
-			Site:        employer.Site,
-			FirstName:   employer.FirstName,
-			SecondName:  employer.SecondName,
-			Email:       employer.Email,
-			Number:      employer.Number,
-			ExtraNumber: employer.ExtraNumber,
-			Password:    employer.Password,
-			City:        employer.City,
-			EmplNum:     employer.EmplNum,
-			PathToImg:   imageName,
-			Vacancies:   employer.Vacancies,
+			CompanyName:      employer.CompanyName,
+			Site:             employer.Site,
+			FirstName:        employer.FirstName,
+			SecondName:       employer.SecondName,
+			Email:            employer.Email,
+			PhoneNumber:      employer.PhoneNumber,
+			ExtraPhoneNumber: employer.ExtraPhoneNumber,
+			Password:         employer.Password,
+			City:             employer.City,
+			EmplNum:          employer.EmplNum,
+			PathToImg:        imageName,
+			Vacancies:        employer.Vacancies,
 		}
 
 		m.EmplMu.Unlock()
