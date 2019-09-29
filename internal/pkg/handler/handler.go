@@ -21,7 +21,7 @@ type Handler struct {
 func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
-	setDefaultHeaders(w)
+	//setDefaultHeaders(w)
 
 	cookie, class, err := h.AuthService.CreateSession(r.Body, h.UserService.Storage)
 	if err != nil {
@@ -38,7 +38,7 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteSession(w http.ResponseWriter, r *http.Request) {
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -60,7 +60,7 @@ func (h *Handler) DeleteSession(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 	uuid, err := h.UserService.CreateSeeker(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -92,7 +92,7 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 
 	uuid, err := h.UserService.CreateEmployer(r.Body)
 	if err != nil {
@@ -126,7 +126,7 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreateResume(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -149,7 +149,7 @@ func (h *Handler) CreateResume(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) {
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -179,7 +179,7 @@ func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetResume(w http.ResponseWriter, r *http.Request) {
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -220,7 +220,7 @@ func (h *Handler) GetResume(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -242,7 +242,7 @@ func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetSeeker(w http.ResponseWriter, r *http.Request) {
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -273,7 +273,7 @@ func (h *Handler) GetSeeker(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -303,7 +303,7 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetEmployer(w http.ResponseWriter, r *http.Request) {
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -335,7 +335,7 @@ func (h *Handler) GetEmployer(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
@@ -367,7 +367,7 @@ func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 
 //should test method
 func (h *Handler) GetSeekerById(w http.ResponseWriter, r *http.Request) {
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 
 	seekId, err := uuid.Parse(mux.Vars(r)["id"])
 
@@ -401,7 +401,7 @@ func (h *Handler) GetSeekerById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetEmployerById(w http.ResponseWriter, r *http.Request) {
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 
 	emplId, err := uuid.Parse(mux.Vars(r)["id"])
 
@@ -435,7 +435,7 @@ func (h *Handler) GetEmployerById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetEmployers(w http.ResponseWriter, r *http.Request) {
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 
 	employers := h.UserService.Storage.GetEmployers()
 
@@ -457,7 +457,7 @@ func (h *Handler) GetEmployers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) {
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 
 	resumes := h.UserService.Storage.GetResumes()
 
@@ -468,7 +468,7 @@ func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetVacancies(w http.ResponseWriter, r *http.Request) {
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 
 	vacancies := h.UserService.Storage.GetVacancies()
 
@@ -480,7 +480,7 @@ func (h *Handler) GetVacancies(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreateVacancy(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -503,7 +503,7 @@ func (h *Handler) CreateVacancy(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) {
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -543,7 +543,7 @@ func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteVacancy(w http.ResponseWriter, r *http.Request) {
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -573,7 +573,7 @@ func (h *Handler) DeleteVacancy(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) PutVacancy(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	setDefaultHeaders(w)
+	// setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

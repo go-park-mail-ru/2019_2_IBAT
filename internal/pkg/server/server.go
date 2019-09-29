@@ -46,6 +46,8 @@ func NewServer() (*Server, error) {
 		},
 	}
 
+	router.Use(handler.CorsMiddleware)
+
 	router.HandleFunc("/auth", h.CreateSession).Methods(http.MethodPost, http.MethodOptions)
 	router.HandleFunc("/auth", h.DeleteSession).Methods(http.MethodDelete, http.MethodOptions)
 

@@ -91,8 +91,8 @@ func TestMapUserStorage_CreateSeeker(t *testing.T) {
 				require.Equal(t, id, got, "The two values should be the same.")
 			}
 
-			if class != "Seeker" {
-				t.Error(`class != "Seeker"`)
+			if class != SeekerStr {
+				t.Error(`class != SeekerStr`)
 			}
 
 			if !ok {
@@ -208,8 +208,8 @@ func TestMapUserStorage_CreateEmployer(t *testing.T) {
 				require.Equal(t, id, gotId, "The two values should be the same.")
 			}
 
-			if class != "Employer" {
-				t.Error(`class != "Employer"`)
+			if class != EmployerStr {
+				t.Error(`class != EmployerStr`)
 			}
 
 			if !gotOk {
@@ -424,7 +424,7 @@ func TestMapUserStorage_CheckUser(t *testing.T) {
 				Password: "12345",
 			},
 			wantId:    uuid.MustParse("6ba6b810-9bad-11d1-80b2-00c04fd430c8"),
-			wantClass: "Seeker",
+			wantClass: SeekerStr,
 			wantOk:    true,
 		},
 		{
@@ -434,7 +434,7 @@ func TestMapUserStorage_CheckUser(t *testing.T) {
 				Password: "12345",
 			},
 			wantId:    uuid.MustParse("6ba7b810-9bad-11d1-80b1-00c04fd430c8"),
-			wantClass: "Seeker",
+			wantClass: SeekerStr,
 			wantOk:    true,
 		},
 		{
@@ -444,7 +444,7 @@ func TestMapUserStorage_CheckUser(t *testing.T) {
 				Password: "1234",
 			},
 			wantId:    uuid.MustParse("6ba7b810-9dad-11d1-80b1-10c05fd430c8"),
-			wantClass: "Employer",
+			wantClass: EmployerStr,
 			wantOk:    true,
 		},
 		{
@@ -454,7 +454,7 @@ func TestMapUserStorage_CheckUser(t *testing.T) {
 				Password: "12",
 			},
 			wantId:    uuid.MustParse("6ba7b811-9dab-11d1-80b1-00c04fd441c8"),
-			wantClass: "Employer",
+			wantClass: EmployerStr,
 			wantOk:    true,
 		},
 		{
