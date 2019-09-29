@@ -1,7 +1,7 @@
 package users
 
 import (
-	. "hh_workspace/2019_2_IBAT/internal/pkg/interfaces"
+	. "2019_2_IBAT/internal/pkg/interfaces"
 	"reflect"
 	"sync"
 	"testing"

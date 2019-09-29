@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	. "hh_workspace/2019_2_IBAT/internal/pkg/interfaces"
+	. "2019_2_IBAT/internal/pkg/interfaces"
 
 	"github.com/google/uuid"
 	"github.com/pkg/errors"

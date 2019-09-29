@@ -3,9 +3,9 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"hh_workspace/2019_2_IBAT/internal/pkg/auth"
-	. "hh_workspace/2019_2_IBAT/internal/pkg/interfaces"
-	"hh_workspace/2019_2_IBAT/internal/pkg/users"
+	"2019_2_IBAT/internal/pkg/auth"
+	. "2019_2_IBAT/internal/pkg/interfaces"
+	"2019_2_IBAT/internal/pkg/users"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"

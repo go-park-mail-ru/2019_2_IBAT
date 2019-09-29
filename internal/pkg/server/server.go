@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"sync"
 
-	"hh_workspace/2019_2_IBAT/internal/pkg/auth"
-	"hh_workspace/2019_2_IBAT/internal/pkg/handler"
-	. "hh_workspace/2019_2_IBAT/internal/pkg/interfaces"
-	"hh_workspace/2019_2_IBAT/internal/pkg/users"
+	"2019_2_IBAT/internal/pkg/auth"
+	"2019_2_IBAT/internal/pkg/handler"
+	. "2019_2_IBAT/internal/pkg/interfaces"
+	"2019_2_IBAT/internal/pkg/users"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"

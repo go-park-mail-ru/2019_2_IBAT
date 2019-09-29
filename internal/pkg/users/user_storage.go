@@ -1,8 +1,8 @@
 package users
 
 import (
+	. "2019_2_IBAT/internal/pkg/interfaces"
 	"fmt"
-	. "hh_workspace/2019_2_IBAT/internal/pkg/interfaces"
 	"sync"
 
 	"github.com/google/uuid"

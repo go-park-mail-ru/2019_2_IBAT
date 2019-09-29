@@ -1,10 +1,10 @@
 package handler
 
 import (
+	"2019_2_IBAT/internal/pkg/auth"
+	. "2019_2_IBAT/internal/pkg/interfaces"
+	"2019_2_IBAT/internal/pkg/users"
 	"encoding/json"
-	"hh_workspace/2019_2_IBAT/internal/pkg/auth"
-	. "hh_workspace/2019_2_IBAT/internal/pkg/interfaces"
-	"hh_workspace/2019_2_IBAT/internal/pkg/users"
 
 	"net/http"
 	"time"
@@ -20,6 +20,7 @@ type Handler struct {
 
 func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
+
 	setDefaultHeaders(w)
 
 	cookie, class, err := h.AuthService.CreateSession(r.Body, h.UserService.Storage)

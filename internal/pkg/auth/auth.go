@@ -1,8 +1,8 @@
 package auth
 
 import (
+	. "2019_2_IBAT/internal/pkg/interfaces"
 	"encoding/json"
-	. "hh_workspace/2019_2_IBAT/internal/pkg/interfaces"
 
 	"io"
 	"io/ioutil"

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"hh_workspace/2019_2_IBAT/internal/pkg/server"
+	"2019_2_IBAT/internal/pkg/server"
 )
 
 func main() {
