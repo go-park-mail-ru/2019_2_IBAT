@@ -34,6 +34,8 @@ type UserStorage interface {
 	GetEmployer(id uuid.UUID) (Employer, bool)
 	GetResume(id uuid.UUID) (Resume, bool)
 	GetVacancy(id uuid.UUID) (Vacancy, bool)
+
+	SetImage(id uuid.UUID, class string, imageName string) bool
 }
 
 type AuthStorage interface {

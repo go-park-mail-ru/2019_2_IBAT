@@ -29,6 +29,7 @@ type Seeker struct {
 	FirstName  string      `json:"first_name"`
 	SecondName string      `json:"second_name"`
 	Password   string      `json:"password"`
+	PathToImg  string      `json:"path_to_img"`
 	Resumes    []uuid.UUID `json:"resumes"` //should be fixed
 } //add extra fields
 
@@ -43,6 +44,7 @@ type Employer struct {
 	Password    string      `json:"password"`
 	City        string      `json:"city"`
 	EmplNum     int         `json:"empl_num"`
+	PathToImg   string      `json:"path_to_img"`
 	Vacancies   []uuid.UUID `json:"-"`
 } //add extra fields
 

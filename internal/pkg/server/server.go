@@ -46,9 +46,19 @@ func NewServer() (*Server, error) {
 		},
 	}
 
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("/tmp/img"))))
+
 	router.Use(handler.CorsMiddleware)
 
+	router.HandleFunc("/upload", h.UploadFile()).Methods(http.MethodPost, http.MethodOptions)
+
+	// staticHandler := http.FileServer(http.Dir("/tmp/img"))
+
+	// router.Handle("/static/{id}", http.StripPrefix("/static/", staticHandler)).Methods(http.MethodGet, http.MethodOptions)
+	// router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("/tmp/img"))))
+
 	router.HandleFunc("/auth", h.CreateSession).Methods(http.MethodPost, http.MethodOptions)
+	router.HandleFunc("/auth", h.GetSession).Methods(http.MethodGet, http.MethodOptions)
 	router.HandleFunc("/auth", h.DeleteSession).Methods(http.MethodDelete, http.MethodOptions)
 
 	router.HandleFunc("/seeker", h.CreateSeeker).Methods(http.MethodPost, http.MethodOptions)

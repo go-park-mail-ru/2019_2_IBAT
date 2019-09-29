@@ -4,7 +4,13 @@ import (
 	"2019_2_IBAT/internal/pkg/auth"
 	. "2019_2_IBAT/internal/pkg/interfaces"
 	"2019_2_IBAT/internal/pkg/users"
+	"crypto/rand"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"mime"
+	"os"
+	"path/filepath"
 
 	"net/http"
 	"time"
@@ -13,6 +19,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const staticDir = "/tmp/img"
+const maxUploadSize = 2 * 1024 * 1024 // 2 mb
+
 type Handler struct {
 	AuthService auth.AuthService
 	UserService users.UserService
@@ -20,8 +29,7 @@ type Handler struct {
 
 func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-
-	//setDefaultHeaders(w)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	cookie, class, err := h.AuthService.CreateSession(r.Body, h.UserService.Storage)
 	if err != nil {
@@ -37,9 +45,36 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(classJSON))
 }
 
-func (h *Handler) DeleteSession(w http.ResponseWriter, r *http.Request) {
-	// setDefaultHeaders(w)
+func (h *Handler) GetSession(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	cookie, err := r.Cookie(auth.CookieName)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		errJSON, _ := json.Marshal(Error{err.Error()})
+		w.Write([]byte(errJSON))
+		return
+	}
+
+	authInfo, ok := h.AuthService.Storage.Get(cookie.Value)
+
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		errJSON, _ := json.Marshal(Error{"Not authorized"})
+		w.Write([]byte(errJSON))
+		return
+	}
+
+	classJSON, _ := json.Marshal(Class{authInfo.Class})
+
+	w.Write([]byte(classJSON))
+}
+
+func (h *Handler) DeleteSession(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie(auth.CookieName)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{err.Error()})
@@ -60,7 +95,8 @@ func (h *Handler) DeleteSession(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	// setDefaultHeaders(w)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	uuid, err := h.UserService.CreateSeeker(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -92,7 +128,7 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	// setDefaultHeaders(w)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	uuid, err := h.UserService.CreateEmployer(r.Body)
 	if err != nil {
@@ -126,7 +162,8 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreateResume(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	// setDefaultHeaders(w)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -149,7 +186,8 @@ func (h *Handler) CreateResume(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) {
-	// setDefaultHeaders(w)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -179,7 +217,8 @@ func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetResume(w http.ResponseWriter, r *http.Request) {
-	// setDefaultHeaders(w)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -219,8 +258,9 @@ func (h *Handler) GetResume(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	defer r.Body.Close()
-	// setDefaultHeaders(w)
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -242,7 +282,8 @@ func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetSeeker(w http.ResponseWriter, r *http.Request) {
-	// setDefaultHeaders(w)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -273,7 +314,8 @@ func (h *Handler) GetSeeker(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	// setDefaultHeaders(w)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -303,7 +345,8 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetEmployer(w http.ResponseWriter, r *http.Request) {
-	// setDefaultHeaders(w)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -334,8 +377,8 @@ func (h *Handler) GetEmployer(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	defer r.Body.Close()
-	// setDefaultHeaders(w)
 
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
@@ -367,8 +410,7 @@ func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 
 //should test method
 func (h *Handler) GetSeekerById(w http.ResponseWriter, r *http.Request) {
-	// setDefaultHeaders(w)
-
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	seekId, err := uuid.Parse(mux.Vars(r)["id"])
 
 	if err != nil {
@@ -401,8 +443,7 @@ func (h *Handler) GetSeekerById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetEmployerById(w http.ResponseWriter, r *http.Request) {
-	// setDefaultHeaders(w)
-
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	emplId, err := uuid.Parse(mux.Vars(r)["id"])
 
 	if err != nil {
@@ -435,8 +476,7 @@ func (h *Handler) GetEmployerById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetEmployers(w http.ResponseWriter, r *http.Request) {
-	// setDefaultHeaders(w)
-
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	employers := h.UserService.Storage.GetEmployers()
 
 	for i, item := range employers {
@@ -457,7 +497,7 @@ func (h *Handler) GetEmployers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) {
-	// setDefaultHeaders(w)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	resumes := h.UserService.Storage.GetResumes()
 
@@ -468,7 +508,7 @@ func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetVacancies(w http.ResponseWriter, r *http.Request) {
-	// setDefaultHeaders(w)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	vacancies := h.UserService.Storage.GetVacancies()
 
@@ -480,7 +520,8 @@ func (h *Handler) GetVacancies(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreateVacancy(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	// setDefaultHeaders(w)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -503,7 +544,8 @@ func (h *Handler) CreateVacancy(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) {
-	// setDefaultHeaders(w)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -543,7 +585,8 @@ func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteVacancy(w http.ResponseWriter, r *http.Request) {
-	// setDefaultHeaders(w)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -573,7 +616,8 @@ func (h *Handler) DeleteVacancy(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) PutVacancy(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	// setDefaultHeaders(w)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -592,4 +636,95 @@ func (h *Handler) PutVacancy(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(errJSON))
 		return
 	}
+}
+
+func (h *Handler) UploadFile() http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+		cookie, err := r.Cookie(auth.CookieName)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			errJSON, _ := json.Marshal(Error{err.Error()})
+			w.Write([]byte(errJSON))
+			return
+		}
+
+		authInfo, ok := h.AuthService.Storage.Get(cookie.Value)
+
+		if !ok {
+			w.WriteHeader(http.StatusUnauthorized)
+			errJSON, _ := json.Marshal(Error{"Not authorized"})
+			w.Write([]byte(errJSON))
+			return
+		}
+
+		r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
+		if err := r.ParseMultipartForm(maxUploadSize); err != nil {
+			// renderError(w, "FILE_TOO_BIG", http.StatusBadRequest)
+			errJSON, _ := json.Marshal(Error{err.Error()})
+			w.Write([]byte(errJSON))
+			return
+		}
+
+		// parse and validate file and post parameters
+		fileType := r.PostFormValue("type")
+		file, _, err := r.FormFile("my_file")
+		if err != nil {
+			errJSON, _ := json.Marshal(Error{err.Error()})
+			w.Write([]byte(errJSON))
+			return
+		}
+		defer file.Close()
+		fileBytes, err := ioutil.ReadAll(file)
+		if err != nil {
+			errJSON, _ := json.Marshal(Error{err.Error()})
+			w.Write([]byte(errJSON))
+			return
+		}
+
+		// check file type, detectcontenttype only needs the first 512 bytes
+		filetype := http.DetectContentType(fileBytes)
+		switch filetype {
+		case "image/jpeg", "image/jpg":
+		case "image/gif", "image/png":
+			// case "application/pdf":
+			break
+		default:
+			errJSON, _ := json.Marshal(Error{err.Error()})
+			w.Write([]byte(errJSON))
+			return
+		}
+		fileName := uuid.New().String()
+		fileEndings, err := mime.ExtensionsByType(filetype)
+		if err != nil {
+			errJSON, _ := json.Marshal(Error{err.Error()})
+			w.Write([]byte(errJSON))
+			return
+		}
+		newPath := filepath.Join(staticDir, fileName+fileEndings[0])
+		fmt.Printf("FileType: %s, File: %s\n", fileType, newPath)
+
+		// write file
+		newFile, err := os.Create(newPath)
+		if err != nil {
+			errJSON, _ := json.Marshal(Error{err.Error()})
+			w.Write([]byte(errJSON))
+			return
+		}
+		defer newFile.Close() // idempotent, okay to call twice
+		if _, err := newFile.Write(fileBytes); err != nil || newFile.Close() != nil {
+			errJSON, _ := json.Marshal(Error{err.Error()})
+			w.Write([]byte(errJSON))
+			return
+		}
+
+		h.UserService.Storage.SetImage(authInfo.ID, authInfo.Class, newPath)
+	})
+}
+
+func randToken(len int) string {
+	b := make([]byte, len)
+	rand.Read(b)
+	return fmt.Sprintf("%x", b)
 }

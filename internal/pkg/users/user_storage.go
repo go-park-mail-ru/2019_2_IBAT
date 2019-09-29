@@ -498,3 +498,43 @@ func (m MapUserStorage) GetVacancies() map[uuid.UUID]Vacancy {
 
 	return vac
 }
+
+func (m MapUserStorage) SetImage(id uuid.UUID, class string, imageName string) bool {
+	if class == SeekerStr {
+		m.SekMu.Lock()
+		seeker := m.SeekerStorage[id]
+
+		m.SeekerStorage[id] = Seeker{
+			Email:      seeker.Email,
+			FirstName:  seeker.FirstName,
+			SecondName: seeker.SecondName,
+			Password:   seeker.Password,
+			PathToImg:  imageName,
+			Resumes:    seeker.Resumes,
+		}
+
+		m.SekMu.Unlock()
+	} else if class == EmployerStr {
+		m.EmplMu.Lock()
+		employer := m.EmployerStorage[id]
+
+		m.EmployerStorage[id] = Employer{
+			CompanyName: employer.CompanyName,
+			Site:        employer.Site,
+			FirstName:   employer.FirstName,
+			SecondName:  employer.SecondName,
+			Email:       employer.Email,
+			Number:      employer.Number,
+			ExtraNumber: employer.ExtraNumber,
+			Password:    employer.Password,
+			City:        employer.City,
+			EmplNum:     employer.EmplNum,
+			PathToImg:   imageName,
+			Vacancies:   employer.Vacancies,
+		}
+
+		m.EmplMu.Unlock()
+	}
+
+	return true //make false case
+}

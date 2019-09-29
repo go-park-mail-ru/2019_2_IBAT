@@ -39,7 +39,7 @@ func CorsMiddleware(h http.Handler) http.Handler {
 			return
 		}
 
-		res.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		// res.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		h.ServeHTTP(res, req)
 	}
 
