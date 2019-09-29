@@ -69,7 +69,15 @@ type Message struct {
 }
 
 type Error struct {
-	Body string `json:"error"`
+	Error string `json:"error"`
+}
+
+type Id struct {
+	Id string `json:"id"`
+}
+
+type Class struct {
+	Class string `json:"class"`
 }
 
 type Vacancy struct {

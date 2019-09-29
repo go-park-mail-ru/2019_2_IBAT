@@ -80,7 +80,7 @@ func (st MapAuthStorage) Delete(cookie string) bool {
 	st.Mu.Unlock()
 
 	_, ok := st.Storage[cookie]
-	if !ok {
+	if ok {
 		return false
 	}
 

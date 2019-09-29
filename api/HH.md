@@ -26,8 +26,10 @@
 - "/seeker"
   - DELETE - удаление пользователя
 
-- "/resume/<id>"
+- "/resume"
   - POST - создание резюме
+
+- "/resume/<id>"
   - PUT - изменение резюме
   - DELETE - удаление резюме
 
@@ -43,8 +45,10 @@
 - "/employer"
   - DELETE - удаление компании
 
-- "/vacancy/<id>"
+- "/vacancy"
   - POST - создание вакансии компании
+
+- "/vacancy/<id>"
   - PUT - изменение вакансии компании
   - DELETE - удаление вакансии компании
   
@@ -59,6 +63,9 @@
 - "/resume/<id>"
   - GET - персональная страница соискателя
 
+- "/seeker/<id>"
+  - GET - персональная страница соискателя
+
 - "/employers"
   - GET - запрос списка работодателей(по фильтрам)
 
@@ -71,6 +78,11 @@
 
 # METHODS DESCRIPTION
 
+Примечание:
+JSON структура на каждый отрицательный респонс
+{
+    "error": "message"
+} 
 ## AUTH
 
 ###  "/auth" POST
@@ -88,7 +100,10 @@ POST - email и пароль для авторизации пользовате�
     Положительный
 
         HTTP/1.1 200 OK
-        Cookie: name=value
+        Set-Cookie: name=value
+        {
+            "class": "seeker/employer"
+        }
 
 
     Отрицательный
@@ -105,6 +120,7 @@ DELETE - разрыв сессии
     Положительный
 
         HTTP/1.1 200 OK
+        Set-Cookie: name=value expires=new_date
 
     Отрицательный
 
@@ -129,6 +145,9 @@ POST - регистрация пользователя
     Положительный
 
         HTTP/1.1 200 OK
+        {
+            "class": "seeker"
+        }
 
     Отрицательный
 
@@ -157,7 +176,11 @@ GET
         HTTP/1.1 200 OK
 
         {
-            TODO implement settings data according to DB structure
+                "email": "somes@mail.com",
+                "first_name": "Grisha",
+                "second_name": "Zyablikov",
+                "password": "111111",
+                "resumes": {id, id} //array of ids
         }
 
     Отрицательный
@@ -168,9 +191,11 @@ PUT
 Структура JSON тела запроса
     
     {
-        TODO implement settings data according to DB structure
+        "email": "somes@mail.com",
+        "first_name": "Grisha",
+        "second_name": "Zyablikov",
+        "password": "111111",
     }
-
 
 Ответ на запрос:
 
@@ -181,7 +206,10 @@ PUT
 
     Отрицательный
 
-        HTTP/1.1 400 
+        HTTP/1.1 400
+        {
+            "error": "message"
+        }
 
 ### "/seeker" DELETE
 DELETE - удаление пользователя
@@ -198,13 +226,25 @@ DELETE - удаление пользователя
 
         HTTP/1.1 204
 
-### "/resume/<id>" POST PUT DELETE
+### "/resume" POST
 POST - создание резюме
 
-Структура JSON тела запроса
-    
+Структура JSON тела запроса   
+
     {
-        TODO resume fields
+        "first_name": "Vova",
+        "second_name": "Zyablikov",
+        "city": "Moscow",
+        "number": "12345678910",
+        "birth_date": "1994-21-08",
+        "sex": "male",
+        "citizenship": "Russia",
+        "experience": "7 years",
+        "profession": "programmer",
+        "position": "middle",
+        "wage": "100500",
+        "education": "MSU",
+        "about": "Hello employer"
     }
 
 
@@ -213,17 +253,33 @@ POST - создание резюме
     Положительный
 
         HTTP/1.1 200 OK
+        {
+            "id": "id" (string)
+        }
 
     Отрицательный
 
         HTTP/1.1 400
 
+### "/resume/<id>"PUT DELETE
 
 PUT - изменение резюме
 Структура JSON тела запроса
     
     {
-        TODO implement resume data according to DB structure
+        "first_name": "Vova",
+        "second_name": "Zyablikov",
+        "city": "Moscow",
+        "number": "12345678910",
+        "birth_date": "1994-21-08",
+        "sex": "male",
+        "citizenship": "Russia",
+        "experience": "7 years",
+        "profession": "programmer",
+        "position": "middle",
+        "wage": "100500",
+        "education": "MSU",
+        "about": "Hello employer"
     }
 
 Ответ на запрос:
@@ -260,12 +316,16 @@ POST - регистрация компании
 Структура JSON тела запроса
 
        {
-            "email": __message__(string)
-            "first_name": __first_name__(string)
-            "second_name": __second_name__(string)
-            "org_name":  __org_name__(string)
-            "org_format":  __org_format__(string)
-            "password": __password__(string)
+            "company_name": "BMSsTU",
+            "site":"bmstu.ru",
+            "email":"bmsstu@mail.com",
+            "first_name":"Tolya",
+            "second_name": "Alex",
+            "password":"1234",
+            "number": "12345678911",
+            "extra_number": "12345678910",
+            "city": "Moscow",
+            "empl_num": 1830
         }
 
 Ответ на запрос:
@@ -273,6 +333,9 @@ POST - регистрация компании
     Положительный
 
         HTTP/1.1 200 OK
+        {
+            "class": "employer"
+        }
 
     Отрицательный
 
@@ -292,7 +355,16 @@ GET
         HTTP/1.1 200 OK
 
         {
-            TODO implement settings data according to DB structure
+            "company_name": "BMSsTU",
+            "site": "bmstu.ru",
+            "first_name": "Tolya",
+            "second_name": "Alex",
+            "email": "bmsstu@mail.com",
+            "number": "12345678911",
+            "extra_number": "12345678910",
+            "password": "1234",
+            "city": "Moscow",
+            "empl_num": 1830
         }
 
     Отрицательный
@@ -302,9 +374,18 @@ GET
 PUT
 Структура JSON тела запроса
     
-    {
-        TODO implement settings data according to DB structure
-    }
+        {
+            "company_name": "BMSsTU",
+            "site": "bmstu.ru",
+            "first_name": "Tolya",
+            "second_name": "Alex",
+            "email": "bmsstu@mail.com",
+            "number": "12345678911",
+            "extra_number": "12345678910",
+            "password": "1234",
+            "city": "Moscow",
+            "empl_num": 1830
+        }
 
 
 Ответ на запрос:
@@ -335,32 +416,51 @@ DELETE - удаление компании
 
 
 
-### "/vacancy/<id>" POST PUT DELETE
+### "/vacancy" POST 
 
 POST - создание вакансии
 Структура JSON тела запроса
     
     {
-        TODO vacancy fields
+        "company_name": "BMSsTU",
+        "experience": "3 years and more",
+        "profession": "baker",
+        "position":  "mid",
+        "tasks": "writing test",
+        "requirements": "should be able writing good tests",
+        "wage": "100500",
+        "conditions": "nice team",
+        "about": "you will work in the best company"
     }
-
 
 Ответ на запрос:
 
     Положительный
 
         HTTP/1.1 200 OK
+        {
+            "id": "id" (string)
+        }
 
     Отрицательный
 
         HTTP/1.1 400  
 
+### "/vacancy/<id>" PUT DELETE
 
 PUT - изменение вакансии
 Структура JSON тела запроса
     
-    {
-        TODO implement vacancy data according to DB structure
+   {
+        "company_name": "BMSsTU",
+        "experience": "3 years and more",
+        "profession": "baker",
+        "position":  "mid",
+        "tasks": "writing test",
+        "requirements": "should be able writing good tests",
+        "wage": "100500",
+        "conditions": "nice team",
+        "about": "you will work in the best company"
     }
 
 
@@ -403,7 +503,17 @@ GET - персональная страница компании
         HTTP/1.1 200 OK
 
         {
-            TODO implement employer info according to DB structure
+            "company_name": "BMSsTU",
+            "site": "bmstu.ru",
+            "first_name": "Tolya",
+            "second_name": "Alex",
+            "email": "bmsstu@mail.com",
+            "number": "12345678911",
+            "extra_number": "12345678910",
+            "password": "",                     //field should be eliminated
+            "city": "Moscow",
+            "empl_num": 1830,
+            "vacancies": {"id1", "id2"}  //array of strings
         }
 
     Отрицательный
@@ -421,7 +531,15 @@ GET - персональная страница вакансии
         HTTP/1.1 200 OK
 
         {
-            TODO implement vacancy info according to DB structure
+            "company_name": "BMSsTU",
+            "experience": "3 years and more",
+            "profession": "baker",
+            "position":  "mid",
+            "tasks": "writing test",
+            "requirements": "should be able writing good tests",
+            "wage": "100500",
+            "conditions": "nice team",
+            "about": "you will work in the best company"
         }
 
     Отрицательный
@@ -438,7 +556,40 @@ GET - резюме соискателя
         HTTP/1.1 200 OK
 
         {
-            TODO implement seeker info according to DB structure
+            "first_name": "Vova",
+            "second_name": "Zyablikov",
+            "city": "Moscow",
+            "number": "12345678910",
+            "birth_date": "1994-21-08",
+            "sex": "male",
+            "citizenship": "Russia",
+            "experience": "7 years",
+            "profession": "programmer",
+            "position": "middle",
+            "wage": "100500",
+            "education": "MSU",
+            "about": "Hello employer"
+        }
+
+    Отрицательный
+
+        HTTP/1.1 400
+
+###  "/seeker/<id>"
+GET - персональная страница соискателя
+
+Ответ на запрос:
+
+    Положительный
+
+        HTTP/1.1 200 OK
+
+        {
+            "email": "somes@mail.com",
+            "first_name": "Grisha",
+            "second_name": "Zyablikov",
+            "password": "",
+            "resumes": {"id1", "id2"} //array of ids
         }
 
     Отрицательный
@@ -457,7 +608,33 @@ TODO describe possible GET request flags
         HTTP/1.1 200 OK
 
         {
-            TODO implement employer info according to DB structure
+            id1: {
+                "company_name": "BMSsTU",
+                "site": "bmstu.ru",
+                "first_name": "Tolya",
+                "second_name": "Alex",
+                "email": "bmsstu@mail.com",
+                "number": "12345678911",
+                "extra_number": "12345678910",
+                "password": "",                     //field should be eliminated
+                "city": "Moscow",
+                "empl_num": 1830,
+                "vacancies": {"id1", "id2"},  //array of strings
+            }
+            
+            id2: {
+                "company_name": "BMSsTU",
+                "site": "bmstu.ru",
+                "first_name": "Tolya",
+                "second_name": "Alex",
+                "email": "bmsstu@mail.com",
+                "number": "12345678911",
+                "extra_number": "12345678910",
+                "password": "",                     //field should be eliminated
+                "city": "Moscow",
+                "empl_num": 1830,
+                "vacancies": {"id1", "id2"}  //array of strings
+            }
         }
 
     Отрицательный
@@ -477,7 +654,37 @@ TODO describe possible GET request flags
         HTTP/1.1 200 OK
 
         {
-            TODO implement seeker info according to DB structure
+            id: {
+                "first_name": "Vova",
+                "second_name": "Zyablikov",
+                "city": "Moscow",
+                "number": "12345678910",
+                "birth_date": "1994-21-08",
+                "sex": "male",
+                "citizenship": "Russia",
+                "experience": "7 years",
+                "profession": "programmer",
+                "position": "middle",
+                "wage": "100500",
+                "education": "MSU",
+                "about": "Hello employer"
+            }
+
+            id: {
+                "first_name": "Vova",
+                "second_name": "Zyablikov",
+                "city": "Moscow",
+                "number": "12345678910",
+                "birth_date": "1994-21-08",
+                "sex": "male",
+                "citizenship": "Russia",
+                "experience": "7 years",
+                "profession": "programmer",
+                "position": "middle",
+                "wage": "100500",
+                "education": "MSU",
+                "about": "Hello employer"
+            }   
         }
 
     Отрицательный
@@ -498,7 +705,29 @@ TODO describe possible GET request flags
         HTTP/1.1 200 OK
 
         {
-            TODO implement seeker info according to DB structure
+            id: {
+                "company_name": "BMSsTU",
+                "experience": "3 years and more",
+                "profession": "baker",
+                "position":  "mid",
+                "tasks": "writing test",
+                "requirements": "should be able writing good tests",
+                "wage": "100500",
+                "conditions": "nice team",
+                "about": "you will work in the best company"
+            }
+            
+            id: {
+                "company_name": "BMSsTU",
+                "experience": "3 years and more",
+                "profession": "baker",
+                "position":  "mid",
+                "tasks": "writing test",
+                "requirements": "should be able writing good tests",
+                "wage": "100500",
+                "conditions": "nice team",
+                "about": "you will work in the best company"
+            }
         }
 
     Отрицательный

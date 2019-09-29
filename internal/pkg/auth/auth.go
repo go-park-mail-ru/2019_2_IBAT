@@ -19,12 +19,12 @@ type AuthService struct {
 
 const CookieName = "session-id"
 
-func (h *AuthService) CreateSession(body io.ReadCloser, usS UserStorage) (http.Cookie, error) {
+func (h *AuthService) CreateSession(body io.ReadCloser, usS UserStorage) (http.Cookie, string, error) {
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		// log.Printf("error while reading body: %s", err)
 		err = errors.Wrap(err, "reading body error")
-		return http.Cookie{}, err
+		return http.Cookie{}, "", err
 	}
 
 	userAuthInput := new(UserAuthInput)
@@ -32,13 +32,13 @@ func (h *AuthService) CreateSession(body io.ReadCloser, usS UserStorage) (http.C
 	if err != nil {
 		// log.Printf("Error while unmarshaling: %s", err)
 		err = errors.Wrap(err, "Error while unmarshaling")
-		return http.Cookie{}, err
+		return http.Cookie{}, "", err
 	}
 
 	id, class, ok := usS.CheckUser(userAuthInput.Login, userAuthInput.Password)
 	if !ok {
 		// log.Printf("No such user error")
-		return http.Cookie{}, errors.New("No such user error")
+		return http.Cookie{}, "", errors.New("No such user error")
 	}
 
 	authInfo, cookieValue := h.Storage.Set(id, class) //possible return authInfo
@@ -50,7 +50,7 @@ func (h *AuthService) CreateSession(body io.ReadCloser, usS UserStorage) (http.C
 	if err != nil {
 		log.Printf("Error while time conversing: %s", err)
 		err = errors.Wrap(err, "Error while time conversing")
-		return http.Cookie{}, err
+		return http.Cookie{}, "", err
 	} //impossible error
 
 	cookie := http.Cookie{
@@ -59,7 +59,7 @@ func (h *AuthService) CreateSession(body io.ReadCloser, usS UserStorage) (http.C
 		Expires: expiresAt,
 	}
 
-	return cookie, nil
+	return cookie, authInfo.Class, nil
 }
 
 func (h *AuthService) DeleteSession(cookie *http.Cookie) bool {

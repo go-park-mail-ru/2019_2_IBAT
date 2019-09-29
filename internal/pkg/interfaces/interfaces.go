@@ -4,8 +4,8 @@ import (
 	"github.com/google/uuid"
 )
 
-const SeekerStr = "Seeker"
-const EmployerStr = "Employer"
+const SeekerStr = "seeker"
+const EmployerStr = "employer"
 
 type UserStorage interface {
 	CreateEmployer(seekerInput EmployerReg) (uuid.UUID, bool)
