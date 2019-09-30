@@ -21,7 +21,7 @@ type EmployerReg struct {
 	ExtraPhoneNumber string `json:"extra_phone_number"`
 	Password         string `json:"password"`
 	City             string `json:"city"`
-	EmplNum          int    `json:"empl_num"`
+	EmplNum          string `json:"empl_num"`
 }
 
 type Seeker struct {
@@ -43,7 +43,7 @@ type Employer struct {
 	ExtraPhoneNumber string      `json:"extra_number"`
 	Password         string      `json:"password"`
 	City             string      `json:"city"`
-	EmplNum          int         `json:"empl_num"`
+	EmplNum          string      `json:"empl_num"`
 	PathToImg        string      `json:"path_to_img"`
 	Vacancies        []uuid.UUID `json:"-"`
 } //add extra fields

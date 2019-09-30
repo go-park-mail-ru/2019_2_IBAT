@@ -93,5 +93,6 @@ func NewServer() (*Server, error) {
 }
 
 func (server *Server) Run() {
-	log.Fatal(http.ListenAndServe(":8080", server.Router))
+	// log.Fatal(http.ListenAndServe(":8080", server.Router))
+	log.Fatal(http.ListenAndServeTLS(":8081", "cert.pem", "key.pem", server.Router))
 }
