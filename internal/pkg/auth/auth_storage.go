@@ -76,6 +76,7 @@ func (st MapAuthStorage) Set(id uuid.UUID, class string) (AuthStorageValue, stri
 
 func (st MapAuthStorage) Delete(cookie string) bool {
 	st.Mu.Lock()
+	fmt.Println("Cookie was deleted")
 	delete(st.Storage, cookie)
 	st.Mu.Unlock()
 

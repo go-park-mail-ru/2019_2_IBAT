@@ -4,6 +4,12 @@ import (
 	"github.com/google/uuid"
 )
 
+const UnauthorizedMsg = "Unauthorized"
+const InternalErrorMsg = "Internal server error"
+const ForbiddenMsg = "Forbidden"
+const InvalidIdMsg = "Invalid ID"
+const InvalidJSONMsg = "Invalid JSON"
+
 type SeekerReg struct {
 	Email      string `json:"email"`
 	FirstName  string `json:"first_name"`
@@ -45,11 +51,11 @@ type Employer struct {
 	City             string      `json:"city"`
 	EmplNum          string      `json:"empl_num"`
 	PathToImg        string      `json:"path_to_img"`
-	Vacancies        []uuid.UUID `json:"-"`
+	Vacancies        []uuid.UUID `json:"vacancies"`
 } //add extra fields
 
 type Resume struct {
-	OwnerID uuid.UUID `json:"-"`
+	OwnerID uuid.UUID `json:"owner_id"` //should be escaped
 	// ID uuid.UUID
 	FirstName   string `json:"first_name"`
 	SecondName  string `json:"second_name"`
@@ -83,7 +89,7 @@ type Class struct {
 }
 
 type Vacancy struct {
-	OwnerID      uuid.UUID `json:"-"`
+	OwnerID      uuid.UUID `json:"owner_id"` //should be escaped
 	CompanyName  string    `json:"company_name"`
 	Experience   string    `json:"experience"`
 	Profession   string    `json:"profession"`
