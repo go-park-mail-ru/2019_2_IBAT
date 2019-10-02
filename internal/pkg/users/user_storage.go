@@ -272,9 +272,9 @@ func (m MapUserStorage) DeleteResume(id uuid.UUID) bool {
 
 	delete(m.ResumeStorage, id)
 
-	for i, item := range m.ResumeStorage { //to remove
-		fmt.Printf("uuid: %s\nvalue: %s\n", i, item)
-	}
+	// for i, item := range m.ResumeStorage { //to remove
+	// 	fmt.Printf("uuid: %s\nvalue: %s\n", i, item)
+	// }
 	fmt.Println()
 
 	m.ResMu.Unlock()

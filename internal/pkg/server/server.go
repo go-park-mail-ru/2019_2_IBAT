@@ -18,6 +18,8 @@ type Server struct {
 	Router *mux.Router
 }
 
+const staticDir = "/tmp/img"
+
 func NewServer() (*Server, error) {
 	server := new(Server)
 
@@ -46,7 +48,7 @@ func NewServer() (*Server, error) {
 		},
 	}
 
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("/tmp/img"))))
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
 
 	router.Use(handler.CorsMiddleware)
 
