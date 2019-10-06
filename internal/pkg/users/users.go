@@ -205,21 +205,21 @@ func (h *UserService) PutSeeker(body io.ReadCloser, id uuid.UUID) error {
 func (h *UserService) PutEmployer(body io.ReadCloser, id uuid.UUID) error {
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
-		// log.Printf("error while reading body: %s", err)
+		log.Printf("error while reading body: %s", err)
 		return errors.Wrap(err, "reading body error")
 	}
 
 	var newEmployerReg EmployerReg
 	err = json.Unmarshal(bytes, &newEmployerReg)
 	if err != nil {
-		// log.Printf("Error while unmarshaling: %s", err)
+		log.Printf("Error while unmarshaling: %s", err)
 		return errors.Wrap(err, "unmarshaling error")
 	}
 
 	ok := h.Storage.PutEmployer(newEmployerReg, id)
 	if !ok {
-		// log.Println("Here inside users")
-		// log.Printf("Error while creating seeker: %s", err)
+		log.Println("Here inside users")
+		log.Printf("Error while creating employer: %s", err)
 		return errors.New("Error while changing employer")
 	}
 

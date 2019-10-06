@@ -18,7 +18,7 @@ type Server struct {
 	Router *mux.Router
 }
 
-const staticDir = "/tmp/img"
+const staticDir = "/media/vltim/img"
 
 func NewServer() (*Server, error) {
 	server := new(Server)

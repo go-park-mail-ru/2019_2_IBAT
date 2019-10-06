@@ -331,12 +331,14 @@ func (m MapUserStorage) PutSeeker(seekerInput SeekerReg, id uuid.UUID) bool {
 
 	m.SekMu.Lock()
 	resumes := m.SeekerStorage[id].Resumes
+	photo := m.SeekerStorage[id].PathToImg
 
 	m.SeekerStorage[id] = Seeker{
 		Email:      seekerInput.Email,
 		FirstName:  seekerInput.FirstName,
 		SecondName: seekerInput.SecondName,
 		Password:   seekerInput.Password,
+		PathToImg:  photo,
 		Resumes:    resumes,
 	}
 
@@ -347,7 +349,7 @@ func (m MapUserStorage) PutSeeker(seekerInput SeekerReg, id uuid.UUID) bool {
 
 func (m MapUserStorage) PutEmployer(employerInput EmployerReg, id uuid.UUID) bool {
 	var err_flag bool
-
+	fmt.Println("Here1000")
 	m.EmplMu.Lock()
 	for i, user := range m.EmployerStorage {
 		if user.Email == employerInput.Email || user.CompanyName == employerInput.CompanyName {
@@ -379,6 +381,7 @@ func (m MapUserStorage) PutEmployer(employerInput EmployerReg, id uuid.UUID) boo
 
 	m.EmplMu.Lock()
 	vacancies := m.EmployerStorage[id].Vacancies
+	photo := m.EmployerStorage[id].PathToImg
 
 	m.EmployerStorage[id] = Employer{
 		CompanyName:      employerInput.CompanyName,
@@ -391,6 +394,7 @@ func (m MapUserStorage) PutEmployer(employerInput EmployerReg, id uuid.UUID) boo
 		Password:         employerInput.Password,
 		City:             employerInput.City,
 		EmplNum:          employerInput.EmplNum,
+		PathToImg:        photo,
 		Vacancies:        vacancies,
 	}
 

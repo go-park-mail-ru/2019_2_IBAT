@@ -20,7 +20,7 @@ import (
 )
 
 const publicDir = "/static"
-const internalDir = "/tmp/img"
+const internalDir = "/media/vltim/img"
 
 const maxUploadSize = 2 * 1024 * 1024 // 2 mb
 

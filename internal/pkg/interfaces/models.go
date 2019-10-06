@@ -45,8 +45,8 @@ type Employer struct {
 	FirstName        string      `json:"first_name"`
 	SecondName       string      `json:"second_name"`
 	Email            string      `json:"email"`
-	PhoneNumber      string      `json:"number"`
-	ExtraPhoneNumber string      `json:"extra_number"`
+	PhoneNumber      string      `json:"phone_number"`
+	ExtraPhoneNumber string      `json:"phone_extra_number"`
 	Password         string      `json:"password"`
 	City             string      `json:"city"`
 	EmplNum          string      `json:"empl_num"`
