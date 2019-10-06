@@ -163,30 +163,6 @@ func (h *UserService) PutResume(resumeId uuid.UUID, body io.ReadCloser,
 	return nil
 }
 
-func (h *UserService) GetSeeker(cookie string, authStor AuthStorage) (Seeker, error) {
-
-	record, ok := authStor.Get(cookie)
-	if !ok {
-		return Seeker{}, errors.New(ForbiddenMsg)
-	}
-
-	res, _ := h.Storage.GetSeeker(record.ID)
-
-	return res, nil
-}
-
-func (h *UserService) GetEmployer(cookie string, authStor AuthStorage) (Employer, error) {
-
-	record, ok := authStor.Get(cookie)
-	if !ok {
-		return Employer{}, errors.New(ForbiddenMsg)
-	}
-
-	res, _ := h.Storage.GetEmployer(record.ID)
-
-	return res, nil
-}
-
 func (h *UserService) DeleteUser(cookie string, authStor AuthStorage) error {
 	record, ok := authStor.Get(cookie)
 	if !ok {

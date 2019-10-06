@@ -340,11 +340,11 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	authInfo, _ := h.AuthService.Storage.Get(cookie.Value)
 
 	if authInfo.Role == SeekerStr {
-		seeker, err := h.UserService.GetSeeker(cookie.Value, h.AuthService.Storage)
+		seeker, ok := h.UserService.Storage.GetSeeker(authInfo.ID)
 
-		if err != nil {
-			w.WriteHeader(http.StatusForbidden)
-			errJSON, _ := json.Marshal(Error{ForbiddenMsg})
+		if !ok {
+			w.WriteHeader(http.StatusBadRequest)
+			errJSON, _ := json.Marshal(Error{InternalErrorMsg})
 			w.Write([]byte(errJSON))
 			return
 		}
@@ -357,11 +357,11 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 
 		w.Write([]byte(answerJSON))
 	} else if authInfo.Role == EmployerStr {
-		employer, err := h.UserService.GetEmployer(cookie.Value, h.AuthService.Storage)
+		employer, ok := h.UserService.Storage.GetEmployer(authInfo.ID)
 
-		if err != nil {
-			w.WriteHeader(http.StatusForbidden)
-			errJSON, _ := json.Marshal(Error{ForbiddenMsg})
+		if !ok {
+			w.WriteHeader(http.StatusBadRequest)
+			errJSON, _ := json.Marshal(Error{InternalErrorMsg})
 			w.Write([]byte(errJSON))
 			return
 		}
