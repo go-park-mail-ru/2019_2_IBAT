@@ -86,7 +86,7 @@ func (h *UserService) CreateResume(body io.ReadCloser, cookie string, authStor A
 	}
 
 	record, ok := authStor.Get(cookie)
-	if !ok || record.Class != SeekerStr {
+	if !ok || record.Role != SeekerStr {
 		// log.Printf("Invalid action: %s", err)
 		return uuid.UUID{}, errors.New(ForbiddenMsg)
 	}
@@ -103,7 +103,7 @@ func (h *UserService) CreateResume(body io.ReadCloser, cookie string, authStor A
 
 func (h *UserService) DeleteResume(resumeId uuid.UUID, cookie string, authStor AuthStorage) error {
 	record, ok := authStor.Get(cookie)
-	if !ok || record.Class != SeekerStr {
+	if !ok || record.Role != SeekerStr {
 		return errors.New(ForbiddenMsg)
 	}
 
@@ -148,7 +148,7 @@ func (h *UserService) PutResume(resumeId uuid.UUID, body io.ReadCloser,
 	}
 
 	user, ok := authStor.Get(cookie)
-	if !ok || user.Class != SeekerStr {
+	if !ok || user.Role != SeekerStr {
 		// log.Printf(ForbiddenMsg, err)
 		return errors.New(ForbiddenMsg)
 	}
@@ -193,9 +193,9 @@ func (h *UserService) DeleteUser(cookie string, authStor AuthStorage) error {
 		return errors.New(ForbiddenMsg)
 	}
 
-	if record.Class == SeekerStr {
+	if record.Role == SeekerStr {
 		h.Storage.DeleteSeeker(record.ID)
-	} else if record.Class == EmployerStr {
+	} else if record.Role == EmployerStr {
 		h.Storage.DeleteEmployer(record.ID)
 	}
 
@@ -267,7 +267,7 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, cookie string, authStor 
 	}
 
 	record, ok := authStor.Get(cookie)
-	if !ok || record.Class != EmployerStr {
+	if !ok || record.Role != EmployerStr {
 		log.Printf("Invalid action: %s", err)
 		return uuid.UUID{}, errors.New("Invalid action")
 	}
@@ -294,7 +294,7 @@ func (h *UserService) GetVacancy(vacancyId uuid.UUID) (Vacancy, error) {
 
 func (h *UserService) DeleteVacancy(vacancyId uuid.UUID, cookie string, authStor AuthStorage) error {
 	record, ok := authStor.Get(cookie)
-	if !ok || record.Class != EmployerStr {
+	if !ok || record.Role != EmployerStr {
 		return errors.New(ForbiddenMsg)
 	}
 
@@ -329,7 +329,7 @@ func (h *UserService) PutVacancy(vacancyId uuid.UUID, body io.ReadCloser,
 	}
 
 	user, ok := authStor.Get(cookie)
-	if !ok || user.Class != EmployerStr {
+	if !ok || user.Role != EmployerStr {
 		log.Printf("Invalid action: %s", err)
 		return errors.New("Invalid action")
 	}

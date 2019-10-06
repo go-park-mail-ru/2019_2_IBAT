@@ -466,12 +466,12 @@ func TestHandler_GetEmployer(t *testing.T) {
 				"aaaaaaaaaa": {
 					ID:      uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   EmployerStr,
+					Role:    EmployerStr,
 				},
 				"aaaaaaaaab": {
 					ID:      uuid.MustParse("6ba7b811-9dab-11d1-80b1-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   EmployerStr,
+					Role:    EmployerStr,
 				},
 			},
 			Mu: &sync.Mutex{},
@@ -579,17 +579,17 @@ func TestHandler_CreateVacancy(t *testing.T) {
 				"aaaaaaaaaa": {
 					ID:      uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   EmployerStr,
+					Role:    EmployerStr,
 				},
 				"bbbbbbbbbb": {
 					ID:      uuid.MustParse("6ba7b810-9bbb-1111-1111-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   EmployerStr,
+					Role:    EmployerStr,
 				},
 				"cccccccc": {
 					ID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   SeekerStr,
+					Role:    SeekerStr,
 				},
 			},
 			Mu: &sync.Mutex{},
@@ -903,12 +903,12 @@ func TestHandler_DeleteVacancy(t *testing.T) {
 				"aaaaaaaaaa": {
 					ID:      uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   EmployerStr,
+					Role:    EmployerStr,
 				},
 				"bbbbbbbbbb": {
 					ID:      uuid.MustParse("6ba7b810-9bbb-1111-1111-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   EmployerStr,
+					Role:    EmployerStr,
 				},
 			},
 			Mu: &sync.Mutex{},
@@ -1085,17 +1085,17 @@ func TestHandler_PutVacancy(t *testing.T) {
 				"aaaaaaaaaa": {
 					ID:      uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   EmployerStr,
+					Role:    EmployerStr,
 				},
 				"bbbbbbbbbb": {
 					ID:      uuid.MustParse("6ba7b810-9bbb-1111-1111-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   EmployerStr,
+					Role:    EmployerStr,
 				},
 				"cccccccc": {
 					ID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   SeekerStr,
+					Role:    SeekerStr,
 				},
 			},
 			Mu: &sync.Mutex{},
@@ -1399,7 +1399,7 @@ func TestHandler_CreateSession(t *testing.T) {
 		authInput        UserAuthInput
 		invJSON          string
 		wantFail         bool
-		wantClass        string
+		wantRole         string
 		wantStatusCode   int
 		wantErrorMessage string
 		wantInvJSON      bool
@@ -1410,8 +1410,8 @@ func TestHandler_CreateSession(t *testing.T) {
 				Login:    "petushki@mail.com",
 				Password: "1234",
 			},
-			wantFail:  false,
-			wantClass: EmployerStr, //make deep check
+			wantFail: false,
+			wantRole: EmployerStr, //make deep check
 		},
 		{
 			name: "Test2",
@@ -1419,8 +1419,8 @@ func TestHandler_CreateSession(t *testing.T) {
 				Login:    "some_another@mail.com",
 				Password: "12345",
 			},
-			wantFail:  false,
-			wantClass: SeekerStr, //make deep check
+			wantFail: false,
+			wantRole: SeekerStr, //make deep check
 		},
 		{
 			name: "Test3",
@@ -1470,10 +1470,10 @@ func TestHandler_CreateSession(t *testing.T) {
 
 			if !tt.wantFail {
 				bytes, _ := ioutil.ReadAll(rr.Body)
-				var gotClass Class
-				json.Unmarshal(bytes, &gotClass)
+				var gotRole Role
+				json.Unmarshal(bytes, &gotRole)
 
-				require.Equal(t, tt.wantClass, gotClass.Class, "The two values should be the same.")
+				require.Equal(t, tt.wantRole, gotRole.Role, "The two values should be the same.")
 
 				if rr.Code != http.StatusOK {
 					t.Error("status is not ok")
@@ -1499,12 +1499,12 @@ func TestHandler_GetSession(t *testing.T) {
 				"aaaaaaaaaa": {
 					ID:      uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   SeekerStr,
+					Role:    SeekerStr,
 				},
 				"bbbbbbbbbb": {
 					ID:      uuid.MustParse("6ba7b810-9bbb-1111-1111-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   EmployerStr,
+					Role:    EmployerStr,
 				},
 			},
 			Mu: &sync.Mutex{},
@@ -1551,7 +1551,7 @@ func TestHandler_GetSession(t *testing.T) {
 	tests := []struct {
 		name             string
 		cookieValue      string
-		wantClass        string
+		wantRole         string
 		wantFail         bool
 		wantUnauth       bool
 		wantStatusCode   int
@@ -1560,7 +1560,7 @@ func TestHandler_GetSession(t *testing.T) {
 		{
 			name:             "Test1",
 			cookieValue:      "bbbbbbbbbb",
-			wantClass:        EmployerStr,
+			wantRole:         EmployerStr,
 			wantFail:         true,
 			wantUnauth:       true,
 			wantStatusCode:   http.StatusUnauthorized,
@@ -1569,7 +1569,7 @@ func TestHandler_GetSession(t *testing.T) {
 		{
 			name:        "Test2",
 			cookieValue: "aaaaaaaaaa",
-			wantClass:   SeekerStr,
+			wantRole:    SeekerStr,
 		},
 	}
 	for _, tt := range tests {
@@ -1598,15 +1598,15 @@ func TestHandler_GetSession(t *testing.T) {
 
 			if !tt.wantFail {
 				bytes, _ := ioutil.ReadAll(rr.Body)
-				var gotClass Class
-				json.Unmarshal(bytes, &gotClass)
+				var gotRole Role
+				json.Unmarshal(bytes, &gotRole)
 
 				if rr.Code != http.StatusOK {
 					t.Error("status is not ok")
 				}
 
-				if tt.wantClass != gotClass.Class {
-					require.Equal(t, tt.wantClass, gotClass.Class, "The two values should be the same.")
+				if tt.wantRole != gotRole.Role {
+					require.Equal(t, tt.wantRole, gotRole.Role, "The two values should be the same.")
 				}
 			} else {
 				bytes, _ := ioutil.ReadAll(rr.Body)
@@ -1627,17 +1627,17 @@ func TestHandler_DeleteSession(t *testing.T) {
 				"aaaaaaaaaa": {
 					ID:      uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   EmployerStr,
+					Role:    EmployerStr,
 				},
 				"bbbbbbbbbb": {
 					ID:      uuid.MustParse("6ba7b810-9bbb-1111-1111-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   EmployerStr,
+					Role:    EmployerStr,
 				},
 				"cccccccc": {
 					ID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   SeekerStr,
+					Role:    SeekerStr,
 				},
 			},
 			Mu: &sync.Mutex{},
@@ -1791,7 +1791,7 @@ func TestHandler_CreateSeeker(t *testing.T) {
 	tests := []struct {
 		name             string
 		seekReg          SeekerReg
-		wantClass        string
+		wantRole         string
 		wantFail         bool
 		wantStatusCode   int
 		wantErrorMessage string
@@ -1806,7 +1806,7 @@ func TestHandler_CreateSeeker(t *testing.T) {
 				SecondName: "Zyablikov",
 				Password:   "12345",
 			},
-			wantClass: SeekerStr,
+			wantRole: SeekerStr,
 		},
 		{
 			name: "Test2",
@@ -1816,7 +1816,7 @@ func TestHandler_CreateSeeker(t *testing.T) {
 				SecondName: "Zyablikov",
 				Password:   "12345",
 			},
-			wantClass:        SeekerStr,
+			wantRole:         SeekerStr,
 			wantFail:         true,
 			wantStatusCode:   http.StatusBadRequest,
 			wantErrorMessage: "Email already exists",
@@ -1829,7 +1829,7 @@ func TestHandler_CreateSeeker(t *testing.T) {
 				SecondName: "Zyablikov",
 				Password:   "12345",
 			},
-			wantClass:        SeekerStr,
+			wantRole:         SeekerStr,
 			wantFail:         true,
 			wantInvJSON:      true,
 			invJSON:          "{sfsdf: some email, login: password: sdfdf}",
@@ -1864,15 +1864,15 @@ func TestHandler_CreateSeeker(t *testing.T) {
 
 			if !tc.wantFail {
 				bytes, _ := ioutil.ReadAll(rr.Body)
-				var class Class
-				json.Unmarshal(bytes, &class)
+				var Role Role
+				json.Unmarshal(bytes, &Role)
 
 				if rr.Code != http.StatusOK {
 					t.Error("status is not ok")
 				}
 
-				if tc.wantClass != class.Class {
-					require.Equal(t, tc.wantClass, class.Class, "The two values should be the same.")
+				if tc.wantRole != Role.Role {
+					require.Equal(t, tc.wantRole, Role.Role, "The two values should be the same.")
 				}
 			} else {
 				bytes, _ := ioutil.ReadAll(rr.Body)
@@ -1913,7 +1913,7 @@ func TestHandler_CreateEmployer(t *testing.T) {
 	tests := []struct {
 		name             string
 		emplReg          EmployerReg
-		wantClass        string
+		wantRole         string
 		wantFail         bool
 		wantStatusCode   int
 		wantErrorMessage string
@@ -1934,7 +1934,7 @@ func TestHandler_CreateEmployer(t *testing.T) {
 				City:             "Petushki",
 				EmplNum:          "322",
 			},
-			wantClass: EmployerStr,
+			wantRole: EmployerStr,
 		},
 		{
 			name: "Test2",
@@ -1950,7 +1950,7 @@ func TestHandler_CreateEmployer(t *testing.T) {
 				City:             "Petushki",
 				EmplNum:          "322",
 			},
-			wantClass:        EmployerStr,
+			wantRole:         EmployerStr,
 			wantFail:         true,
 			wantStatusCode:   http.StatusBadRequest,
 			wantErrorMessage: "Email already exists",
@@ -1969,7 +1969,7 @@ func TestHandler_CreateEmployer(t *testing.T) {
 				City:             "Petushki",
 				EmplNum:          "322",
 			},
-			wantClass:        EmployerStr,
+			wantRole:         EmployerStr,
 			wantFail:         true,
 			wantInvJSON:      true,
 			invJSON:          "{sfsdf: some email, login: password: sdfdf}",
@@ -2004,15 +2004,15 @@ func TestHandler_CreateEmployer(t *testing.T) {
 
 			if !tc.wantFail {
 				bytes, _ := ioutil.ReadAll(rr.Body)
-				var class Class
-				json.Unmarshal(bytes, &class)
+				var Role Role
+				json.Unmarshal(bytes, &Role)
 
 				if rr.Code != http.StatusOK {
 					t.Error("status is not ok")
 				}
 
-				if tc.wantClass != class.Class {
-					require.Equal(t, tc.wantClass, class.Class, "The two values should be the same.")
+				if tc.wantRole != Role.Role {
+					require.Equal(t, tc.wantRole, Role.Role, "The two values should be the same.")
 				}
 			} else {
 				bytes, _ := ioutil.ReadAll(rr.Body)
@@ -2033,17 +2033,17 @@ func TestHandler_CreateResume(t *testing.T) {
 				"aaaaaaaaaa": {
 					ID:      uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   EmployerStr,
+					Role:    EmployerStr,
 				},
 				"cccccccc": {
 					ID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   SeekerStr,
+					Role:    SeekerStr,
 				},
 				"cfv": {
 					ID:      uuid.MustParse("6ba6b810-9bad-11d1-80b2-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   SeekerStr,
+					Role:    SeekerStr,
 				},
 			},
 			Mu: &sync.Mutex{},
@@ -2250,17 +2250,17 @@ func TestHandler_DeleteResume(t *testing.T) {
 				"aaaaaaaaaa": {
 					ID:      uuid.MustParse("6ba7b811-9dad-11d1-80b1-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   EmployerStr,
+					Role:    EmployerStr,
 				},
 				"cccccccc": {
 					ID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   SeekerStr,
+					Role:    SeekerStr,
 				},
 				"cfv": {
 					ID:      uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   SeekerStr,
+					Role:    SeekerStr,
 				},
 			},
 			Mu: &sync.Mutex{},
@@ -2723,12 +2723,12 @@ func TestHandler_PutResume(t *testing.T) {
 				"aaaaaaaaaa": {
 					ID:      uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   EmployerStr,
+					Role:    EmployerStr,
 				},
 				"cccccccc": {
 					ID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Class:   SeekerStr,
+					Role:    SeekerStr,
 				},
 			},
 			Mu: &sync.Mutex{},

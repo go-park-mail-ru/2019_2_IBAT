@@ -84,8 +84,8 @@ type Id struct {
 	Id string `json:"id"`
 }
 
-type Class struct {
-	Class string `json:"class"`
+type Role struct {
+	Role string `json:"role"`
 }
 
 type Vacancy struct {
@@ -104,7 +104,7 @@ type Vacancy struct {
 type AuthStorageValue struct {
 	ID      uuid.UUID
 	Expires string
-	Class   string
+	Role    string
 }
 
 type UserAuthInput struct {

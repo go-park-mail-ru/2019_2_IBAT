@@ -51,7 +51,7 @@ func (h *AuthService) CreateSession(body io.ReadCloser, usS UserStorage) (http.C
 		Expires: expiresAt,
 	}
 
-	return cookie, authInfo.Class, nil
+	return cookie, authInfo.Role, nil
 }
 
 func (h *AuthService) DeleteSession(cookie *http.Cookie) bool {

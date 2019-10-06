@@ -18,10 +18,9 @@ var (
 )
 
 type CorsData struct {
-	AllowOrigins []string
-	AllowMethods []string
-	AllowHeaders []string
-	// MaxAge           int
+	AllowOrigins     []string
+	AllowMethods     []string
+	AllowHeaders     []string
 	AllowCredentials bool
 }
 
@@ -39,7 +38,6 @@ func CorsMiddleware(h http.Handler) http.Handler {
 			return
 		}
 
-		// res.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		h.ServeHTTP(res, req)
 	}
 

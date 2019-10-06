@@ -62,7 +62,7 @@ func (st MapAuthStorage) Set(id uuid.UUID, class string) (AuthStorageValue, stri
 	record := AuthStorageValue{
 		ID:      id,
 		Expires: expires.Format(TimeFormat),
-		Class:   class,
+		Role:    class,
 	}
 
 	cookie := generateCookie()

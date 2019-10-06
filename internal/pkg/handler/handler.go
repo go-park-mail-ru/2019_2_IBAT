@@ -33,7 +33,7 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 	defer r.Body.Close()
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-	cookie, class, err := h.AuthService.CreateSession(r.Body, h.UserService.Storage)
+	cookie, role, err := h.AuthService.CreateSession(r.Body, h.UserService.Storage)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{err.Error()})
@@ -42,9 +42,9 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 	}
 
 	http.SetCookie(w, &cookie)
-	classJSON, _ := json.Marshal(Class{class})
+	RoleJSON, _ := json.Marshal(Role{role})
 
-	w.Write([]byte(classJSON))
+	w.Write([]byte(RoleJSON))
 }
 
 func (h *Handler) GetSession(w http.ResponseWriter, r *http.Request) { //+
@@ -68,9 +68,9 @@ func (h *Handler) GetSession(w http.ResponseWriter, r *http.Request) { //+
 		return
 	}
 
-	classJSON, _ := json.Marshal(Class{authInfo.Class})
+	RoleJSON, _ := json.Marshal(Role{authInfo.Role})
 
-	w.Write([]byte(classJSON))
+	w.Write([]byte(RoleJSON))
 }
 
 func (h *Handler) DeleteSession(w http.ResponseWriter, r *http.Request) { //+
@@ -124,9 +124,9 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
 		Expires: expiresAt,
 	}
 	http.SetCookie(w, &cookie)
-	classJSON, _ := json.Marshal(Class{authInfo.Class})
+	RoleJSON, _ := json.Marshal(Role{authInfo.Role})
 
-	w.Write([]byte(classJSON))
+	w.Write([]byte(RoleJSON))
 }
 
 func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) { //+
@@ -158,9 +158,9 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) { //+
 	}
 
 	http.SetCookie(w, &cookie)
-	classJSON, _ := json.Marshal(Class{authInfo.Class})
+	RoleJSON, _ := json.Marshal(Role{authInfo.Role})
 
-	w.Write([]byte(classJSON))
+	w.Write([]byte(RoleJSON))
 }
 
 func (h *Handler) CreateResume(w http.ResponseWriter, r *http.Request) { //+
@@ -402,9 +402,9 @@ func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if authInfo.Class == SeekerStr {
+	if authInfo.Role == SeekerStr {
 		err = h.UserService.PutSeeker(r.Body, authInfo.ID)
-	} else if authInfo.Class == EmployerStr {
+	} else if authInfo.Role == EmployerStr {
 		err = h.UserService.PutEmployer(r.Body, authInfo.ID)
 	}
 
@@ -666,6 +666,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 			return
 		}
 		defer file.Close()
+
 		fileBytes, err := ioutil.ReadAll(file)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -674,7 +675,6 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 			return
 		}
 
-		// check file type, detectcontenttype only needs the first 512 bytes
 		filetype := http.DetectContentType(fileBytes)
 
 		switch filetype {
@@ -699,7 +699,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 
 		internalPath := filepath.Join(internalDir, fileName+fileEndings[0])
 
-		fmt.Println(internalPath)
+		//fmt.Println(internalPath)
 		newFile, err := os.Create(internalPath)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -717,7 +717,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		}
 
 		publicPath := filepath.Join(publicDir, fileName+fileEndings[0])
-		h.UserService.Storage.SetImage(authInfo.ID, authInfo.Class, publicPath)
+		h.UserService.Storage.SetImage(authInfo.ID, authInfo.Role, publicPath)
 	})
 }
 

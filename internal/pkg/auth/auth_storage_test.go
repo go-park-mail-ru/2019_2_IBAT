@@ -156,12 +156,12 @@ func TestMapAuthStorage_Set(t *testing.T) {
 				Storage: map[string]AuthStorageValue{
 					"werwe": {
 						ID:      uuid.New(),
-						Class:   SeekerStr,
+						Role:    SeekerStr,
 						Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
 					},
 					"werre": {
 						ID:      uuid.New(),
-						Class:   EmployerStr,
+						Role:    EmployerStr,
 						Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
 					},
 				},

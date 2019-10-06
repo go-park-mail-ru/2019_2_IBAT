@@ -54,11 +54,6 @@ func NewServer() (*Server, error) {
 
 	router.HandleFunc("/upload", h.UploadFile()).Methods(http.MethodPost, http.MethodOptions)
 
-	// staticHandler := http.FileServer(http.Dir("/tmp/img"))
-
-	// router.Handle("/static/{id}", http.StripPrefix("/static/", staticHandler)).Methods(http.MethodGet, http.MethodOptions)
-	// router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("/tmp/img"))))
-
 	router.HandleFunc("/auth", h.CreateSession).Methods(http.MethodPost, http.MethodOptions)
 	router.HandleFunc("/auth", h.GetSession).Methods(http.MethodGet, http.MethodOptions)
 	router.HandleFunc("/auth", h.DeleteSession).Methods(http.MethodDelete, http.MethodOptions)
@@ -95,6 +90,5 @@ func NewServer() (*Server, error) {
 }
 
 func (server *Server) Run() {
-	// log.Fatal(http.ListenAndServe(":8080", server.Router))
 	log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", server.Router))
 }
