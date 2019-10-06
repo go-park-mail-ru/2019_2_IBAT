@@ -1407,7 +1407,7 @@ func TestHandler_CreateSession(t *testing.T) {
 		{
 			name: "Test1",
 			authInput: UserAuthInput{
-				Login:    "petushki@mail.com",
+				Email:    "petushki@mail.com",
 				Password: "1234",
 			},
 			wantFail: false,
@@ -1416,7 +1416,7 @@ func TestHandler_CreateSession(t *testing.T) {
 		{
 			name: "Test2",
 			authInput: UserAuthInput{
-				Login:    "some_another@mail.com",
+				Email:    "some_another@mail.com",
 				Password: "12345",
 			},
 			wantFail: false,
@@ -1425,12 +1425,12 @@ func TestHandler_CreateSession(t *testing.T) {
 		{
 			name: "Test3",
 			authInput: UserAuthInput{
-				Login:    "some_another@mail.com",
+				Email:    "some_another@mail.com",
 				Password: "1234567",
 			},
 			wantFail:         true,
 			wantStatusCode:   http.StatusBadRequest,
-			wantErrorMessage: "Invalid password or login",
+			wantErrorMessage: "Invalid password or email",
 		},
 		{
 			name:             "Test4",

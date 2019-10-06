@@ -35,10 +35,10 @@ func (h *AuthService) CreateSession(body io.ReadCloser, usS UserStorage) (http.C
 		return http.Cookie{}, "", errors.New("Invalid json")
 	}
 
-	id, class, ok := usS.CheckUser(userAuthInput.Login, userAuthInput.Password)
+	id, class, ok := usS.CheckUser(userAuthInput.Email, userAuthInput.Password)
 	if !ok {
 		// log.Printf("No such user error")
-		return http.Cookie{}, "", errors.New("Invalid password or login")
+		return http.Cookie{}, "", errors.New("Invalid password or email")
 	}
 
 	authInfo, cookieValue := h.Storage.Set(id, class) //possible return authInfo
