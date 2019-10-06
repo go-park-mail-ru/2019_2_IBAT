@@ -60,15 +60,17 @@ func NewServer() (*Server, error) {
 
 	router.HandleFunc("/seeker", h.CreateSeeker).Methods(http.MethodPost, http.MethodOptions)
 	router.HandleFunc("/seeker", h.DeleteUser).Methods(http.MethodDelete, http.MethodOptions)
-	router.HandleFunc("/seeker", h.GetSeeker).Methods(http.MethodGet, http.MethodOptions) //use for getting all seeker info including password
+	// router.HandleFunc("/seeker", h.GetSeeker).Methods(http.MethodGet, http.MethodOptions) //use for getting all seeker info including password
 	router.HandleFunc("/seeker", h.PutUser).Methods(http.MethodPut, http.MethodOptions)
 	router.HandleFunc("/seeker/{id}", h.GetSeekerById).Methods(http.MethodGet, http.MethodOptions)
 
 	router.HandleFunc("/employer", h.CreateEmployer).Methods(http.MethodPost, http.MethodOptions)
 	router.HandleFunc("/employer", h.DeleteUser).Methods(http.MethodDelete, http.MethodOptions)
-	router.HandleFunc("/employer", h.GetEmployer).Methods(http.MethodGet, http.MethodOptions)
+	// router.HandleFunc("/employer", h.GetEmployer).Methods(http.MethodGet, http.MethodOptions)
 	router.HandleFunc("/employer", h.PutUser).Methods(http.MethodPut, http.MethodOptions)
 	router.HandleFunc("/employer/{id}", h.GetEmployerById).Methods(http.MethodGet, http.MethodOptions)
+
+	router.HandleFunc("/profile", h.GetUser).Methods(http.MethodGet, http.MethodOptions)
 
 	router.HandleFunc("/resume", h.CreateResume).Methods(http.MethodPost, http.MethodOptions)
 	router.HandleFunc("/resume/{id}", h.DeleteResume).Methods(http.MethodDelete, http.MethodOptions)

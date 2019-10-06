@@ -301,7 +301,32 @@ func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) GetSeeker(w http.ResponseWriter, r *http.Request) {
+// func (h *Handler) GetSeeker(w http.ResponseWriter, r *http.Request) {
+// 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+// 	cookie, err := r.Cookie(auth.CookieName)
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusUnauthorized)
+// 		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+// 		w.Write([]byte(errJSON))
+// 		return
+// 	}
+
+// 	seeker, err := h.UserService.GetSeeker(cookie.Value, h.AuthService.Storage)
+
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusForbidden)
+// 		errJSON, _ := json.Marshal(Error{ForbiddenMsg})
+// 		w.Write([]byte(errJSON))
+// 		return
+// 	}
+
+// 	seekerJSON, _ := json.Marshal(seeker)
+
+// 	w.Write([]byte(seekerJSON))
+// }
+
+func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	cookie, err := r.Cookie(auth.CookieName)
@@ -312,18 +337,48 @@ func (h *Handler) GetSeeker(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	seeker, err := h.UserService.GetSeeker(cookie.Value, h.AuthService.Storage)
+	authInfo, _ := h.AuthService.Storage.Get(cookie.Value)
 
-	if err != nil {
-		w.WriteHeader(http.StatusForbidden)
-		errJSON, _ := json.Marshal(Error{ForbiddenMsg})
+	if authInfo.Role == SeekerStr {
+		seeker, err := h.UserService.GetSeeker(cookie.Value, h.AuthService.Storage)
+
+		if err != nil {
+			w.WriteHeader(http.StatusForbidden)
+			errJSON, _ := json.Marshal(Error{ForbiddenMsg})
+			w.Write([]byte(errJSON))
+			return
+		}
+
+		answer := UserSeekAnswer{
+			Role:   SeekerStr,
+			Seeker: seeker,
+		}
+		answerJSON, _ := json.Marshal(answer)
+
+		w.Write([]byte(answerJSON))
+	} else if authInfo.Role == EmployerStr {
+		employer, err := h.UserService.GetEmployer(cookie.Value, h.AuthService.Storage)
+
+		if err != nil {
+			w.WriteHeader(http.StatusForbidden)
+			errJSON, _ := json.Marshal(Error{ForbiddenMsg})
+			w.Write([]byte(errJSON))
+			return
+		}
+
+		answer := UserEmplAnswer{
+			Role:     EmployerStr,
+			Employer: employer,
+		}
+		answerJSON, _ := json.Marshal(answer)
+
+		w.Write([]byte(answerJSON))
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
-
-	seekerJSON, _ := json.Marshal(seeker)
-
-	w.Write([]byte(seekerJSON))
 }
 
 func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
@@ -357,30 +412,30 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookie)
 }
 
-func (h *Handler) GetEmployer(w http.ResponseWriter, r *http.Request) { //+
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+// func (h *Handler) GetEmployer(w http.ResponseWriter, r *http.Request) { //+
+// 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-	cookie, err := r.Cookie(auth.CookieName)
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
-		w.Write([]byte(errJSON))
-		return
-	}
+// 	cookie, err := r.Cookie(auth.CookieName)
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusUnauthorized)
+// 		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+// 		w.Write([]byte(errJSON))
+// 		return
+// 	}
 
-	employer, err := h.UserService.GetEmployer(cookie.Value, h.AuthService.Storage)
+// 	employer, err := h.UserService.GetEmployer(cookie.Value, h.AuthService.Storage)
 
-	if err != nil {
-		w.WriteHeader(http.StatusForbidden)
-		errJSON, _ := json.Marshal(Error{ForbiddenMsg})
-		w.Write([]byte(errJSON))
-		return
-	}
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusForbidden)
+// 		errJSON, _ := json.Marshal(Error{ForbiddenMsg})
+// 		w.Write([]byte(errJSON))
+// 		return
+// 	}
 
-	employerJSON, _ := json.Marshal(employer)
+// 	employerJSON, _ := json.Marshal(employer)
 
-	w.Write([]byte(employerJSON))
-}
+// 	w.Write([]byte(employerJSON))
+// }
 
 func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
