@@ -41,7 +41,13 @@ func (h *AuthService) CreateSession(body io.ReadCloser, usS UserStorage) (http.C
 		return http.Cookie{}, "", errors.New("Invalid password or email")
 	}
 
-	authInfo, cookieValue := h.Storage.Set(id, class) //possible return authInfo
+	authInfo, cookieValue, err := h.Storage.Set(id, class) //possible return authInfo
+
+	if err != nil {
+		// log.Printf("Error while unmarshaling: %s", err)
+		// err = errors.Wrap(err, "error while unmarshaling")
+		return http.Cookie{}, "", errors.New("Creating session error")
+	}
 
 	expiresAt, _ := time.Parse(TimeFormat, authInfo.Expires)
 

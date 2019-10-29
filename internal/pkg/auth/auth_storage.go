@@ -91,12 +91,12 @@ func (st MapAuthStorage) Delete(cookie string) bool {
 func generateCookie() string {
 	rand.Seed(time.Now().UnixNano())
 	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-		"abcdefghijklmnopqrstuvwxyz" +
-		"0123456789")
+		"abcdefghijklmnopqrstuvwxyz" + "0123456789")
 
 	var b strings.Builder
 	for i := 0; i < CookieLength; i++ {
 		b.WriteRune(chars[rand.Intn(len(chars))])
 	}
+
 	return b.String()
 }

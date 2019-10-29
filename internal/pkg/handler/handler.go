@@ -4,7 +4,6 @@ import (
 	"2019_2_IBAT/internal/pkg/auth"
 	. "2019_2_IBAT/internal/pkg/interfaces"
 	"2019_2_IBAT/internal/pkg/users"
-	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -36,7 +35,7 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 	cookie, role, err := h.AuthService.CreateSession(r.Body, h.UserService.Storage)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{err.Error()})
+		errJSON, _ := json.Marshal(Error{Message: err.Error()})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -54,7 +53,7 @@ func (h *Handler) GetSession(w http.ResponseWriter, r *http.Request) { //+
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -63,7 +62,7 @@ func (h *Handler) GetSession(w http.ResponseWriter, r *http.Request) { //+
 
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -80,7 +79,7 @@ func (h *Handler) DeleteSession(w http.ResponseWriter, r *http.Request) { //+
 
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -88,7 +87,7 @@ func (h *Handler) DeleteSession(w http.ResponseWriter, r *http.Request) { //+
 	ok := h.AuthService.DeleteSession(cookie)
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -103,17 +102,25 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
 	uuid, err := h.UserService.CreateSeeker(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{err.Error()})
+		errJSON, _ := json.Marshal(Error{Message: err.Error()})
 		w.Write([]byte(errJSON))
 		return
 	}
 
-	authInfo, cookieValue := h.AuthService.Storage.Set(uuid, SeekerStr) //possible return authInfo
+	authInfo, cookieValue, err := h.AuthService.Storage.Set(uuid, SeekerStr) //possible return authInfo
+
+	if err != nil {
+		// log.Printf("Error while unmarshaling: %s", err)
+		// err = errors.Wrap(err, "error while unmarshaling")
+		errJSON, _ := json.Marshal(Error{Message: err.Error()})
+		w.Write([]byte(errJSON))
+		return
+	}
 
 	expiresAt, err := time.Parse(auth.TimeFormat, authInfo.Expires)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		errJSON, _ := json.Marshal(Error{InternalErrorMsg})
+		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
 		w.Write([]byte(errJSON))
 		return
 	} //impossible error
@@ -136,17 +143,25 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) { //+
 	uuid, err := h.UserService.CreateEmployer(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{err.Error()})
+		errJSON, _ := json.Marshal(Error{Message: err.Error()})
 		w.Write([]byte(errJSON))
 		return
 	}
 
-	authInfo, cookieValue := h.AuthService.Storage.Set(uuid, EmployerStr) //possible return authInfo
+	authInfo, cookieValue, err := h.AuthService.Storage.Set(uuid, EmployerStr) //possible return authInfo
+
+	if err != nil {
+		// log.Printf("Error while unmarshaling: %s", err)
+		// err = errors.Wrap(err, "error while unmarshaling")
+		errJSON, _ := json.Marshal(Error{Message: err.Error()})
+		w.Write([]byte(errJSON))
+		return
+	}
 
 	expiresAt, err := time.Parse(auth.TimeFormat, authInfo.Expires)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		errJSON, _ := json.Marshal(Error{InternalErrorMsg})
+		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
 		w.Write([]byte(errJSON))
 		return
 	} //impossible error
@@ -170,7 +185,7 @@ func (h *Handler) CreateResume(w http.ResponseWriter, r *http.Request) { //+
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -188,7 +203,7 @@ func (h *Handler) CreateResume(w http.ResponseWriter, r *http.Request) { //+
 		}
 		w.WriteHeader(code)
 
-		errJSON, _ := json.Marshal(Error{err.Error()})
+		errJSON, _ := json.Marshal(Error{Message: err.Error()})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -204,7 +219,7 @@ func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) { //+
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -213,7 +228,7 @@ func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) { //+
 	resId, err := uuid.Parse(strId)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{InvalidIdMsg})
+		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -233,7 +248,7 @@ func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) { //+
 		}
 		w.WriteHeader(code)
 
-		errJSON, _ := json.Marshal(Error{err.Error()})
+		errJSON, _ := json.Marshal(Error{Message: err.Error()})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -246,7 +261,7 @@ func (h *Handler) GetResume(w http.ResponseWriter, r *http.Request) { //+
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{InvalidIdMsg})
+		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -255,7 +270,7 @@ func (h *Handler) GetResume(w http.ResponseWriter, r *http.Request) { //+
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{InvalidIdMsg})
+		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -272,7 +287,7 @@ func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -295,36 +310,11 @@ func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
 		}
 		w.WriteHeader(code)
 
-		errJSON, _ := json.Marshal(Error{err.Error()})
+		errJSON, _ := json.Marshal(Error{Message: err.Error()})
 		w.Write([]byte(errJSON))
 		return
 	}
 }
-
-// func (h *Handler) GetSeeker(w http.ResponseWriter, r *http.Request) {
-// 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
-// 	cookie, err := r.Cookie(auth.CookieName)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusUnauthorized)
-// 		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
-// 		w.Write([]byte(errJSON))
-// 		return
-// 	}
-
-// 	seeker, err := h.UserService.GetSeeker(cookie.Value, h.AuthService.Storage)
-
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusForbidden)
-// 		errJSON, _ := json.Marshal(Error{ForbiddenMsg})
-// 		w.Write([]byte(errJSON))
-// 		return
-// 	}
-
-// 	seekerJSON, _ := json.Marshal(seeker)
-
-// 	w.Write([]byte(seekerJSON))
-// }
 
 func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -332,7 +322,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -340,11 +330,11 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	authInfo, _ := h.AuthService.Storage.Get(cookie.Value)
 
 	if authInfo.Role == SeekerStr {
-		seeker, ok := h.UserService.Storage.GetSeeker(authInfo.ID)
+		seeker, err := h.UserService.Storage.GetSeeker(authInfo.ID)
 
-		if !ok {
+		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			errJSON, _ := json.Marshal(Error{InternalErrorMsg})
+			errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
 			w.Write([]byte(errJSON))
 			return
 		}
@@ -357,11 +347,11 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 
 		w.Write([]byte(answerJSON))
 	} else if authInfo.Role == EmployerStr {
-		employer, ok := h.UserService.Storage.GetEmployer(authInfo.ID)
+		employer, err := h.UserService.Storage.GetEmployer(authInfo.ID)
 
-		if !ok {
+		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			errJSON, _ := json.Marshal(Error{InternalErrorMsg})
+			errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
 			w.Write([]byte(errJSON))
 			return
 		}
@@ -375,7 +365,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(answerJSON))
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -387,7 +377,7 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -396,7 +386,7 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
-		errJSON, _ := json.Marshal(Error{ForbiddenMsg})
+		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -404,38 +394,13 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	ok := h.AuthService.DeleteSession(cookie)
 	if !ok {
 		w.WriteHeader(http.StatusInternalServerError)
-		errJSON, _ := json.Marshal(Error{InternalErrorMsg})
+		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
 
 	http.SetCookie(w, cookie)
 }
-
-// func (h *Handler) GetEmployer(w http.ResponseWriter, r *http.Request) { //+
-// 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
-// 	cookie, err := r.Cookie(auth.CookieName)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusUnauthorized)
-// 		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
-// 		w.Write([]byte(errJSON))
-// 		return
-// 	}
-
-// 	employer, err := h.UserService.GetEmployer(cookie.Value, h.AuthService.Storage)
-
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusForbidden)
-// 		errJSON, _ := json.Marshal(Error{ForbiddenMsg})
-// 		w.Write([]byte(errJSON))
-// 		return
-// 	}
-
-// 	employerJSON, _ := json.Marshal(employer)
-
-// 	w.Write([]byte(employerJSON))
-// }
 
 func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -444,7 +409,7 @@ func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -452,7 +417,7 @@ func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 	authInfo, ok := h.AuthService.Storage.Get(cookie.Value) //impossible error, should use only Set method
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -465,7 +430,7 @@ func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden) //should add invalid email case
-		errJSON, _ := json.Marshal(Error{ForbiddenMsg})
+		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -478,16 +443,16 @@ func (h *Handler) GetSeekerById(w http.ResponseWriter, r *http.Request) { //+
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{InvalidIdMsg})
+		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
 
-	seeker, ok := h.UserService.Storage.GetSeeker(seekId)
+	seeker, err := h.UserService.Storage.GetSeeker(seekId)
 
-	if !ok {
+	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{InvalidIdMsg})
+		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -504,16 +469,16 @@ func (h *Handler) GetEmployerById(w http.ResponseWriter, r *http.Request) { //+
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{InvalidIdMsg})
+		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
 
-	employer, ok := h.UserService.Storage.GetEmployer(emplId)
+	employer, err := h.UserService.Storage.GetEmployer(emplId)
 
-	if !ok {
+	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{InvalidIdMsg})
+		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -526,12 +491,19 @@ func (h *Handler) GetEmployerById(w http.ResponseWriter, r *http.Request) { //+
 
 func (h *Handler) GetEmployers(w http.ResponseWriter, r *http.Request) { //+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	employers := h.UserService.Storage.GetEmployers()
+	employers, _ := h.UserService.Storage.GetEmployers()
 
-	for i, item := range employers {
-		item.Password = ""
-		employers[i] = item
-	}
+	// if err != nil {
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// 	errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
+	// 	w.Write([]byte(errJSON))
+	// 	return
+	// }
+
+	// for i, item := range employers {
+	// 	item.Password = ""
+	// 	employers[i] = item
+	// }
 
 	employerJSON, _ := json.Marshal(employers)
 
@@ -541,7 +513,7 @@ func (h *Handler) GetEmployers(w http.ResponseWriter, r *http.Request) { //+
 func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) { //+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-	resumes := h.UserService.Storage.GetResumes()
+	resumes, _ := h.UserService.Storage.GetResumes() //error handling
 
 	resumesJSON, _ := json.Marshal(resumes)
 
@@ -551,7 +523,7 @@ func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) { //+
 func (h *Handler) GetVacancies(w http.ResponseWriter, r *http.Request) { //+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-	vacancies := h.UserService.Storage.GetVacancies()
+	vacancies, _ := h.UserService.Storage.GetVacancies() //err handle
 
 	vacanciesJSON, _ := json.Marshal(vacancies)
 
@@ -566,7 +538,7 @@ func (h *Handler) CreateVacancy(w http.ResponseWriter, r *http.Request) { //+
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -574,7 +546,7 @@ func (h *Handler) CreateVacancy(w http.ResponseWriter, r *http.Request) { //+
 	id, err := h.UserService.CreateVacancy(r.Body, cookie.Value, h.AuthService.Storage)
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
-		errJSON, _ := json.Marshal(Error{ForbiddenMsg})
+		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -591,7 +563,7 @@ func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) { //+
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{InvalidIdMsg})
+		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -600,7 +572,7 @@ func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) { //+
 
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
-		errJSON, _ := json.Marshal(Error{ForbiddenMsg})
+		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -616,7 +588,7 @@ func (h *Handler) DeleteVacancy(w http.ResponseWriter, r *http.Request) { //+
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -625,7 +597,7 @@ func (h *Handler) DeleteVacancy(w http.ResponseWriter, r *http.Request) { //+
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{"Invalid id"})
+		errJSON, _ := json.Marshal(Error{Message: "Invalid id"})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -646,7 +618,7 @@ func (h *Handler) DeleteVacancy(w http.ResponseWriter, r *http.Request) { //+
 		}
 		w.WriteHeader(code)
 
-		errJSON, _ := json.Marshal(Error{err.Error()})
+		errJSON, _ := json.Marshal(Error{Message: err.Error()})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -659,7 +631,7 @@ func (h *Handler) PutVacancy(w http.ResponseWriter, r *http.Request) { //+
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -668,7 +640,7 @@ func (h *Handler) PutVacancy(w http.ResponseWriter, r *http.Request) { //+
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{InvalidIdMsg})
+		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -677,7 +649,7 @@ func (h *Handler) PutVacancy(w http.ResponseWriter, r *http.Request) { //+
 
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
-		errJSON, _ := json.Marshal(Error{ForbiddenMsg})
+		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -690,7 +662,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		cookie, err := r.Cookie(auth.CookieName)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
-			errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+			errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 			w.Write([]byte(errJSON))
 			return
 		}
@@ -699,7 +671,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 
 		if !ok {
 			w.WriteHeader(http.StatusUnauthorized)
-			errJSON, _ := json.Marshal(Error{UnauthorizedMsg})
+			errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 			w.Write([]byte(errJSON))
 			return
 		}
@@ -707,7 +679,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 		if err := r.ParseMultipartForm(maxUploadSize); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			errJSON, _ := json.Marshal(Error{"Invalid size"})
+			errJSON, _ := json.Marshal(Error{Message: "Invalid size"})
 			w.Write([]byte(errJSON))
 			return
 		}
@@ -716,7 +688,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		file, _, err := r.FormFile("my_file")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			errJSON, _ := json.Marshal(Error{"Invalid form key"})
+			errJSON, _ := json.Marshal(Error{Message: "Invalid form key"})
 			w.Write([]byte(errJSON))
 			return
 		}
@@ -725,7 +697,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		fileBytes, err := ioutil.ReadAll(file)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			errJSON, _ := json.Marshal(Error{"Bad file"})
+			errJSON, _ := json.Marshal(Error{Message: "Bad file"})
 			w.Write([]byte(errJSON))
 			return
 		}
@@ -738,7 +710,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 			break
 		default:
 			w.WriteHeader(http.StatusBadRequest)
-			errJSON, _ := json.Marshal(Error{"Invalid extension"})
+			errJSON, _ := json.Marshal(Error{Message: "Invalid extension"})
 			w.Write([]byte(errJSON))
 			return
 		}
@@ -747,7 +719,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		fileEndings, err := mime.ExtensionsByType(filetype)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			errJSON, _ := json.Marshal(Error{"Invalid extension"})
+			errJSON, _ := json.Marshal(Error{Message: "Invalid extension"})
 			w.Write([]byte(errJSON))
 			return
 		}
@@ -758,7 +730,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		newFile, err := os.Create(internalPath)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			errJSON, _ := json.Marshal(Error{"Failed to set image"})
+			errJSON, _ := json.Marshal(Error{Message: "Failed to set image"})
 			w.Write([]byte(errJSON))
 			return
 		}
@@ -766,7 +738,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		defer newFile.Close() // idempotent, okay to call twice
 		if _, err := newFile.Write(fileBytes); err != nil || newFile.Close() != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			errJSON, _ := json.Marshal(Error{InternalErrorMsg})
+			errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
 			w.Write([]byte(errJSON))
 			return
 		}
@@ -776,8 +748,57 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 	})
 }
 
-func randToken(len int) string {
-	b := make([]byte, len)
-	rand.Read(b)
-	return fmt.Sprintf("%x", b)
+func (h *Handler) GetResponds(w http.ResponseWriter, r *http.Request) { //+
+	fmt.Println("Here")
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	//employers, _ := h.UserService.Storage.GetEmployers()
+
+	cookie, err := r.Cookie(auth.CookieName)
+	if err != nil {
+		// w.WriteHeader(http.StatusUnauthorized)
+		// errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
+		// w.Write([]byte(errJSON))
+		// return
+		fmt.Println("No cookie")
+		cookie.Value = ""
+	}
+
+	v := r.URL.Query()
+	params := make(map[string]string)
+	params["vacancyid"] = v.Get("vacancyid")
+	params["resumeid"] = v.Get("resumeid")
+	fmt.Printf("vacancyid = %s, resumeid = %s, id = %s", params["vacancyid"], params["resumeid"])
+
+	responds, _ := h.UserService.GetResponds(cookie.Value, params, h.AuthService.Storage) //error handling
+
+	resumesJSON, _ := json.Marshal(responds)
+
+	w.Write([]byte(resumesJSON))
+
+	// w.Write([]byte(employerJSON))
+	// w.Write([]byte(employerJSON))
+}
+
+func (h *Handler) CreateRespond(w http.ResponseWriter, r *http.Request) { //+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	cookie, err := r.Cookie(auth.CookieName)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
+		w.Write([]byte(errJSON))
+		return
+	}
+
+	id, err := h.UserService.CreateRespond(r.Body, cookie.Value, h.AuthService.Storage)
+	if err != nil {
+		w.WriteHeader(http.StatusForbidden)
+		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
+		w.Write([]byte(errJSON))
+		return
+	}
+
+	idJSON, _ := json.Marshal(Id{id.String()})
+
+	w.Write([]byte(idJSON))
 }

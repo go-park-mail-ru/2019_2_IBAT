@@ -1,17 +1,26 @@
 package server
 
 import (
+	"flag"
 	"log"
 	"net/http"
-	"sync"
+	"os"
+	"time"
 
 	"2019_2_IBAT/internal/pkg/auth"
 	"2019_2_IBAT/internal/pkg/handler"
-	. "2019_2_IBAT/internal/pkg/interfaces"
+
+	// . "2019_2_IBAT/internal/pkg/interfaces"
+	"2019_2_IBAT/internal/pkg/middleware"
 	"2019_2_IBAT/internal/pkg/users"
 
-	"github.com/google/uuid"
+	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
+	"github.com/jackc/pgx"
+
+	"github.com/jackc/pgx/stdlib"
+	"github.com/jmoiron/sqlx"
+	"github.com/pkg/errors"
 )
 
 type Server struct {
@@ -25,32 +34,46 @@ func NewServer() (*Server, error) {
 
 	router := mux.NewRouter()
 
-	ah := auth.AuthService{
-		Storage: auth.MapAuthStorage{
-			Storage: make(map[string]AuthStorageValue),
-			Mu:      &sync.Mutex{},
-		},
+	redisAddr := flag.String("addr", "redis://user:@localhost:6379/0", "redis addr")
+
+	redisConn, err := redis.DialURL(*redisAddr)
+	if err != nil {
+		log.Fatalf("cant connect to redis")
 	}
+
+	// var sessManager *auth.SessionManager
+	sessManager := auth.NewSessionManager(redisConn)
+
+	ah := auth.AuthService{
+		// Storage: auth.MapAuthStorage{
+		// 	Storage: make(map[string]AuthStorageValue),
+		// 	Mu:      &sync.Mutex{},
+		// },
+		Storage: sessManager,
+	}
+
+	db, err := OpenSqlxViaPgxConnPool()
 
 	h := handler.Handler{
 		AuthService: ah,
 		UserService: users.UserService{
-			Storage: &users.MapUserStorage{
-				SekMu:           &sync.Mutex{},
-				EmplMu:          &sync.Mutex{},
-				ResMu:           &sync.Mutex{},
-				VacMu:           &sync.Mutex{},
-				SeekerStorage:   map[uuid.UUID]Seeker{},
-				EmployerStorage: map[uuid.UUID]Employer{}, //implement through new_handler()
-				ResumeStorage:   map[uuid.UUID]Resume{},
-				VacancyStorage:  map[uuid.UUID]Vacancy{},
+			Storage: &users.DBUserStorage{
+				DbConn: db,
 			},
 		},
 	}
 
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
+	AccessLogOut := new(middleware.AccessLogger)
 
-	router.Use(handler.CorsMiddleware)
+	// std
+	AccessLogOut.StdLogger = log.New(os.Stdout, "STD ", log.LUTC|log.Lshortfile)
+
+	// router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
+
+	router.Use(middleware.CorsMiddleware)
+	router.Use(AccessLogOut.AccessLogMiddleware)
+
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
 
 	router.HandleFunc("/upload", h.UploadFile()).Methods(http.MethodPost, http.MethodOptions)
 
@@ -60,21 +83,19 @@ func NewServer() (*Server, error) {
 
 	router.HandleFunc("/seeker", h.CreateSeeker).Methods(http.MethodPost, http.MethodOptions)
 	router.HandleFunc("/seeker", h.DeleteUser).Methods(http.MethodDelete, http.MethodOptions)
-	// router.HandleFunc("/seeker", h.GetSeeker).Methods(http.MethodGet, http.MethodOptions) //use for getting all seeker info including password
 	router.HandleFunc("/seeker", h.PutUser).Methods(http.MethodPut, http.MethodOptions)
 	router.HandleFunc("/seeker/{id}", h.GetSeekerById).Methods(http.MethodGet, http.MethodOptions)
 
 	router.HandleFunc("/employer", h.CreateEmployer).Methods(http.MethodPost, http.MethodOptions)
 	router.HandleFunc("/employer", h.DeleteUser).Methods(http.MethodDelete, http.MethodOptions)
-	// router.HandleFunc("/employer", h.GetEmployer).Methods(http.MethodGet, http.MethodOptions)
 	router.HandleFunc("/employer", h.PutUser).Methods(http.MethodPut, http.MethodOptions)
 	router.HandleFunc("/employer/{id}", h.GetEmployerById).Methods(http.MethodGet, http.MethodOptions)
 
 	router.HandleFunc("/profile", h.GetUser).Methods(http.MethodGet, http.MethodOptions)
 
 	router.HandleFunc("/resume", h.CreateResume).Methods(http.MethodPost, http.MethodOptions)
-	router.HandleFunc("/resume/{id}", h.DeleteResume).Methods(http.MethodDelete, http.MethodOptions)
-	router.HandleFunc("/resume/{id}", h.PutResume).Methods(http.MethodPut, http.MethodOptions) // extra
+	router.HandleFunc("/resume/{id}", h.DeleteResume).Methods(http.MethodDelete, http.MethodOptions) //test
+	router.HandleFunc("/resume/{id}", h.PutResume).Methods(http.MethodPut, http.MethodOptions)
 	router.HandleFunc("/resume/{id}", h.GetResume).Methods(http.MethodGet, http.MethodOptions)
 
 	router.HandleFunc("/vacancy", h.CreateVacancy).Methods(http.MethodPost, http.MethodOptions)
@@ -86,6 +107,9 @@ func NewServer() (*Server, error) {
 	router.HandleFunc("/resumes", h.GetResumes).Methods(http.MethodGet, http.MethodOptions)
 	router.HandleFunc("/vacancies", h.GetVacancies).Methods(http.MethodGet, http.MethodOptions)
 
+	router.HandleFunc("/responds", h.GetResponds).Methods(http.MethodGet, http.MethodOptions)
+	router.HandleFunc("/respond", h.CreateRespond).Methods(http.MethodPost, http.MethodOptions)
+
 	server.Router = router
 
 	return server, nil
@@ -93,4 +117,34 @@ func NewServer() (*Server, error) {
 
 func (server *Server) Run() {
 	log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", server.Router))
+}
+
+func OpenSqlxViaPgxConnPool() (*sqlx.DB, error) {
+	// First set up the pgx connection pool
+	connConfig := pgx.ConnConfig{
+		Host:     "localhost",
+		Database: "hh",
+		User:     "postgres",
+		Password: "11111111",
+	}
+	connPool, err := pgx.NewConnPool(pgx.ConnPoolConfig{
+		ConnConfig:     connConfig,
+		AfterConnect:   nil,
+		MaxConnections: 20,
+		AcquireTimeout: 30 * time.Second,
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "Call to pgx.NewConnPool failed")
+	}
+
+	// Apply any migrations...
+
+	// Then set up sqlx and return the created DB reference
+	// nativeDB, err := stdlib.OpenFromConnPool(connPool)
+	nativeDB := stdlib.OpenDBFromPool(connPool)
+	if err != nil {
+		connPool.Close()
+		return nil, errors.Wrap(err, "Call to stdlib.OpenFromConnPool failed")
+	}
+	return sqlx.NewDb(nativeDB, "pgx"), nil
 }

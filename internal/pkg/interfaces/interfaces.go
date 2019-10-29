@@ -13,10 +13,11 @@ type UserStorage interface {
 	CreateResume(resumeReg Resume, userId uuid.UUID) (uuid.UUID, bool)
 	CreateVacancy(vacancyReg Vacancy, userId uuid.UUID) (uuid.UUID, bool)
 
-	DeleteEmployer(id uuid.UUID)
-	DeleteSeeker(id uuid.UUID)
-	DeleteResume(id uuid.UUID) bool
-	DeleteVacancy(id uuid.UUID) bool
+	CreateRespond(respond Respond, userId uuid.UUID) (uuid.UUID, bool)
+
+	DeleteUser(id uuid.UUID) error
+	DeleteResume(id uuid.UUID) error
+	DeleteVacancy(id uuid.UUID) error
 
 	CheckUser(email string, password string) (uuid.UUID, string, bool)
 
@@ -25,21 +26,23 @@ type UserStorage interface {
 	PutResume(resume Resume, userId uuid.UUID, resumeId uuid.UUID) bool
 	PutVacancy(vacavcy Vacancy, userId uuid.UUID, resumeId uuid.UUID) bool
 
-	GetEmployers() map[uuid.UUID]Employer
-	GetResumes() map[uuid.UUID]Resume
-	GetVacancies() map[uuid.UUID]Vacancy
-	GetSeekers() map[uuid.UUID]Seeker
+	GetEmployers() ([]Employer, error)
+	GetSeekers() ([]Seeker, error)
+	GetResumes() ([]Resume, error)
+	GetVacancies() ([]Vacancy, error)
 
-	GetSeeker(id uuid.UUID) (Seeker, bool)
-	GetEmployer(id uuid.UUID) (Employer, bool)
-	GetResume(id uuid.UUID) (Resume, bool)
-	GetVacancy(id uuid.UUID) (Vacancy, bool)
+	GetResponds(record AuthStorageValue, params map[string]string) ([]Respond, error)
+
+	GetSeeker(id uuid.UUID) (Seeker, error)
+	GetEmployer(id uuid.UUID) (Employer, error)
+	GetResume(id uuid.UUID) (Resume, error)
+	GetVacancy(id uuid.UUID) (Vacancy, error)
 
 	SetImage(id uuid.UUID, class string, imageName string) bool
 }
 
 type AuthStorage interface {
 	Get(cookie string) (AuthStorageValue, bool)
-	Set(id uuid.UUID, class string) (AuthStorageValue, string)
+	Set(id uuid.UUID, class string) (AuthStorageValue, string, error) //bool
 	Delete(cookie string) bool
 }

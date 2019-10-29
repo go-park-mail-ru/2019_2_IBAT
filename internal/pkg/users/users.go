@@ -107,15 +107,15 @@ func (h *UserService) DeleteResume(resumeId uuid.UUID, cookie string, authStor A
 		return errors.New(ForbiddenMsg)
 	}
 
-	resume, ok := h.Storage.GetResume(resumeId)
+	resume, err := h.Storage.GetResume(resumeId)
 
-	if resume.OwnerID != record.ID || !ok {
+	if resume.OwnerID != record.ID || err != nil {
 		return errors.New(ForbiddenMsg)
 	}
 
-	ok = h.Storage.DeleteResume(resumeId)
+	err = h.Storage.DeleteResume(resumeId)
 
-	if !ok {
+	if err != nil {
 		return errors.New("Internal server error")
 	}
 
@@ -123,9 +123,9 @@ func (h *UserService) DeleteResume(resumeId uuid.UUID, cookie string, authStor A
 }
 
 func (h *UserService) GetResume(resumeId uuid.UUID) (Resume, error) {
-	resume, ok := h.Storage.GetResume(resumeId)
+	resume, err := h.Storage.GetResume(resumeId)
 
-	if !ok {
+	if err != nil {
 		return resume, errors.New(InvalidIdMsg)
 	}
 
@@ -169,11 +169,7 @@ func (h *UserService) DeleteUser(cookie string, authStor AuthStorage) error {
 		return errors.New(ForbiddenMsg)
 	}
 
-	if record.Role == SeekerStr {
-		h.Storage.DeleteSeeker(record.ID)
-	} else if record.Role == EmployerStr {
-		h.Storage.DeleteEmployer(record.ID)
-	}
+	h.Storage.DeleteUser(record.ID)
 
 	return nil
 }
@@ -205,21 +201,21 @@ func (h *UserService) PutSeeker(body io.ReadCloser, id uuid.UUID) error {
 func (h *UserService) PutEmployer(body io.ReadCloser, id uuid.UUID) error {
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
-		log.Printf("error while reading body: %s", err)
+		// log.Printf("error while reading body: %s", err)
 		return errors.Wrap(err, "reading body error")
 	}
 
 	var newEmployerReg EmployerReg
 	err = json.Unmarshal(bytes, &newEmployerReg)
 	if err != nil {
-		log.Printf("Error while unmarshaling: %s", err)
+		// log.Printf("Error while unmarshaling: %s", err)
 		return errors.Wrap(err, "unmarshaling error")
 	}
 
 	ok := h.Storage.PutEmployer(newEmployerReg, id)
 	if !ok {
-		log.Println("Here inside users")
-		log.Printf("Error while creating employer: %s", err)
+		// log.Println("Here inside users")
+		// log.Printf("Error while creating employer: %s", err)
 		return errors.New("Error while changing employer")
 	}
 
@@ -259,9 +255,9 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, cookie string, authStor 
 }
 
 func (h *UserService) GetVacancy(vacancyId uuid.UUID) (Vacancy, error) {
-	vacancy, ok := h.Storage.GetVacancy(vacancyId)
+	vacancy, err := h.Storage.GetVacancy(vacancyId)
 
-	if !ok {
+	if err != nil { //error wrap
 		return vacancy, errors.New("Error while getting vacancy")
 	}
 
@@ -274,15 +270,15 @@ func (h *UserService) DeleteVacancy(vacancyId uuid.UUID, cookie string, authStor
 		return errors.New(ForbiddenMsg)
 	}
 
-	vacancy, ok := h.Storage.GetVacancy(vacancyId)
+	vacancy, err := h.Storage.GetVacancy(vacancyId)
 
-	if vacancy.OwnerID != record.ID || !ok {
+	if vacancy.OwnerID != record.ID || err != nil { //error wrap
 		return errors.New(ForbiddenMsg)
 	}
 
-	ok = h.Storage.DeleteVacancy(vacancyId)
+	err = h.Storage.DeleteVacancy(vacancyId)
 
-	if !ok {
+	if err != nil {
 		return errors.New("Error while deleting vacancy")
 	}
 
@@ -318,4 +314,59 @@ func (h *UserService) PutVacancy(vacancyId uuid.UUID, body io.ReadCloser,
 	}
 
 	return nil
+}
+
+func (h *UserService) CreateRespond(body io.ReadCloser, cookie string, authStor AuthStorage) (uuid.UUID, error) { //should do this part by one r with if?
+	bytes, err := ioutil.ReadAll(body)
+	if err != nil {
+		log.Printf("error while reading body: %s", err)
+		err = errors.Wrap(err, "reading body error")
+		return uuid.UUID{}, err
+	}
+
+	var respond Respond
+	err = json.Unmarshal(bytes, &respond)
+	if err != nil {
+		log.Printf("Error while unmarshaling: %s", err)
+		err = errors.Wrap(err, "unmarshaling error")
+		return uuid.UUID{}, err
+	}
+	respond.Status = AwaitSt
+
+	record, ok := authStor.Get(cookie)
+	if !ok || record.Role != SeekerStr {
+		log.Printf("Invalid action: %s", err)
+		return uuid.UUID{}, errors.New("Invalid action")
+	}
+
+	id, ok := h.Storage.CreateRespond(respond, record.ID)
+
+	if !ok {
+		log.Printf("Error while creating respond: %s", err)
+		return uuid.UUID{}, errors.New("Error while creating respond")
+	}
+
+	return id, nil
+}
+
+func (h *UserService) GetResponds(cookie string, params map[string]string, authStor AuthStorage) ([]Respond, error) {
+	responds := []Respond{}
+	log.Println("GetResponds outer: start\n")
+
+	if params["resumeid"] != "" && params["vacancyid"] != "" {
+		return responds, errors.New("Invalid message")
+	}
+
+	user, ok := authStor.Get(cookie)
+	if !ok {
+		// log.Printf("Invalid action: %s", err)
+		return responds, errors.New("Invalid action")
+	}
+
+	responds, err := h.Storage.GetResponds(user, params)
+	if err != nil {
+		return responds, errors.New("Invalid action") ///
+	}
+
+	return responds, nil
 }

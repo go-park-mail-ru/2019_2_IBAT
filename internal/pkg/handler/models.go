@@ -13,3 +13,8 @@ type UserSeekAnswer struct {
 	Role   string `json:"role"`
 	Seeker Seeker `json:"profile"`
 }
+
+type Error struct {
+	Message string            `json:"error"`
+	Params  map[string]string `json:"params"`
+}

@@ -775,7 +775,7 @@ func TestHandler_CreateVacancy(t *testing.T) {
 				json.Unmarshal(bytes, &gotError)
 
 				require.Equal(t, tc.wantStatusCode, rr.Code, "The two values should be the same.")
-				require.Equal(t, tc.wantErrorMessage, gotError.Error, "The two values should be the same.")
+				require.Equal(t, tc.wantErrorMessage, gotError.Message, "The two values should be the same.")
 			}
 		})
 	}
@@ -1072,7 +1072,7 @@ func TestHandler_DeleteVacancy(t *testing.T) {
 				json.Unmarshal(bytes, &gotError)
 
 				require.Equal(t, tc.wantStatusCode, rr.Code, "The two values should be the same.")
-				require.Equal(t, tc.wantErrorMessage, gotError.Error, "The two values should be the same.")
+				require.Equal(t, tc.wantErrorMessage, gotError.Message, "The two values should be the same.")
 			}
 		})
 	}
@@ -1329,7 +1329,7 @@ func TestHandler_PutVacancy(t *testing.T) {
 				json.Unmarshal(bytes, &gotError)
 
 				require.Equal(t, tc.wantStatusCode, rr.Code, "The two values should be the same.")
-				require.Equal(t, tc.wantErrorMessage, gotError.Error, "The two values should be the same.")
+				require.Equal(t, tc.wantErrorMessage, gotError.Message, "The two values should be the same.")
 			}
 		})
 	}
@@ -1485,7 +1485,7 @@ func TestHandler_CreateSession(t *testing.T) {
 				json.Unmarshal(bytes, &gotError)
 
 				require.Equal(t, tt.wantStatusCode, rr.Code, "The two values should be the same.")
-				require.Equal(t, tt.wantErrorMessage, gotError.Error, "The two values should be the same.")
+				require.Equal(t, tt.wantErrorMessage, gotError.Message, "The two values should be the same.")
 			}
 
 		})
@@ -1614,7 +1614,7 @@ func TestHandler_GetSession(t *testing.T) {
 				json.Unmarshal(bytes, &gotError)
 
 				require.Equal(t, tt.wantStatusCode, rr.Code, "The two values should be the same.")
-				require.Equal(t, tt.wantErrorMessage, gotError.Error, "The two values should be the same.")
+				require.Equal(t, tt.wantErrorMessage, gotError.Message, "The two values should be the same.")
 			}
 		})
 	}
@@ -1758,7 +1758,7 @@ func TestHandler_DeleteSession(t *testing.T) {
 				json.Unmarshal(bytes, &gotError)
 
 				require.Equal(t, tt.wantStatusCode, rr.Code, "The two values should be the same.")
-				require.Equal(t, tt.wantErrorMessage, gotError.Error, "The two values should be the same.")
+				require.Equal(t, tt.wantErrorMessage, gotError.Message, "The two values should be the same.")
 			}
 		})
 	}
@@ -1880,7 +1880,7 @@ func TestHandler_CreateSeeker(t *testing.T) {
 				json.Unmarshal(bytes, &gotError)
 
 				require.Equal(t, tc.wantStatusCode, rr.Code, "The two values should be the same.")
-				require.Equal(t, tc.wantErrorMessage, gotError.Error, "The two values should be the same.")
+				require.Equal(t, tc.wantErrorMessage, gotError.Message, "The two values should be the same.")
 			}
 		})
 	}
@@ -2020,7 +2020,7 @@ func TestHandler_CreateEmployer(t *testing.T) {
 				json.Unmarshal(bytes, &gotError)
 
 				require.Equal(t, tc.wantStatusCode, rr.Code, "The two values should be the same.")
-				require.Equal(t, tc.wantErrorMessage, gotError.Error, "The two values should be the same.")
+				require.Equal(t, tc.wantErrorMessage, gotError.Message, "The two values should be the same.")
 			}
 		})
 	}
@@ -2237,7 +2237,7 @@ func TestHandler_CreateResume(t *testing.T) {
 				json.Unmarshal(bytes, &gotError)
 
 				require.Equal(t, tc.wantStatusCode, rr.Code, "The two values should be the same.")
-				require.Equal(t, tc.wantErrorMessage, gotError.Error, "The two values should be the same.")
+				require.Equal(t, tc.wantErrorMessage, gotError.Message, "The two values should be the same.")
 			}
 		})
 	}
@@ -2428,7 +2428,7 @@ func TestHandler_DeleteResume(t *testing.T) {
 				json.Unmarshal(bytes, &gotError)
 
 				require.Equal(t, tc.wantStatusCode, rr.Code, "The two values should be the same.")
-				require.Equal(t, tc.wantErrorMessage, gotError.Error, "The two values should be the same.")
+				require.Equal(t, tc.wantErrorMessage, gotError.Message, "The two values should be the same.")
 			}
 		})
 	}
@@ -2566,7 +2566,7 @@ func TestHandler_GetResume(t *testing.T) {
 				json.Unmarshal(bytes, &gotError)
 
 				require.Equal(t, tc.wantStatusCode, rr.Code, "The two values should be the same.")
-				require.Equal(t, tc.wantErrorMessage, gotError.Error, "The two values should be the same.")
+				require.Equal(t, tc.wantErrorMessage, gotError.Message, "The two values should be the same.")
 			}
 		})
 	}
@@ -2710,7 +2710,7 @@ func TestHandler_GetVacancy(t *testing.T) {
 				json.Unmarshal(bytes, &gotError)
 
 				require.Equal(t, tc.wantStatusCode, rr.Code, "The two values should be the same.")
-				require.Equal(t, tc.wantErrorMessage, gotError.Error, "The two values should be the same.")
+				require.Equal(t, tc.wantErrorMessage, gotError.Message, "The two values should be the same.")
 			}
 		})
 	}
@@ -2884,7 +2884,7 @@ func TestHandler_PutResume(t *testing.T) {
 				json.Unmarshal(bytes, &gotError)
 
 				require.Equal(t, tc.wantStatusCode, rr.Code, "The two values should be the same.")
-				require.Equal(t, tc.wantErrorMessage, gotError.Error, "The two values should be the same.")
+				require.Equal(t, tc.wantErrorMessage, gotError.Message, "The two values should be the same.")
 			}
 		})
 	}
