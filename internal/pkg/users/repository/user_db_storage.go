@@ -1,4 +1,4 @@
-package users
+package repository
 
 import (
 	. "2019_2_IBAT/internal/pkg/interfaces"

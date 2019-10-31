@@ -7,12 +7,15 @@ import (
 	"os"
 	"time"
 
-	"2019_2_IBAT/internal/pkg/auth"
+	auth_rep "2019_2_IBAT/internal/pkg/auth/repository"
+	auth_serv "2019_2_IBAT/internal/pkg/auth/service"
+
 	"2019_2_IBAT/internal/pkg/handler"
+	usRep "2019_2_IBAT/internal/pkg/users/repository"
+	usServ "2019_2_IBAT/internal/pkg/users/service"
 
 	// . "2019_2_IBAT/internal/pkg/interfaces"
 	"2019_2_IBAT/internal/pkg/middleware"
-	"2019_2_IBAT/internal/pkg/users"
 
 	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
@@ -20,7 +23,6 @@ import (
 
 	"github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
-	"github.com/pkg/errors"
 )
 
 type Server struct {
@@ -42,36 +44,33 @@ func NewServer() (*Server, error) {
 	}
 
 	// var sessManager *auth.SessionManager
-	sessManager := auth.NewSessionManager(redisConn)
+	sessManager := auth_rep.NewSessionManager(redisConn)
 
-	ah := auth.AuthService{
-		// Storage: auth.MapAuthStorage{
-		// 	Storage: make(map[string]AuthStorageValue),
-		// 	Mu:      &sync.Mutex{},
-		// },
-		Storage: sessManager,
-	}
+	db := OpenSqlxViaPgxConnPool()
 
-	db, err := OpenSqlxViaPgxConnPool()
-
-	h := handler.Handler{
-		AuthService: ah,
-		UserService: users.UserService{
-			Storage: &users.DBUserStorage{
-				DbConn: db,
-			},
+	uS := usServ.UserService{
+		Storage: &usRep.DBUserStorage{
+			DbConn: db,
 		},
 	}
 
+	aS := auth_serv.AuthService{
+		Storage: sessManager,
+		// UsSt:    &uS.Storage, //fix
+	}
+
+	h := handler.Handler{
+		InternalDir: staticDir,
+		AuthService: aS,
+		UserService: uS,
+	}
+
 	AccessLogOut := new(middleware.AccessLogger)
-
-	// std
 	AccessLogOut.StdLogger = log.New(os.Stdout, "STD ", log.LUTC|log.Lshortfile)
-
-	// router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
 
 	router.Use(middleware.CorsMiddleware)
 	router.Use(AccessLogOut.AccessLogMiddleware)
+	router.Use(aS.AuthMiddleware)
 
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
 
@@ -119,13 +118,12 @@ func (server *Server) Run() {
 	log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", server.Router))
 }
 
-func OpenSqlxViaPgxConnPool() (*sqlx.DB, error) {
-	// First set up the pgx connection pool
+func OpenSqlxViaPgxConnPool() *sqlx.DB {
 	connConfig := pgx.ConnConfig{
 		Host:     "localhost",
 		Database: "hh",
 		User:     "postgres",
-		Password: "11111111",
+		Password: "newPassword",
 	}
 	connPool, err := pgx.NewConnPool(pgx.ConnPoolConfig{
 		ConnConfig:     connConfig,
@@ -134,7 +132,7 @@ func OpenSqlxViaPgxConnPool() (*sqlx.DB, error) {
 		AcquireTimeout: 30 * time.Second,
 	})
 	if err != nil {
-		return nil, errors.Wrap(err, "Call to pgx.NewConnPool failed")
+		log.Fatal("Failed to create connections pool")
 	}
 
 	// Apply any migrations...
@@ -144,7 +142,8 @@ func OpenSqlxViaPgxConnPool() (*sqlx.DB, error) {
 	nativeDB := stdlib.OpenDBFromPool(connPool)
 	if err != nil {
 		connPool.Close()
-		return nil, errors.Wrap(err, "Call to stdlib.OpenFromConnPool failed")
+		log.Fatal("Failed to create connections pool")
+
 	}
-	return sqlx.NewDb(nativeDB, "pgx"), nil
+	return sqlx.NewDb(nativeDB, "pgx")
 }

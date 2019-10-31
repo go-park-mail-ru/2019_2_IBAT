@@ -19,6 +19,7 @@ CREATE TABLE companies(
     company_name VARCHAR (70) PRIMARY KEY,
     own_id uuid REFERENCES persons (id) ON DELETE CASCADE UNIQUE,
     site VARCHAR (70) NOT NULL,
+    --not not null
     city VARCHAR (70),
     phone_number VARCHAR (70),
     extra_phone_number VARCHAR (70),
@@ -100,7 +101,7 @@ VALUES(gen_random_uuid(), 'yandex@mail.ru', 'Sasha', 'Koen', 'iearoiqdsfwejfka',
 
 INSERT INTO companies(own_id, company_name, site, spheres_of_work, empl_num,
 description, phone_number, extra_phone_number)
-VALUES((SELECT id FROM persons WHERE email = 'yandex@mail.ru'), 'Yandex', 'Yandex.ru',
+VALUES(SELECT id FROM persons WHERE email = 'yandex@mail.ru'), 'Yandex', 'Yandex.ru',
 'IT, business', 'more than 1000', 'not so bad', '89266239479', '8926639479');
 
 

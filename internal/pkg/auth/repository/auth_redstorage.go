@@ -1,10 +1,12 @@
-package auth
+package repository
 
 import (
 	. "2019_2_IBAT/internal/pkg/interfaces"
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/gomodule/redigo/redis"
@@ -12,9 +14,9 @@ import (
 )
 
 // const TimeFormat = time.RFC3339
-// const CookieLength = 10
+const CookieLength = 10
 
-// var Loc *time.Location
+var Loc *time.Location
 
 func init() {
 	Loc, _ = time.LoadLocation("Europe/Moscow")
@@ -101,15 +103,15 @@ func (st SessionManager) Delete(cookie string) bool {
 	return true
 }
 
-// func generateCookie() string {
-// 	rand.Seed(time.Now().UnixNano())
-// 	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-// 		"abcdefghijklmnopqrstuvwxyz" + "0123456789")
+func generateCookie() string {
+	rand.Seed(time.Now().UnixNano())
+	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+		"abcdefghijklmnopqrstuvwxyz" + "0123456789")
 
-// 	var b strings.Builder
-// 	for i := 0; i < CookieLength; i++ {
-// 		b.WriteRune(chars[rand.Intn(len(chars))])
-// 	}
+	var b strings.Builder
+	for i := 0; i < CookieLength; i++ {
+		b.WriteRune(chars[rand.Intn(len(chars))])
+	}
 
-// 	return b.String()
-// }
+	return b.String()
+}

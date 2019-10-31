@@ -75,6 +75,9 @@
 - "/vacancies"
   - GET - запрос списка вакансий(по фильтрам)
 
+  - "/responds"
+  - GET - запрос списка вакансий(по фильтрам)
+
 
 # METHODS DESCRIPTION
 

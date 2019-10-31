@@ -1,6 +1,8 @@
 package interfaces
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 )
 
@@ -14,6 +16,12 @@ const InvalidJSONMsg = "Invalid JSON"
 const AwaitSt = "Await"
 const RejectedSt = "RejectedSt"
 const Accepted = "Accepted"
+
+type key string
+
+const AuthRec key = "AuthRecord" ///fix
+
+const TimeFormat = time.RFC3339 //duplicate
 
 type SeekerReg struct {
 	Email      string `json:"email"`
