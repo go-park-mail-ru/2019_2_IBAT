@@ -44,25 +44,21 @@ func NewServer() (*Server, error) {
 	}
 
 	// var sessManager *auth.SessionManager
-	sessManager := auth_rep.NewSessionManager(redisConn)
 
-	db := OpenSqlxViaPgxConnPool()
+	aS := auth_serv.AuthService{
+		Storage: auth_rep.NewSessionManager(redisConn),
+	}
 
 	uS := usServ.UserService{
 		Storage: &usRep.DBUserStorage{
-			DbConn: db,
+			DbConn: OpenSqlxViaPgxConnPool(),
 		},
-	}
-
-	aS := auth_serv.AuthService{
-		Storage: sessManager,
-		// UsSt:    &uS.Storage, //fix
 	}
 
 	h := handler.Handler{
 		InternalDir: staticDir,
-		AuthService: aS,
-		UserService: uS,
+		AuthService: &aS,
+		UserService: &uS,
 	}
 
 	AccessLogOut := new(middleware.AccessLogger)
@@ -71,6 +67,7 @@ func NewServer() (*Server, error) {
 	router.Use(middleware.CorsMiddleware)
 	router.Use(AccessLogOut.AccessLogMiddleware)
 	router.Use(aS.AuthMiddleware)
+	router.Use(middleware.CSRFMiddleware)
 
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
 
@@ -135,15 +132,8 @@ func OpenSqlxViaPgxConnPool() *sqlx.DB {
 		log.Fatal("Failed to create connections pool")
 	}
 
-	// Apply any migrations...
-
-	// Then set up sqlx and return the created DB reference
-	// nativeDB, err := stdlib.OpenFromConnPool(connPool)
 	nativeDB := stdlib.OpenDBFromPool(connPool)
-	if err != nil {
-		connPool.Close()
-		log.Fatal("Failed to create connections pool")
 
-	}
+	log.Println("OpenSqlxViaPgxConnPool: the connection was created")
 	return sqlx.NewDb(nativeDB, "pgx")
 }

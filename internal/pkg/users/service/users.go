@@ -6,7 +6,6 @@ import (
 	"io"
 	"io/ioutil"
 
-	"2019_2_IBAT/internal/pkg/auth"
 	"2019_2_IBAT/internal/pkg/users"
 
 	. "2019_2_IBAT/internal/pkg/interfaces"
@@ -19,7 +18,7 @@ type UserService struct {
 	Storage users.Repository
 }
 
-func (h UserService) CreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
+func (h *UserService) CreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		// log.Printf("error while reading body: %s", err)
@@ -45,7 +44,7 @@ func (h UserService) CreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
 	return id, nil
 }
 
-func (h UserService) CreateEmployer(body io.ReadCloser) (uuid.UUID, error) { //should do this part by one r with if?
+func (h *UserService) CreateEmployer(body io.ReadCloser) (uuid.UUID, error) { //should do this part by one r with if?
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		// log.Printf("error while reading body: %s", err)
@@ -71,18 +70,14 @@ func (h UserService) CreateEmployer(body io.ReadCloser) (uuid.UUID, error) { //s
 	return id, nil
 }
 
-func (h UserService) DeleteUser(cookie string, authStor auth.Service) error {
-	record, ok := authStor.GetSession(cookie)
-	if !ok {
-		return errors.New(ForbiddenMsg)
-	}
+func (h *UserService) DeleteUser(authInfo AuthStorageValue) error {
 
-	h.Storage.DeleteUser(record.ID)
+	h.Storage.DeleteUser(authInfo.ID)
 
 	return nil
 }
 
-func (h UserService) PutSeeker(body io.ReadCloser, id uuid.UUID) error {
+func (h *UserService) PutSeeker(body io.ReadCloser, id uuid.UUID) error {
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		// log.Printf("error while reading body: %s", err)
@@ -106,7 +101,7 @@ func (h UserService) PutSeeker(body io.ReadCloser, id uuid.UUID) error {
 	return nil
 }
 
-func (h UserService) PutEmployer(body io.ReadCloser, id uuid.UUID) error {
+func (h *UserService) PutEmployer(body io.ReadCloser, id uuid.UUID) error {
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		// log.Printf("error while reading body: %s", err)
@@ -130,22 +125,23 @@ func (h UserService) PutEmployer(body io.ReadCloser, id uuid.UUID) error {
 	return nil
 }
 
-func (h UserService) GetSeeker(id uuid.UUID) (Seeker, error) {
+func (h *UserService) GetSeeker(id uuid.UUID) (Seeker, error) {
+	// log.Println("service.GetSeeker")
 	return h.Storage.GetSeeker(id)
 }
 
-func (h UserService) GetEmployer(id uuid.UUID) (Employer, error) {
+func (h *UserService) GetEmployer(id uuid.UUID) (Employer, error) {
 	return h.Storage.GetEmployer(id)
 }
 
-func (h UserService) GetEmployers() ([]Employer, error) {
+func (h *UserService) GetEmployers() ([]Employer, error) {
 	return h.Storage.GetEmployers()
 }
 
-func (h UserService) GetSeekers() ([]Seeker, error) {
+func (h *UserService) GetSeekers() ([]Seeker, error) {
 	return h.Storage.GetSeekers()
 }
 
-func (h UserService) CheckUser(email string, password string) (uuid.UUID, string, bool) {
+func (h *UserService) CheckUser(email string, password string) (uuid.UUID, string, bool) {
 	return h.Storage.CheckUser(email, password)
 }

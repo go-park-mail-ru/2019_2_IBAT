@@ -53,13 +53,17 @@ CREATE TABLE resumes(
 
 CREATE TABLE vacancies(
     id uuid PRIMARY KEY,
-    own_id uuid REFERENCES persons (id) ON DELETE CASCADE,
+    own_id uuid REFERENCES persons (id) ON DELETE CASCADE NOT NULL,
 
+    region     VARCHAR (70),
     profession VARCHAR (70) NOT NULL,
     position    VARCHAR (70),
     experience  TEXT,
-    wage  MONEY,
+    wage_from  MONEY,
+    wage_to    MONEY,
     tasks TEXT,
+    type_of_employment VARCHAR (70),
+    work_schedule      VARCHAR (70),
     requirements TEXT,
     conditions TEXT,
     about  TEXT
@@ -68,15 +72,15 @@ CREATE TABLE vacancies(
 
 CREATE TABLE offers(
     status VARCHAR (70) NOT NULL,
-    resume_id uuid NOT NULL,
-    vacancy_id uuid NOT NULL,
+    resume_id uuid REFERENCES resumes (id) ON DELETE CASCADE NOT NULL ,
+    vacancy_id uuid REFERENCES vacancies (id) ON DELETE CASCADE NOT NULL ,
     PRIMARY KEY(resume_id, vacancy_id)
 );
 
 CREATE TABLE responds(
     status VARCHAR (70) NOT NULL,
-    resume_id uuid NOT NULL,
-    vacancy_id uuid NOT NULL,
+    resume_id uuid REFERENCES resumes (id) ON DELETE CASCADE NOT NULL,
+    vacancy_id uuid REFERENCES vacancies (id) ON DELETE CASCADE NOT NULL ,
     PRIMARY KEY(resume_id, vacancy_id)
 );
 
@@ -101,18 +105,35 @@ VALUES(gen_random_uuid(), 'yandex@mail.ru', 'Sasha', 'Koen', 'iearoiqdsfwejfka',
 
 INSERT INTO companies(own_id, company_name, site, spheres_of_work, empl_num,
 description, phone_number, extra_phone_number)
-VALUES(SELECT id FROM persons WHERE email = 'yandex@mail.ru'), 'Yandex', 'Yandex.ru',
+VALUES((SELECT id FROM persons WHERE email = 'yandex@mail.ru'), 'Yandex', 'Yandex.ru',
 'IT, business', 'more than 1000', 'not so bad', '89266239479', '8926639479');
 
 
-INSERT INTO vacancies(id, own_id, profession, position, experience,
-wage, tasks, requirements, conditions, about)VALUES(gen_random_uuid(), (SELECT own_id FROM companies WHERE company_name = 'Mail.ru'),
-'frontend developer', 'middle', '4 years', 125000, 'write frontend', 'JS', 'nice office, good team', 'the best IT company');
+INSERT INTO vacancies(id, own_id, profession, region, position, experience,
+wage_from, wage_to, type_of_employment, tasks, requirements, work_schedule,
+conditions, about)VALUES(gen_random_uuid(),
+(SELECT own_id FROM companies WHERE company_name = 'Mail.ru'),
+'frontend developer', 'middle', 'Moscow', '4 years', 125000, 130000, 'Полная занятость',
+'write frontend', 'JS', 'Полный день','nice office, good team', 'the best IT company');
 
-INSERT INTO vacancies(id, own_id, profession, position, experience,
-wage, tasks, requirements, conditions, about)VALUES(gen_random_uuid(), (SELECT own_id FROM companies WHERE company_name = 'Mail.ru'),
-'backend developer', 'middle', '4 years', 125000, 'write backend', 'Go', 'nice office, good team', 'the best IT company');
+INSERT INTO vacancies(id, own_id, profession, region, position, experience,
+wage_from, wage_to, type_of_employment, tasks, requirements, work_schedule,
+conditions, about)VALUES(gen_random_uuid(),
+(SELECT own_id FROM companies WHERE company_name = 'Mail.ru'),
+'backend developer', 'middle', 'Moscow', '4 years', 80000, 120000, 'Полная занятость',
+'write backend', 'Go', 'Полный день', 'nice office, good team', 'the best IT company');
 
-INSERT INTO vacancies(id, own_id, profession, position, experience,
-wage, tasks, requirements, conditions, about)VALUES(gen_random_uuid(), (SELECT own_id FROM companies WHERE company_name = 'Yandex'),
-'backend developer', 'middle', '4 years', 125000, 'write backend', 'Go', 'nice office, good team', 'top 2 IT company');
+INSERT INTO vacancies(id, own_id, profession, region, position, experience,
+wage_from, wage_to, type_of_employment, tasks, requirements, work_schedule,
+conditions, about)VALUES(gen_random_uuid(),
+(SELECT own_id FROM companies WHERE company_name = 'Yandex'),
+'backend developer', 'middle', 'Moscow', '4 years', 125000, 250000, 'Полная занятость',
+'write backend', 'Go', 'Удаленная работа','nice office, good team', 'top 2 IT company');
+
+
+INSERT INTO vacancies(id, own_id, profession, region, position, experience,
+wage_from, wage_to, type_of_employment, tasks, requirements, work_schedule,
+conditions, about)VALUES(gen_random_uuid(),
+(SELECT own_id FROM companies WHERE company_name = 'Yandex'),
+'data scientist', 'middle', 'Moscow', '5 years', 150000, 300000, 'Полная занятость',
+'write II', 'Python, math', 'Удаленная работа','nice office, good team', 'top 2 IT company');
