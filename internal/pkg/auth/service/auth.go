@@ -3,50 +3,38 @@ package service
 import (
 	"2019_2_IBAT/internal/pkg/auth"
 	. "2019_2_IBAT/internal/pkg/interfaces"
+	"context"
 
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/google/uuid"
-	gcontext "github.com/gorilla/context"
+	// context "github.com/gorilla/context"
+
 	"github.com/pkg/errors"
 )
 
 type AuthService struct {
 	Storage auth.Repository
-	// UsSt    *usRep.UserStorage
 }
 
 const CookieName = "session-id"
 
-func (h AuthService) CreateSession(id uuid.UUID, class string) (http.Cookie, string, error) {
-	// id, class, ok := usS.CheckUser(userAuthInput.Email, userAuthInput.Password)
-	// if !ok {
-	// 	// log.Printf("No such user error")
-	// 	return http.Cookie{}, "", errors.New("Invalid password or email")
-	// }
+func (h *AuthService) CreateSession(id uuid.UUID, class string) (AuthStorageValue, string, error) {
 
-	authInfo, cookieValue, err := h.Storage.Set(id, class) //possible return authInfo
+	authInfo, cookieValue, err := h.Storage.Set(id, class)
 
 	if err != nil {
-		// log.Printf("Error while unmarshaling: %s", err)
-		// err = errors.Wrap(err, "error while unmarshaling")
-		return http.Cookie{}, "", errors.New("Creating session error")
+		log.Printf("Error while unmarshaling: %s\n", err)
+		err = errors.Wrap(err, "error while unmarshaling")
+		return authInfo, cookieValue, errors.New("Creating session error")
 	}
 
-	expiresAt, _ := time.Parse(TimeFormat, authInfo.Expires)
-
-	cookie := http.Cookie{
-		Name:    CookieName,
-		Value:   cookieValue,
-		Expires: expiresAt,
-	}
-
-	return cookie, authInfo.Role, nil
+	return authInfo, cookieValue, nil
 }
 
-func (h AuthService) DeleteSession(cookie *http.Cookie) bool {
+func (h *AuthService) DeleteSession(cookie *http.Cookie) bool {
 	_, ok := h.Storage.Get(cookie.Value)
 	if !ok {
 		log.Printf("No such session")
@@ -62,25 +50,39 @@ func (h AuthService) DeleteSession(cookie *http.Cookie) bool {
 	return true
 }
 
-func (auth AuthService) AuthMiddleware(h http.Handler) http.Handler {
+func (auth *AuthService) AuthMiddleware(h http.Handler) http.Handler {
 	var mw http.HandlerFunc = func(res http.ResponseWriter, req *http.Request) {
-		cookie, _ := req.Cookie(CookieName)
+		log.Println("AuthMiddleware: started")
+		cookie, err := req.Cookie(CookieName)
 
-		record, ok := auth.Storage.Get(cookie.Value)
-		if ok {
-			gcontext.Set(req, AuthRec, record)
+		ctx := context.TODO()
+		if err != nil {
+			log.Println("AuthMiddleware: No cookie detected")
+		} else {
+			log.Println(auth.Storage)
+			log.Println("AuthMiddleware: Get cookie start")
+			record, ok := auth.Storage.Get(cookie.Value)
+
+			log.Println("AuthMiddleware: Get cookie end")
+
+			if ok {
+				// context.Set(req, AuthRec, record)
+				ctx = NewContext(req.Context(), record)
+				log.Println("AuthMiddleware: auth_record was setted")
+			}
 		}
 
-		h.ServeHTTP(res, req)
+		log.Println("AuthMiddleware: passing to serve")
+		h.ServeHTTP(res, req.WithContext(ctx))
 	}
 
 	return mw
 }
 
-func (auth AuthService) GetSession(cookie string) (AuthStorageValue, bool) {
+func (auth *AuthService) GetSession(cookie string) (AuthStorageValue, bool) {
 	return auth.Storage.Get(cookie)
 }
 
-func (auth AuthService) SetRecord(id uuid.UUID, class string) (AuthStorageValue, string, error) {
+func (auth *AuthService) SetRecord(id uuid.UUID, class string) (AuthStorageValue, string, error) {
 	return auth.Storage.Set(id, SeekerStr)
 }

@@ -7,14 +7,18 @@ import (
 	"io/ioutil"
 	"log"
 
-	"2019_2_IBAT/internal/pkg/auth"
 	. "2019_2_IBAT/internal/pkg/interfaces"
 
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
 
-func (h UserService) CreateVacancy(body io.ReadCloser, cookie string, authStor auth.Service) (uuid.UUID, error) { //should do this part by one r with if?
+func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValue) (uuid.UUID, error) { //should do this part by one r with if?
+	if authInfo.Role != EmployerStr {
+		// log.Printf("Invalid action: %s", err)
+		return uuid.UUID{}, errors.New("Invalid action")
+	}
+
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		log.Printf("error while reading body: %s", err)
@@ -30,13 +34,10 @@ func (h UserService) CreateVacancy(body io.ReadCloser, cookie string, authStor a
 		return uuid.UUID{}, err
 	}
 
-	record, ok := authStor.GetSession(cookie)
-	if !ok || record.Role != EmployerStr {
-		log.Printf("Invalid action: %s", err)
-		return uuid.UUID{}, errors.New("Invalid action")
-	}
-
-	id, ok := h.Storage.CreateVacancy(vacancyReg, record.ID)
+	id := uuid.New()
+	vacancyReg.ID = id
+	vacancyReg.OwnerID = authInfo.ID
+	ok := h.Storage.CreateVacancy(vacancyReg)
 
 	if !ok {
 		log.Printf("Error while creating vacancy: %s", err)
@@ -46,7 +47,7 @@ func (h UserService) CreateVacancy(body io.ReadCloser, cookie string, authStor a
 	return id, nil
 }
 
-func (h UserService) GetVacancy(vacancyId uuid.UUID) (Vacancy, error) {
+func (h *UserService) GetVacancy(vacancyId uuid.UUID) (Vacancy, error) {
 	vacancy, err := h.Storage.GetVacancy(vacancyId)
 
 	if err != nil { //error wrap
@@ -56,15 +57,14 @@ func (h UserService) GetVacancy(vacancyId uuid.UUID) (Vacancy, error) {
 	return vacancy, nil
 }
 
-func (h UserService) DeleteVacancy(vacancyId uuid.UUID, cookie string, authStor auth.Service) error {
-	record, ok := authStor.GetSession(cookie)
-	if !ok || record.Role != EmployerStr {
+func (h *UserService) DeleteVacancy(vacancyId uuid.UUID, authInfo AuthStorageValue) error {
+	if authInfo.Role != EmployerStr {
 		return errors.New(ForbiddenMsg)
 	}
 
 	vacancy, err := h.Storage.GetVacancy(vacancyId)
 
-	if vacancy.OwnerID != record.ID || err != nil { //error wrap
+	if vacancy.OwnerID != authInfo.ID || err != nil { //error wrap
 		return errors.New(ForbiddenMsg)
 	}
 
@@ -77,8 +77,12 @@ func (h UserService) DeleteVacancy(vacancyId uuid.UUID, cookie string, authStor 
 	return nil
 }
 
-func (h UserService) PutVacancy(vacancyId uuid.UUID, body io.ReadCloser,
-	cookie string, authStor auth.Service) error {
+func (h *UserService) PutVacancy(vacancyId uuid.UUID, body io.ReadCloser, authInfo AuthStorageValue) error {
+	if authInfo.Role != EmployerStr {
+		// log.Printf("Invalid action: %s", err)
+		return errors.New("Invalid action")
+	}
+
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		return errors.Wrap(err, "reading body error")
@@ -92,13 +96,7 @@ func (h UserService) PutVacancy(vacancyId uuid.UUID, body io.ReadCloser,
 		return err
 	}
 
-	user, ok := authStor.GetSession(cookie)
-	if !ok || user.Role != EmployerStr {
-		log.Printf("Invalid action: %s", err)
-		return errors.New("Invalid action")
-	}
-
-	ok = h.Storage.PutVacancy(vacancy, user.ID, vacancyId)
+	ok := h.Storage.PutVacancy(vacancy, authInfo.ID, vacancyId)
 
 	if !ok {
 		log.Printf("Error while changing vacancy")
@@ -108,6 +106,6 @@ func (h UserService) PutVacancy(vacancyId uuid.UUID, body io.ReadCloser,
 	return nil
 }
 
-func (h UserService) GetVacancies() ([]Vacancy, error) {
-	return h.Storage.GetVacancies()
+func (h *UserService) GetVacancies(params map[string]interface{}) ([]Vacancy, error) {
+	return h.Storage.GetVacancies(params)
 }

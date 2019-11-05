@@ -14,11 +14,11 @@ const CookieName = "session-id"
 
 // Usecase represent the article's usecases
 type Service interface {
-	CreateSession(id uuid.UUID, class string) (http.Cookie, string, error)
+	CreateSession(id uuid.UUID, class string) (AuthStorageValue, string, error)
 	DeleteSession(cookie *http.Cookie) bool
 
 	GetSession(cookie string) (AuthStorageValue, bool)
-	SetRecord(id uuid.UUID, class string) (AuthStorageValue, string, error)
+	// SetRecord(id uuid.UUID, class string) (AuthStorageValue, string, error)
 
 	AuthMiddleware(h http.Handler) http.Handler
 }

@@ -9,8 +9,8 @@ import (
 type Repository interface {
 	CreateEmployer(seekerInput EmployerReg) (uuid.UUID, bool)
 	CreateSeeker(seekerInput SeekerReg) (uuid.UUID, bool)
-	CreateResume(resumeReg Resume, userId uuid.UUID) (uuid.UUID, bool)
-	CreateVacancy(vacancyReg Vacancy, userId uuid.UUID) (uuid.UUID, bool)
+	CreateResume(resumeReg Resume) bool
+	CreateVacancy(vacancyReg Vacancy) bool
 
 	CreateRespond(respond Respond, userId uuid.UUID) (uuid.UUID, bool)
 
@@ -28,7 +28,7 @@ type Repository interface {
 	GetEmployers() ([]Employer, error)
 	GetSeekers() ([]Seeker, error)
 	GetResumes() ([]Resume, error)
-	GetVacancies() ([]Vacancy, error)
+	GetVacancies(params map[string]interface{}) ([]Vacancy, error)
 
 	GetResponds(record AuthStorageValue, params map[string]string) ([]Respond, error)
 

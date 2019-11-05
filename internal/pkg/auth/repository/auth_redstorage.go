@@ -14,7 +14,7 @@ import (
 )
 
 // const TimeFormat = time.RFC3339
-const CookieLength = 10
+const CookieLength = 32
 
 var Loc *time.Location
 
@@ -32,10 +32,11 @@ func NewSessionManager(conn redis.Conn) *SessionManager {
 	}
 }
 
-func (st SessionManager) Get(cookie string) (AuthStorageValue, bool) {
+func (st *SessionManager) Get(cookie string) (AuthStorageValue, bool) {
+	log.Println("AuthStorage: Get started")
 	data, err := redis.Bytes(st.redisConn.Do("GET", cookie))
 	if err != nil {
-		log.Println("cant get data:", err)
+		log.Println("AuthStorage: Can not get auth info:", err)
 		return AuthStorageValue{}, false
 	}
 
@@ -43,14 +44,14 @@ func (st SessionManager) Get(cookie string) (AuthStorageValue, bool) {
 	err = json.Unmarshal(data, &record)
 
 	if err != nil {
-		fmt.Println("Unmarshalling error") //
+		fmt.Println("AuthStorage: Unmarshalling error") //
 		return AuthStorageValue{}, false
 	} //cannot be error
 
 	expiresAt, err := time.Parse(TimeFormat, record.Expires)
 
 	if err != nil {
-		fmt.Println("Parse error")
+		fmt.Println("AuthStorage: Time parse error")
 		return AuthStorageValue{}, false
 	} //cannot be error
 
@@ -67,7 +68,7 @@ func (st SessionManager) Get(cookie string) (AuthStorageValue, bool) {
 	return record, true
 }
 
-func (st SessionManager) Set(id uuid.UUID, class string) (AuthStorageValue, string, error) {
+func (st *SessionManager) Set(id uuid.UUID, class string) (AuthStorageValue, string, error) {
 	expires := time.Now().In(Loc).Add(24 * time.Hour)
 
 	record := AuthStorageValue{
@@ -92,7 +93,7 @@ func (st SessionManager) Set(id uuid.UUID, class string) (AuthStorageValue, stri
 	return record, cookie, nil
 }
 
-func (st SessionManager) Delete(cookie string) bool {
+func (st *SessionManager) Delete(cookie string) bool {
 	_, err := redis.Int(st.redisConn.Do("DEL", cookie))
 
 	if err != nil {

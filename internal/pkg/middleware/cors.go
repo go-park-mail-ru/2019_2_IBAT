@@ -13,7 +13,7 @@ var (
 			"localhost:8080",
 		},
 		AllowMethods:     []string{"GET", "DELETE", "POST", "PUT"},
-		AllowHeaders:     []string{"Content-Type", "X-Content-Type-Options"},
+		AllowHeaders:     []string{"Content-Type", "X-Content-Type-Options", "X-Csrf-Token"},
 		AllowCredentials: true,
 	}
 )
@@ -27,6 +27,7 @@ type CorsData struct {
 
 func CorsMiddleware(h http.Handler) http.Handler {
 	var mw http.HandlerFunc = func(res http.ResponseWriter, req *http.Request) {
+		fmt.Println(req.Context())
 		fmt.Println("Request was accepted")
 		val, ok := req.Header["Origin"]
 		if ok {

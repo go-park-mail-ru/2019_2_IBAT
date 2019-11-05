@@ -7,14 +7,18 @@ import (
 	"io/ioutil"
 	"log"
 
-	"2019_2_IBAT/internal/pkg/auth"
 	. "2019_2_IBAT/internal/pkg/interfaces"
 
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
 
-func (h UserService) CreateResume(body io.ReadCloser, cookie string, authStor auth.Service) (uuid.UUID, error) { //should do this part by one r with if?
+func (h *UserService) CreateResume(body io.ReadCloser, authInfo AuthStorageValue) (uuid.UUID, error) { //should do this part by one r with if?
+	if authInfo.Role != SeekerStr {
+		// log.Printf("Invalid action: %s", err)
+		return uuid.UUID{}, errors.New(ForbiddenMsg)
+	}
+
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		// log.Printf("error while reading body: %s", err)
@@ -30,13 +34,10 @@ func (h UserService) CreateResume(body io.ReadCloser, cookie string, authStor au
 		return uuid.UUID{}, errors.New(InvalidJSONMsg)
 	}
 
-	record, ok := authStor.GetSession(cookie)
-	if !ok || record.Role != SeekerStr {
-		// log.Printf("Invalid action: %s", err)
-		return uuid.UUID{}, errors.New(ForbiddenMsg)
-	}
-
-	id, ok := h.Storage.CreateResume(resumeReg, record.ID)
+	id := uuid.New()
+	resumeReg.ID = id
+	resumeReg.OwnerID = authInfo.ID
+	ok := h.Storage.CreateResume(resumeReg)
 
 	if !ok {
 		// log.Printf("Error while creating resume: %s", err)
@@ -46,15 +47,14 @@ func (h UserService) CreateResume(body io.ReadCloser, cookie string, authStor au
 	return id, nil
 }
 
-func (h UserService) DeleteResume(resumeId uuid.UUID, cookie string, authStor auth.Service) error {
-	record, ok := authStor.GetSession(cookie)
-	if !ok || record.Role != SeekerStr {
+func (h *UserService) DeleteResume(resumeId uuid.UUID, authInfo AuthStorageValue) error {
+	if authInfo.Role != SeekerStr {
 		return errors.New(ForbiddenMsg)
 	}
 
 	resume, err := h.Storage.GetResume(resumeId)
 
-	if resume.OwnerID != record.ID || err != nil {
+	if resume.OwnerID != authInfo.ID || err != nil {
 		return errors.New(ForbiddenMsg)
 	}
 
@@ -67,18 +67,23 @@ func (h UserService) DeleteResume(resumeId uuid.UUID, cookie string, authStor au
 	return nil
 }
 
-func (h UserService) GetResume(resumeId uuid.UUID) (Resume, error) {
+func (h *UserService) GetResume(resumeId uuid.UUID) (Resume, error) {
 	resume, err := h.Storage.GetResume(resumeId)
 
 	if err != nil {
+		log.Println("Service GetResume: failed to get resume")
 		return resume, errors.New(InvalidIdMsg)
 	}
 
 	return resume, nil
 }
 
-func (h UserService) PutResume(resumeId uuid.UUID, body io.ReadCloser,
-	cookie string, authStor auth.Service) error {
+func (h *UserService) PutResume(resumeId uuid.UUID, body io.ReadCloser, authInfo AuthStorageValue) error {
+	if authInfo.Role != SeekerStr {
+		// log.Printf(ForbiddenMsg, err)
+		return errors.New(ForbiddenMsg)
+	}
+
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		return errors.Wrap(err, "reading body error")
@@ -92,13 +97,7 @@ func (h UserService) PutResume(resumeId uuid.UUID, body io.ReadCloser,
 		return err
 	}
 
-	user, ok := authStor.GetSession(cookie)
-	if !ok || user.Role != SeekerStr {
-		// log.Printf(ForbiddenMsg, err)
-		return errors.New(ForbiddenMsg)
-	}
-
-	ok = h.Storage.PutResume(resume, user.ID, resumeId)
+	ok := h.Storage.PutResume(resume, authInfo.ID, resumeId)
 
 	if !ok {
 		// log.Printf("Error while creating resume: %s", err)
@@ -108,6 +107,6 @@ func (h UserService) PutResume(resumeId uuid.UUID, body io.ReadCloser,
 	return nil
 }
 
-func (h UserService) GetResumes() ([]Resume, error) {
+func (h *UserService) GetResumes() ([]Resume, error) {
 	return h.Storage.GetResumes()
 }

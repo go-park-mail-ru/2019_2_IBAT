@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	"context"
 	"time"
 
 	"github.com/google/uuid"
@@ -11,15 +12,22 @@ const InternalErrorMsg = "Internal server error"
 const ForbiddenMsg = "Forbidden"
 const InvalidIdMsg = "Invalid ID"
 const InvalidJSONMsg = "Invalid JSON"
+const BadRequestMsg = "Bad request"
 
 //respond/offer status
 const AwaitSt = "Await"
 const RejectedSt = "RejectedSt"
 const Accepted = "Accepted"
 
-type key string
+// type key string
 
-const AuthRec key = "AuthRecord" ///fix
+// const AuthRec key = "AuthRecord" ///fix
+
+var Loc *time.Location
+
+func init() {
+	Loc, _ = time.LoadLocation("Europe/Moscow")
+}
 
 const TimeFormat = time.RFC3339 //duplicate
 
@@ -109,9 +117,10 @@ type Vacancy struct {
 	Experience   string    `json:"experience"    db:"experience"`
 	Profession   string    `json:"profession"    db:"profession"`
 	Position     string    `json:"position"      db:"position"`
-	Tasks        string    `json:"task"          db:"tasks"`
+	Tasks        string    `json:"tasks"         db:"tasks"`
 	Requirements string    `json:"requirements"  db:"requirements"`
-	Wage         string    `json:"wage"          db:"wage"`
+	WageFrom     string    `json:"wage_from"     db:"wage_from"`
+	WageTo       string    `json:"wage_to"       db:"wage_to"`
 	Conditions   string    `json:"conditions"    db:"conditions"`
 	About        string    `json:"about"         db:"about"`
 }
@@ -121,20 +130,6 @@ type Respond struct {
 	ResumeID  uuid.UUID `json:"resume_id"        db:"resume_id"`
 	VacancyID uuid.UUID `json:"vacancy_id"       db:"vacancy_id"`
 }
-
-// CREATE TABLE vacancies(
-//     id uuid PRIMARY KEY,
-//     own_id uuid NOT NULL,
-
-//     profession VARCHAR (70) NOT NULL,
-//     position    VARCHAR (70),
-//     experience  TEXT,
-//     wage  MONEY,
-//     tasks TEXT,
-//     requirements TEXT,
-//     conditions TEXT,
-//     about  TEXT
-// );
 
 type AuthStorageValue struct {
 	ID      uuid.UUID
@@ -151,3 +146,23 @@ type UserAuthInput struct {
 // 	Storage AuthStorage
 // 	Mu      *sync.Mutex
 // }
+
+type Error struct {
+	Message string            `json:"error"`
+	Params  map[string]string `json:"params"`
+}
+
+type key string
+
+const AuthRec key = "AuthRecord" ///fix
+
+func NewContext(ctx context.Context, authInfo AuthStorageValue) context.Context {
+	return context.WithValue(ctx, AuthRec, authInfo)
+}
+
+// FromContext extracts the user IP address from ctx, if present.
+func FromContext(ctx context.Context) (AuthStorageValue, bool) {
+
+	authInfo, ok := ctx.Value(AuthRec).(AuthStorageValue)
+	return authInfo, ok
+}
