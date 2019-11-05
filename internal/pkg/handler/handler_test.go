@@ -174,6 +174,8 @@ package handler
 // 			},
 // 		},
 // 	}
+// 	r := httptest.NewRequest("GET", "/employers/", nil)
+// 	w := httptest.NewRecorder()
 
 // 	expectedEmployers := h.UserService.Storage.GetEmployers()
 
