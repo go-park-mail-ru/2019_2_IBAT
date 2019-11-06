@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	"github.com/pkg/errors"
 )
 
 type DBUserStorage struct {
@@ -15,27 +16,28 @@ func (m *DBUserStorage) DeleteUser(id uuid.UUID) error {
 	_, err := m.DbConn.Exec("DELETE FROM persons WHERE id = $1", id)
 	if err != nil {
 		fmt.Println("DeleteUser: error while deleting")
-		return err
+		return errors.New("DeleteUser: error while deleting")
 	}
 	return nil
 }
 
 func (m *DBUserStorage) CheckUser(email string, password string) (uuid.UUID, string, bool) {
 
-	row := m.DbConn.QueryRow("SELECT id, role FROM persons "+
-		"WHERE email = $1 AND password_hash = $2;", email, password)
+	// password = passwords.CheckPass()
+	row := m.DbConn.QueryRow("SELECT id, role, password_hash FROM persons "+
+		"WHERE email = $1", email)
 
 	resId := uuid.UUID{}
 	var class string
-	err := row.Scan(&resId, &class)
+	var password_hash []byte
+	err := row.Scan(&resId, &class, &password_hash)
 
-	if err != nil {
-		fmt.Println("CheckUser: Scan error")
-		fmt.Printf("CheckUser: resId - %s\n", resId)
-		fmt.Printf("CheckUser: class - %s\n", class)
+	// if !passwords.CheckPass(password_hash, password) || err != nil {
+	// 	return resId, class, false
+	// }
+	if password != string(password_hash) || err != nil {
 		return resId, class, false
 	}
-
 	return resId, class, true
 }
 

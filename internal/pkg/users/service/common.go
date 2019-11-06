@@ -14,9 +14,9 @@ type UserService struct {
 
 func (h *UserService) DeleteUser(authInfo AuthStorageValue) error {
 
-	h.Storage.DeleteUser(authInfo.ID)
+	err := h.Storage.DeleteUser(authInfo.ID)
 
-	return nil
+	return err
 }
 
 func (h *UserService) CheckUser(email string, password string) (uuid.UUID, string, bool) {

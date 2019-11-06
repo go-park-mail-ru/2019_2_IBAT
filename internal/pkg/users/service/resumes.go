@@ -27,6 +27,9 @@ func (h *UserService) CreateResume(body io.ReadCloser, authInfo AuthStorageValue
 	}
 
 	var resumeReg Resume
+	id := uuid.New()
+	resumeReg.ID = id
+	resumeReg.OwnerID = authInfo.ID
 	err = json.Unmarshal(bytes, &resumeReg)
 	if err != nil {
 		// log.Printf("Error while unmarshaling: %s", err)
@@ -34,14 +37,14 @@ func (h *UserService) CreateResume(body io.ReadCloser, authInfo AuthStorageValue
 		return uuid.UUID{}, errors.New(InvalidJSONMsg)
 	}
 
-	id := uuid.New()
-	resumeReg.ID = id
-	resumeReg.OwnerID = authInfo.ID
+	// id := uuid.New()
+	// resumeReg.ID = id
+	// resumeReg.OwnerID = authInfo.ID
 	ok := h.Storage.CreateResume(resumeReg)
 
 	if !ok {
 		// log.Printf("Error while creating resume: %s", err)
-		return uuid.UUID{}, errors.New(InternalErrorMsg)
+		return uuid.UUID{}, errors.New(BadRequestMsg)
 	}
 
 	return id, nil
@@ -86,15 +89,14 @@ func (h *UserService) PutResume(resumeId uuid.UUID, body io.ReadCloser, authInfo
 
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
-		return errors.Wrap(err, "reading body error")
+		return errors.New(BadRequestMsg)
 	}
 
 	var resume Resume
 	err = json.Unmarshal(bytes, &resume)
 	if err != nil {
 		log.Printf("Error while unmarshaling: %s", err)
-		err = errors.Wrap(err, "unmarshaling error")
-		return err
+		return errors.New(InvalidJSONMsg)
 	}
 
 	ok := h.Storage.PutResume(resume, authInfo.ID, resumeId)

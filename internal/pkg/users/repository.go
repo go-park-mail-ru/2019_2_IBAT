@@ -7,8 +7,8 @@ import (
 )
 
 type Repository interface {
-	CreateEmployer(seekerInput EmployerReg) (uuid.UUID, bool)
-	CreateSeeker(seekerInput SeekerReg) (uuid.UUID, bool)
+	CreateEmployer(seekerInput Employer) bool
+	CreateSeeker(seekerInput Seeker) bool
 	CreateResume(resumeReg Resume) bool
 	CreateVacancy(vacancyReg Vacancy) bool
 

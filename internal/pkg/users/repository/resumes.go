@@ -38,7 +38,7 @@ func (m *DBUserStorage) GetResume(id uuid.UUID) (Resume, error) {
 	err := row.StructScan(&resume)
 	if err != nil {
 		log.Println("GetResume: error while querying")
-		return Resume{}, errors.New("GetResume: error while querying")
+		return Resume{}, errors.New(InvalidIdMsg)
 	}
 	log.Println("Storage: GetResume\n Resume:")
 	log.Println(resume)
@@ -51,7 +51,7 @@ func (m *DBUserStorage) DeleteResume(id uuid.UUID) error {
 
 	if err != nil {
 		fmt.Println("DeleteResume: error while deleting")
-		return err
+		return errors.New(InternalErrorMsg)
 	}
 
 	return nil

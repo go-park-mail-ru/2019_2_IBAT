@@ -38,7 +38,7 @@ func (m *DBUserStorage) GetVacancy(id uuid.UUID) (Vacancy, error) {
 	err := row.StructScan(&vacancy)
 	if err != nil {
 		log.Println("GetVacancy: error while querying")
-		return Vacancy{}, errors.New("GetVacancy: error while querying")
+		return Vacancy{}, errors.New(InvalidIdMsg)
 	}
 	log.Println("Storage: GetVacancy\n vacancy:")
 	log.Println(vacancy)
@@ -68,7 +68,7 @@ func (m *DBUserStorage) PutVacancy(vacancy Vacancy, userId uuid.UUID, vacancyId 
 	)
 
 	if err != nil {
-		fmt.Println("PutVacancy: error while changing")
+		fmt.Println(BadRequestMsg)
 		return false
 	}
 
@@ -89,7 +89,7 @@ func (m *DBUserStorage) GetVacancies(params map[string]interface{}) ([]Vacancy, 
 			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE " + query)
 		if err != nil {
 			log.Println("GetVacancies: error while preparing statement")
-			return vacancies, errors.New("GetVacancies: error while querying")
+			return vacancies, errors.New(InternalErrorMsg)
 		}
 	} else {
 		log.Println("GetVacancies: query is empty")
@@ -106,7 +106,7 @@ func (m *DBUserStorage) GetVacancies(params map[string]interface{}) ([]Vacancy, 
 
 	if err != nil {
 		log.Println("GetVacancies: error while query")
-		return vacancies, errors.New("GetVacancies: error while querying")
+		return vacancies, errors.New(InternalErrorMsg)
 	}
 	for rows.Next() {
 		var vacancy Vacancy

@@ -2,41 +2,47 @@ package repository
 
 import (
 	. "2019_2_IBAT/internal/pkg/interfaces"
+
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 )
 
-func (m *DBUserStorage) CreateEmployer(employerInput EmployerReg) (uuid.UUID, bool) {
+func (m *DBUserStorage) CreateEmployer(employerInput Employer) bool {
 	tx, err := m.DbConn.Begin()
 	if err != nil {
 		fmt.Println("error while creating user")
-		return uuid.UUID{}, false
+		return false
 	}
-	id := uuid.New()
+	// id := uuid.New()
+
+	// salt := make([]byte, 8)
+	// rand.Read(salt)
+	// employerInput.Password = string(passwords.HashPass(salt, employerInput.Password))
 
 	_, err = m.DbConn.Exec(
 		"INSERT INTO persons(id, email, first_name, second_name, password_hash, role)"+
-			"VALUES($1, $2, $3, $4, $5, $6)", id, employerInput.Email, employerInput.FirstName,
+			"VALUES($1, $2, $3, $4, $5, $6)", employerInput.ID, employerInput.Email, employerInput.FirstName,
 		employerInput.SecondName, employerInput.Password, EmployerStr,
 	)
 
 	if err != nil {
 		fmt.Println("error while creating person")
-		return uuid.UUID{}, false
+		return false
 	}
 
 	_, err = m.DbConn.Exec(
 		"INSERT INTO companies(own_id, company_name, site, phone_number, "+
 			"extra_phone_number, city, empl_num)VALUES($1, $2, $3, $4, $5, $6, $7)",
-		id, employerInput.CompanyName, employerInput.Site, employerInput.PhoneNumber,
+		employerInput.ID, employerInput.CompanyName, employerInput.Site, employerInput.PhoneNumber,
 		employerInput.ExtraPhoneNumber, employerInput.City, employerInput.EmplNum,
 	)
 
 	if err != nil {
 		fmt.Println("error while creating company")
 		tx.Rollback()
-		return uuid.UUID{}, false
+		return false
 	}
 
 	err = tx.Commit()
@@ -44,10 +50,10 @@ func (m *DBUserStorage) CreateEmployer(employerInput EmployerReg) (uuid.UUID, bo
 	if err != nil {
 		fmt.Println("error while creating user")
 		tx.Rollback()
-		return uuid.UUID{}, false
+		return false
 	}
 
-	return id, true
+	return true
 }
 
 func (m *DBUserStorage) GetEmployer(id uuid.UUID) (Employer, error) {
@@ -64,7 +70,7 @@ func (m *DBUserStorage) GetEmployer(id uuid.UUID) (Employer, error) {
 
 	id_rows, err := m.DbConn.Query("SELECT v.id FROM vacancies AS v WHERE v.own_id = $1", empl.ID)
 	if err != nil {
-		return empl, err
+		return empl, errors.New(InternalErrorMsg)
 	}
 	defer id_rows.Close()
 
@@ -136,7 +142,7 @@ func (m *DBUserStorage) GetEmployers() ([]Employer, error) {
 	defer rows.Close()
 
 	if err != nil {
-		return employers, err
+		return employers, errors.New(InternalErrorMsg)
 	}
 
 	for rows.Next() {
@@ -148,7 +154,7 @@ func (m *DBUserStorage) GetEmployers() ([]Employer, error) {
 
 		id_rows, err := m.DbConn.Query("SELECT v.id FROM vacancies AS v WHERE v.own_id = $1", empl.ID)
 		if err != nil {
-			return employers, err
+			return employers, errors.New(InternalErrorMsg)
 		}
 		defer id_rows.Close()
 

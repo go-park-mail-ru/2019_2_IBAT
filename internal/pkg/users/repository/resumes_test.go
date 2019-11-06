@@ -12,15 +12,6 @@ import (
 	sqlmock "gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
-// func init() {
-// 	/* load test data */
-// 	db, mock, err := sqlmock.New()
-// 	if err != nil {
-// 		t.Fatalf("cant create mock: %s", err)
-// 	}
-// 	defer db.Close()
-// }
-
 func TestDBUserStorage_GetResumes_Correct(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	defer db.Close()
@@ -93,7 +84,6 @@ func TestDBUserStorage_GetResumes_Correct(t *testing.T) {
 	}
 
 	resumes, err := repo.GetResumes()
-	fmt.Println(resumes)
 
 	if err != nil {
 		t.Errorf("unexpected err: %s", err)
@@ -133,7 +123,6 @@ func TestDBUserStorage_GetResumes_Fail(t *testing.T) {
 	fmt.Println(resumes)
 
 	if err == nil {
-		fmt.Println(err)
 		t.Errorf("Expected err")
 		return
 	}
@@ -197,7 +186,6 @@ func TestDBUserStorage_GetResume_Correct(t *testing.T) {
 	}
 
 	item, err := repo.GetResume(id)
-	fmt.Println()
 
 	if err != nil {
 		t.Errorf("unexpected err: %s", err)
@@ -235,8 +223,7 @@ func TestDBUserStorage_GetResume_Fail(t *testing.T) {
 		DbConn: sqlxDB,
 	}
 
-	resume, err := repo.GetResume(id)
-	fmt.Println(resume)
+	_, err = repo.GetResume(id)
 
 	if err == nil {
 		fmt.Println(err)
@@ -372,7 +359,6 @@ func TestDBUserStorage_DeleteResume_Correct(t *testing.T) {
 	}
 
 	err = repo.DeleteResume(id)
-	fmt.Println()
 
 	if err != nil {
 		t.Errorf("unexpected err: %s", err)

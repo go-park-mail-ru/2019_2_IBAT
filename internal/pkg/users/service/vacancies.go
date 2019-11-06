@@ -27,6 +27,10 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 	}
 
 	var vacancyReg Vacancy
+	id := uuid.New()
+	vacancyReg.ID = id
+	vacancyReg.OwnerID = authInfo.ID
+
 	err = json.Unmarshal(bytes, &vacancyReg)
 	if err != nil {
 		log.Printf("Error while unmarshaling: %s", err)
@@ -34,14 +38,14 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 		return uuid.UUID{}, errors.New(InvalidJSONMsg)
 	}
 
-	id := uuid.New()
-	vacancyReg.ID = id
-	vacancyReg.OwnerID = authInfo.ID
+	// id := uuid.New()
+	// vacancyReg.ID = id
+	// vacancyReg.OwnerID = authInfo.ID
 	ok := h.Storage.CreateVacancy(vacancyReg)
 
 	if !ok {
 		log.Printf("Error while creating vacancy: %s", err)
-		return uuid.UUID{}, errors.New(InternalErrorMsg)
+		return uuid.UUID{}, errors.New(BadRequestMsg)
 	}
 
 	return id, nil
@@ -51,7 +55,7 @@ func (h *UserService) GetVacancy(vacancyId uuid.UUID) (Vacancy, error) {
 	vacancy, err := h.Storage.GetVacancy(vacancyId)
 
 	if err != nil { //error wrap
-		return vacancy, errors.New("Error while getting vacancy")
+		return vacancy, errors.New(InvalidIdMsg)
 	}
 
 	return vacancy, nil
@@ -71,7 +75,7 @@ func (h *UserService) DeleteVacancy(vacancyId uuid.UUID, authInfo AuthStorageVal
 	err = h.Storage.DeleteVacancy(vacancyId)
 
 	if err != nil {
-		return errors.New("Error while deleting vacancy")
+		return errors.New(InternalErrorMsg)
 	}
 
 	return nil
@@ -80,19 +84,19 @@ func (h *UserService) DeleteVacancy(vacancyId uuid.UUID, authInfo AuthStorageVal
 func (h *UserService) PutVacancy(vacancyId uuid.UUID, body io.ReadCloser, authInfo AuthStorageValue) error {
 	if authInfo.Role != EmployerStr {
 		// log.Printf("Invalid action: %s", err)
-		return errors.New("Invalid action")
+		return errors.New(ForbiddenMsg)
 	}
 
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
-		return errors.Wrap(err, "reading body error")
+		return errors.New(BadRequestMsg)
 	}
 
 	var vacancy Vacancy
 	err = json.Unmarshal(bytes, &vacancy)
 	if err != nil {
 		log.Printf("Error while unmarshaling: %s", err)
-		err = errors.Wrap(err, "unmarshaling error")
+		err = errors.New(InvalidJSONMsg)
 		return err
 	}
 
@@ -100,7 +104,7 @@ func (h *UserService) PutVacancy(vacancyId uuid.UUID, body io.ReadCloser, authIn
 
 	if !ok {
 		log.Printf("Error while changing vacancy")
-		return errors.New("Error while changing vacancy")
+		return errors.New(BadRequestMsg)
 	}
 
 	return nil

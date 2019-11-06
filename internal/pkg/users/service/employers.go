@@ -2,6 +2,7 @@ package users
 
 import (
 	"encoding/json"
+	"log"
 
 	"io"
 	"io/ioutil"
@@ -15,24 +16,26 @@ import (
 func (h *UserService) CreateEmployer(body io.ReadCloser) (uuid.UUID, error) { //should do this part by one r with if?
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
-		// log.Printf("error while reading body: %s", err)
-		// err = errors.Wrap(err, "reading body error")
-		return uuid.UUID{}, errors.New("Invalid body, transfer error")
+		log.Printf("error while reading body: %s", err)
+		return uuid.UUID{}, errors.New(BadRequestMsg)
 	}
 
-	var newEmployerReg EmployerReg
+	var newEmployerReg Employer
+	// id := uuid.New()
+	// newEmployerReg.ID = id
 	err = json.Unmarshal(bytes, &newEmployerReg)
 	if err != nil {
-		// log.Printf("Error while unmarshaling: %s", err)
-		// err = errors.Wrap(err, "unmarshaling error")
-		return uuid.UUID{}, errors.New("Invalid JSON")
+		log.Printf("Error while unmarshaling: %s", err)
+		return uuid.UUID{}, errors.New(InvalidJSONMsg)
 	}
 
-	id, ok := h.Storage.CreateEmployer(newEmployerReg)
+	id := uuid.New()
+	newEmployerReg.ID = id
+	ok := h.Storage.CreateEmployer(newEmployerReg)
 
 	if !ok {
-		// log.Printf("Error while creating employer: %s", err)
-		return uuid.UUID{}, errors.New("Email already exists")
+		log.Printf("Error while creating employer: %s", err)
+		return uuid.UUID{}, errors.New(EmailExistsMsg)
 	}
 
 	return id, nil
@@ -41,22 +44,21 @@ func (h *UserService) CreateEmployer(body io.ReadCloser) (uuid.UUID, error) { //
 func (h *UserService) PutEmployer(body io.ReadCloser, id uuid.UUID) error {
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
-		// log.Printf("error while reading body: %s", err)
-		return errors.Wrap(err, "reading body error")
+		log.Printf("error while reading body: %s", err)
+		return errors.Wrap(err, BadRequestMsg)
 	}
 
 	var newEmployerReg EmployerReg
 	err = json.Unmarshal(bytes, &newEmployerReg)
 	if err != nil {
-		// log.Printf("Error while unmarshaling: %s", err)
-		return errors.Wrap(err, "unmarshaling error")
+		log.Printf("Error while unmarshaling: %s", err)
+		return errors.New(InvalidJSONMsg)
 	}
 
 	ok := h.Storage.PutEmployer(newEmployerReg, id)
 	if !ok {
-		// log.Println("Here inside users")
-		// log.Printf("Error while creating employer: %s", err)
-		return errors.New("Error while changing employer")
+		log.Printf("Error while creating employer")
+		return errors.New(BadRequestMsg)
 	}
 
 	return nil

@@ -111,7 +111,6 @@ func TestDBUserStorage_GetVacancies_Fail(t *testing.T) {
 	fmt.Println(vacancies)
 
 	if err == nil {
-		fmt.Println(err)
 		t.Errorf("Expected err")
 		return
 	}
@@ -174,7 +173,6 @@ func TestDBUserStorage_GetVacancy_Correct(t *testing.T) {
 
 	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a")
 	item, err := repo.GetVacancy(id)
-	fmt.Println()
 
 	if err != nil {
 		t.Errorf("unexpected err: %s", err)
@@ -216,7 +214,6 @@ func TestDBUserStorage_GetVacancy_Fail(t *testing.T) {
 	fmt.Println(vacancy)
 
 	if err == nil {
-		fmt.Println(err)
 		t.Errorf("Expected err")
 		return
 	}
@@ -342,7 +339,6 @@ func TestDBUserStorage_DeleteVacancy_Correct(t *testing.T) {
 	}
 
 	err = repo.DeleteVacancy(id)
-	fmt.Println()
 
 	if err != nil {
 		t.Errorf("unexpected err: %s", err)
@@ -357,10 +353,8 @@ func TestDBUserStorage_DeleteVacancy_Correct(t *testing.T) {
 		WillReturnError(errors.New("GetVacancy: error while querying"))
 
 	_, err = repo.GetVacancy(id)
-	fmt.Println()
 
 	if err == nil {
-		fmt.Println(err)
 		t.Errorf("Expected err")
 		return
 	}
@@ -395,7 +389,6 @@ func TestDBUserStorage_DeleteVacancy_False(t *testing.T) {
 	err = repo.DeleteVacancy(id)
 
 	if err == nil {
-		fmt.Println(err)
 		t.Errorf("Expected err")
 		return
 	}
