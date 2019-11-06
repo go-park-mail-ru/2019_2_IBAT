@@ -55,3 +55,23 @@ type Vacancy struct {
 	Conditions       string    `json:"conditions"          db:"conditions"`
 	About            string    `json:"about"               db:"about"`
 }
+
+type SeekerReg struct {
+	Email      string `json:"email"`
+	FirstName  string `json:"first_name"`
+	SecondName string `json:"second_name"`
+	Password   string `json:"password"`
+}
+
+type EmployerReg struct {
+	CompanyName      string `json:"company_name"`
+	Site             string `json:"site"`
+	FirstName        string `json:"first_name"`
+	SecondName       string `json:"second_name"`
+	Email            string `json:"email"`
+	PhoneNumber      string `json:"phone_number"`
+	ExtraPhoneNumber string `json:"extra_phone_number"`
+	Password         string `json:"password"`
+	Region           string `json:"region"`
+	EmplNum          string `json:"empl_num"`
+}
