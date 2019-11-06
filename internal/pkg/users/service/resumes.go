@@ -23,7 +23,7 @@ func (h *UserService) CreateResume(body io.ReadCloser, authInfo AuthStorageValue
 	if err != nil {
 		// log.Printf("error while reading body: %s", err)
 		// err = errors.Wrap(err, "reading body error")
-		return uuid.UUID{}, errors.New("Invalid body, transfer error")
+		return uuid.UUID{}, errors.New(BadRequestMsg)
 	}
 
 	var resumeReg Resume
@@ -41,7 +41,7 @@ func (h *UserService) CreateResume(body io.ReadCloser, authInfo AuthStorageValue
 
 	if !ok {
 		// log.Printf("Error while creating resume: %s", err)
-		return uuid.UUID{}, errors.New("Something went wrong. Error while creating resume")
+		return uuid.UUID{}, errors.New(InternalErrorMsg)
 	}
 
 	return id, nil
@@ -61,7 +61,7 @@ func (h *UserService) DeleteResume(resumeId uuid.UUID, authInfo AuthStorageValue
 	err = h.Storage.DeleteResume(resumeId)
 
 	if err != nil {
-		return errors.New("Internal server error")
+		return errors.New(InternalErrorMsg)
 	}
 
 	return nil

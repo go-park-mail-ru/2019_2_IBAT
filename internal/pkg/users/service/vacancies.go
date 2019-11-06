@@ -16,14 +16,14 @@ import (
 func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValue) (uuid.UUID, error) { //should do this part by one r with if?
 	if authInfo.Role != EmployerStr {
 		// log.Printf("Invalid action: %s", err)
-		return uuid.UUID{}, errors.New("Invalid action")
+		return uuid.UUID{}, errors.New(ForbiddenMsg)
 	}
 
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
 		log.Printf("error while reading body: %s", err)
 		err = errors.Wrap(err, "reading body error")
-		return uuid.UUID{}, err
+		return uuid.UUID{}, errors.New(BadRequestMsg)
 	}
 
 	var vacancyReg Vacancy
@@ -31,7 +31,7 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 	if err != nil {
 		log.Printf("Error while unmarshaling: %s", err)
 		err = errors.Wrap(err, "unmarshaling error")
-		return uuid.UUID{}, err
+		return uuid.UUID{}, errors.New(InvalidJSONMsg)
 	}
 
 	id := uuid.New()
@@ -41,7 +41,7 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 
 	if !ok {
 		log.Printf("Error while creating vacancy: %s", err)
-		return uuid.UUID{}, errors.New("Error while creating vacancy")
+		return uuid.UUID{}, errors.New(InternalErrorMsg)
 	}
 
 	return id, nil

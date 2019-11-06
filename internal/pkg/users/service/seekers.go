@@ -17,7 +17,7 @@ func (h *UserService) CreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
 	if err != nil {
 		// log.Printf("error while reading body: %s", err)
 		// err = errors.Wrap(err, "reading body error")
-		return uuid.UUID{}, errors.New("Invalid body, transfer error")
+		return uuid.UUID{}, errors.New(BadRequestMsg)
 	}
 
 	var newSeekerReg SeekerReg
@@ -25,14 +25,14 @@ func (h *UserService) CreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
 	if err != nil {
 		// log.Printf("Error while unmarshaling: %s", err)
 		// err = errors.Wrap(err, "unmarshaling error")
-		return uuid.UUID{}, errors.New("Invalid JSON")
+		return uuid.UUID{}, errors.New(InvalidJSONMsg)
 	}
 
 	id, ok := h.Storage.CreateSeeker(newSeekerReg)
 	if !ok {
 		// log.Println("Here inside users")
 		// log.Printf("Error while creating seeker: %s", err)
-		return uuid.UUID{}, errors.New("Email already exists")
+		return uuid.UUID{}, errors.New(EmailExistsMsg)
 	}
 
 	return id, nil

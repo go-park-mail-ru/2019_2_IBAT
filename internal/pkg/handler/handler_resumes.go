@@ -15,9 +15,8 @@ func (h *Handler) CreateResume(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-	// ctx := r.Context()
-	log.Println("Create resume req:")
-	log.Println(r)
+	// log.Println("Create resume req:")
+	// log.Println(r)
 	authInfo, ok := FromContext(r.Context())
 
 	if !ok {
@@ -35,6 +34,8 @@ func (h *Handler) CreateResume(w http.ResponseWriter, r *http.Request) {
 			code = http.StatusForbidden
 		case UnauthorizedMsg:
 			code = http.StatusUnauthorized
+		case InternalErrorMsg:
+			code = http.StatusInternalServerError
 		default:
 			code = http.StatusBadRequest
 		}
@@ -57,7 +58,7 @@ func (h *Handler) CreateResume(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(idJSON))
 }
 
-func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) { //+
+func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	authInfo, ok := FromContext(r.Context())
@@ -165,7 +166,7 @@ func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) { //+
+func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	resumes, _ := h.UserService.GetResumes() //error handling

@@ -61,8 +61,20 @@ func (h *Handler) CreateVacancy(w http.ResponseWriter, r *http.Request) { //+
 
 	id, err := h.UserService.CreateVacancy(r.Body, authInfo)
 	if err != nil {
-		w.WriteHeader(http.StatusForbidden)
-		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
+		var code int
+		switch err.Error() {
+		case ForbiddenMsg:
+			code = http.StatusForbidden
+		case UnauthorizedMsg:
+			code = http.StatusUnauthorized
+		case InternalErrorMsg:
+			code = http.StatusInternalServerError
+		default:
+			code = http.StatusBadRequest
+		}
+		w.WriteHeader(code)
+
+		errJSON, _ := json.Marshal(Error{Message: err.Error()})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -87,8 +99,8 @@ func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) { //+
 	vacancy, err := h.UserService.GetVacancy(vacId)
 
 	if err != nil {
-		w.WriteHeader(http.StatusForbidden)
-		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
+		w.WriteHeader(http.StatusBadRequest)
+		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -113,7 +125,7 @@ func (h *Handler) DeleteVacancy(w http.ResponseWriter, r *http.Request) { //+
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{Message: "Invalid id"})
+		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
 		w.Write([]byte(errJSON))
 		return
 	}

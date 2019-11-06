@@ -14,6 +14,9 @@ const InvalidIdMsg = "Invalid ID"
 const InvalidJSONMsg = "Invalid JSON"
 const BadRequestMsg = "Bad request"
 
+const EmailExistsMsg = "Email already exists"
+const InvPassOrEmailMsg = "Invalid password or email"
+
 //respond/offer status
 const AwaitSt = "Await"
 const RejectedSt = "RejectedSt"

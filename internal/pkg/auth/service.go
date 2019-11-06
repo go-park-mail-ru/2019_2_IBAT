@@ -15,7 +15,7 @@ const CookieName = "session-id"
 // Usecase represent the article's usecases
 type Service interface {
 	CreateSession(id uuid.UUID, class string) (AuthStorageValue, string, error)
-	DeleteSession(cookie *http.Cookie) bool
+	DeleteSession(cookie string) bool
 
 	GetSession(cookie string) (AuthStorageValue, bool)
 	// SetRecord(id uuid.UUID, class string) (AuthStorageValue, string, error)

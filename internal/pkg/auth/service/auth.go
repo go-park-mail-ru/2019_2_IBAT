@@ -7,7 +7,6 @@ import (
 
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/google/uuid"
 	// context "github.com/gorilla/context"
@@ -34,18 +33,17 @@ func (h *AuthService) CreateSession(id uuid.UUID, class string) (AuthStorageValu
 	return authInfo, cookieValue, nil
 }
 
-func (h *AuthService) DeleteSession(cookie *http.Cookie) bool {
-	_, ok := h.Storage.Get(cookie.Value)
+func (h *AuthService) DeleteSession(cookie string) bool {
+	_, ok := h.Storage.Get(cookie)
 	if !ok {
 		log.Printf("No such session")
 		return false
 	}
 
-	ok = h.Storage.Delete(cookie.Value)
+	ok = h.Storage.Delete(cookie)
 	if !ok {
 		return false
 	}
-	cookie.Expires = time.Now().AddDate(0, 0, -1)
 
 	return true
 }

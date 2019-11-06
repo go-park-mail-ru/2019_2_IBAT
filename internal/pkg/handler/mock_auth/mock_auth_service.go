@@ -4,12 +4,11 @@
 package mock_auth
 
 import (
+	. "2019_2_IBAT/internal/pkg/interfaces"
 	http "net/http"
 
 	gomock "github.com/golang/mock/gomock"
 	uuid "github.com/google/uuid"
-
-	. "2019_2_IBAT/internal/pkg/interfaces"
 )
 
 // Mock of Service interface
@@ -45,7 +44,7 @@ func (_mr *_MockServiceRecorder) CreateSession(arg0, arg1 interface{}) *gomock.C
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "CreateSession", arg0, arg1)
 }
 
-func (_m *MockService) DeleteSession(cookie *http.Cookie) bool {
+func (_m *MockService) DeleteSession(cookie string) bool {
 	ret := _m.ctrl.Call(_m, "DeleteSession", cookie)
 	ret0, _ := ret[0].(bool)
 	return ret0

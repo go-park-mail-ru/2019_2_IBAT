@@ -31,7 +31,7 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 	if err != nil {
 		log.Println("Handle CreateSession: error while unmarshaling")
 		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{Message: BadRequestMsg})
+		errJSON, _ := json.Marshal(Error{Message: InvalidJSONMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -40,12 +40,11 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 	if !ok {
 		log.Println("Handle CreateSession: Check user failed")
 		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{Message: BadRequestMsg}) //
+		errJSON, _ := json.Marshal(Error{Message: InvPassOrEmailMsg}) //
 		w.Write([]byte(errJSON))
 		return
 	}
 
-	// cookie, role, err := h.AuthService.CreateSession(id, role)
 	authInfo, cookieValue, err := h.AuthService.CreateSession(id, role)
 
 	if err != nil {
@@ -93,14 +92,6 @@ func (h *Handler) GetSession(w http.ResponseWriter, r *http.Request) { //+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	authInfo, ok := FromContext(r.Context())
-
-	if !ok {
-		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write([]byte(errJSON))
-		return
-	}
-
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
@@ -125,13 +116,14 @@ func (h *Handler) DeleteSession(w http.ResponseWriter, r *http.Request) { //+
 		return
 	}
 
-	ok := h.AuthService.DeleteSession(cookie)
+	ok := h.AuthService.DeleteSession(cookie.Value)
 	if !ok {
-		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
+		w.WriteHeader(http.StatusBadRequest)
+		errJSON, _ := json.Marshal(Error{Message: BadRequestMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
 
+	cookie.Expires = time.Now().AddDate(0, 0, -1)
 	http.SetCookie(w, cookie)
 }

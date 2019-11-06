@@ -31,7 +31,8 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
 	if err != nil {
 		// log.Printf("Error while unmarshaling: %s", err)
 		// err = errors.Wrap(err, "error while unmarshaling")
-		errJSON, _ := json.Marshal(Error{Message: err.Error()})
+		w.WriteHeader(http.StatusInternalServerError)
+		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
@@ -68,7 +69,7 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
 }
 
 //should test method
-func (h *Handler) GetSeekerById(w http.ResponseWriter, r *http.Request) { //+
+func (h *Handler) GetSeekerById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	seekId, err := uuid.Parse(mux.Vars(r)["id"])
 

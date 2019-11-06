@@ -107,7 +107,7 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	cookie, _ := r.Cookie(auth.CookieName) //костыль
 
-	ok = h.AuthService.DeleteSession(cookie)
+	ok = h.AuthService.DeleteSession(cookie.Value)
 	if !ok {
 		w.WriteHeader(http.StatusInternalServerError)
 		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})

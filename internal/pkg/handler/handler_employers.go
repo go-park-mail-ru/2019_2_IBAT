@@ -29,9 +29,8 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) { //+
 	authInfo, cookieValue, err := h.AuthService.CreateSession(uuid, EmployerStr)
 
 	if err != nil {
-		// log.Printf("Error while unmarshaling: %s", err)
-		// err = errors.Wrap(err, "error while unmarshaling")
-		errJSON, _ := json.Marshal(Error{Message: err.Error()})
+		w.WriteHeader(http.StatusInternalServerError)
+		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
 		w.Write([]byte(errJSON))
 		return
 	}

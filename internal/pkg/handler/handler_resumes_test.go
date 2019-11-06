@@ -1,16 +1,14 @@
 package handler
 
-<<<<<<< HEAD
 import (
 	mock_users "2019_2_IBAT/internal/pkg/handler/mock_users"
 	"context"
-	"sync"
+	"errors"
+	"strings"
 
 	. "2019_2_IBAT/internal/pkg/interfaces"
 	"encoding/json"
 	"io/ioutil"
-	"log"
-	"strings"
 	"time"
 
 	"github.com/golang/mock/gomock"
@@ -22,7 +20,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 )
 
@@ -157,152 +154,6 @@ func TestHandler_GetResumes(t *testing.T) {
 		{
 			ID:          uuid.MustParse("22222222-9dad-11d1-80b1-00c04fd435c8"),
 			OwnerID:     uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
-=======
-
-import (
-	. "2019_2_IBAT/internal/pkg/interfaces"
-	"github.com/golang/mock/gomock"
-	"encoding/json"
-	"io/ioutil"
-	mock_users "2019_2_IBAT/internal/pkg/handler/mock_users"
-	"fmt"
-	"net/http"
-	"github.com/google/uuid"
-
-)
-
-// (1) Define an interface that you wish to mock.
-//       type MyInterface interface {
-//         SomeMethod(x int64, y string)
-//       }
-// (2) Use mockgen to generate a mock from the interface.
-// (3) Use the mock in a test:
-//       func TestMyThing(t *testing.T) {
-//         mockCtrl := gomock.NewController(t)
-//         defer mockCtrl.Finish()
-
-//         mockObj := something.NewMockMyInterface(mockCtrl)
-//         mockObj.EXPECT().SomeMethod(4, "blah")
-//         // pass mockObj to a real object and play with it.
-//       }
-
-
-// func (h *Handler) GetResume(w http.ResponseWriter, r *http.Request) { //+
-// 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-// 	log.Println("Handle GetResume: start")
-
-// 	resId, err := uuid.Parse(mux.Vars(r)["id"])
-
-// 	if err != nil {
-// 		log.Println("Handle GetResume: invalid id")
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-// 		w.Write([]byte(errJSON))
-// 		return
-// 	}
-
-// 	resume, err := h.UserService.GetResume(resId)
-
-// 	if err != nil {
-// 		log.Println("Handle GetResume: failed to get resume")
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-// 		w.Write([]byte(errJSON))
-// 		return
-// 	}
-
-// 	resumeJSON, _ := json.Marshal(resume)
-
-// 	w.Write([]byte(resumeJSON))
-// }
-
-func TestHandler_GetResume(t *testing.T) {
-	// ah := auth.AuthService{
-	// 	Storage: auth.MapAuthStorage{
-	// 		Storage: make(map[string]AuthStorageValue),
-	// 		Mu:      &sync.Mutex{},
-	// 	},
-	// }
-
-	// h := &Handler{
-	// 	AuthService: ah,
-	// 	UserService: users.UserService{
-	// 		Storage: &users.MapUserStorage{
-	// 			SekMu:  &sync.Mutex{},
-	// 			EmplMu: &sync.Mutex{},
-	// 			ResMu:  &sync.Mutex{},
-	// 			SeekerStorage: map[uuid.UUID]Seeker{
-	// 				uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"): {
-	// 					Email:      "some@mail.com",
-	// 					FirstName:  "Vova",
-	// 					SecondName: "Zyablikov",
-	// 					Password:   "1234",
-	// 					Resumes: []uuid.UUID{
-	// 						uuid.MustParse("11111111-9dad-11d1-80b1-00c04fd435c8"),
-	// 					},
-	// 				},
-	// 				uuid.MustParse("6ba7b810-9bad-11d1-80b1-00c04fd430c8"): {
-	// 					Email:      "third@mail.com",
-	// 					FirstName:  "Petr",
-	// 					SecondName: "Zyablikov",
-	// 					Password:   "12345",
-	// 					Resumes: []uuid.UUID{
-	// 						uuid.MustParse("22222222-9dad-11d1-80b1-00c04fd435c8"),
-	// 					},
-	// 				},
-	// 			},
-	// 			EmployerStorage: map[uuid.UUID]Employer{},
-	// 			ResumeStorage: map[uuid.UUID]Resume{
-	// 				uuid.MustParse("11111111-9dad-11d1-80b1-00c04fd435c8"): {
-	// 					OwnerID:     uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
-	// 					FirstName:   "Vova",
-	// 					SecondName:  "Zyablikov",
-	// 					City:        "Moscow",
-	// 					PhoneNumber: "12345678910",
-	// 					BirthDate:   "1994-21-08",
-	// 					Sex:         "male",
-	// 					Citizenship: "Russia",
-	// 					Experience:  "7 years",
-	// 					Profession:  "programmer",
-	// 					Position:    "middle",
-	// 					Wage:        "100500",
-	// 					Education:   "MSU",
-	// 					About:       "Hello employer",
-	// 				},
-	// 				uuid.MustParse("22222222-9dad-11d1-80b1-00c04fd435c8"): {
-	// 					OwnerID:     uuid.MustParse("6ba7b810-9bad-11d1-80b1-00c04fd430c8"),
-	// 					FirstName:   "Vova",
-	// 					SecondName:  "Zyablikov",
-	// 					City:        "Moscow",
-	// 					PhoneNumber: "12345678910",
-	// 					BirthDate:   "1994-21-08",
-	// 					Sex:         "male",
-	// 					Citizenship: "Ukraine",
-	// 					Experience:  "7 years",
-	// 					Profession:  "programmer",
-	// 					Position:    "middle",
-	// 					Wage:        "100500",
-	// 					Education:   "MSU",
-	// 					About:       "Hello employer",
-	// 				},
-	// 			},
-	// 		},
-	// 	},
-	// }
-
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-	
-	userService := mock_users.NewMockService(mockCtrl)
-	h := Handler{
-		UserService: userService,
-	}
-
-	want_resumes := []Resume{
-		{
-			ID: uuid.MustParse("22222222-9dad-11d1-80b1-00c04fd435c8"),
-			OwnerID:     uuid.MustParse("6ba7b810-9bad-11d1-80b1-00c04fd430c8"),
->>>>>>> 0ffc1e987c6bc6b935425bf07d111edecc90a0f3
 			FirstName:   "Vova",
 			SecondName:  "Zyablikov",
 			City:        "Moscow",
@@ -319,7 +170,6 @@ func TestHandler_GetResume(t *testing.T) {
 		},
 	}
 
-<<<<<<< HEAD
 	mockUserService.
 		EXPECT().
 		GetResumes().
@@ -367,7 +217,6 @@ func TestHandler_CreateResume(t *testing.T) {
 
 	tests := []struct {
 		name             string
-		cookieValue      string
 		resume           Resume
 		wantFail         bool
 		wantUnauth       bool
@@ -378,8 +227,7 @@ func TestHandler_CreateResume(t *testing.T) {
 		record           AuthStorageValue
 	}{
 		{
-			name:        "Test1",
-			cookieValue: "cccccccc",
+			name: "Test1",
 			resume: Resume{
 				OwnerID:     uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 				FirstName:   "Petya",
@@ -403,8 +251,7 @@ func TestHandler_CreateResume(t *testing.T) {
 			},
 		},
 		{
-			name:        "Test2",
-			cookieValue: "aaaaaaaaaa",
+			name: "Test2",
 			resume: Resume{
 				OwnerID:     uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 				FirstName:   "Petya",
@@ -426,8 +273,7 @@ func TestHandler_CreateResume(t *testing.T) {
 			wantErrorMessage: ForbiddenMsg,
 		},
 		{
-			name:        "Test3",
-			cookieValue: "cbfdgdfg",
+			name: "Test3",
 			resume: Resume{
 				OwnerID:     uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 				FirstName:   "Petya",
@@ -451,13 +297,40 @@ func TestHandler_CreateResume(t *testing.T) {
 		},
 		{
 			name:             "Test4",
-			cookieValue:      "cbfdgdfg",
 			resume:           Resume{},
 			wantFail:         true,
 			wantStatusCode:   http.StatusBadRequest,
 			wantErrorMessage: BadRequestMsg,
 			wantInvJSON:      true,
 			invJSON:          "{testx: fdsfsdf, fdsfsdf'sdfsdf / fdsfsdf}",
+		},
+		{
+			name: "Test5",
+			resume: Resume{
+				OwnerID:     uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
+				FirstName:   "Petya",
+				SecondName:  "Zyablikov",
+				City:        "Moscow",
+				PhoneNumber: "12345678910",
+				BirthDate:   "1994-21-08",
+				Sex:         "male",
+				Citizenship: "Russia",
+				Experience:  "7 years",
+				Profession:  "programmer",
+				Position:    "middle",
+				Wage:        "100500",
+				Education:   "MSU",
+				About:       "Hello employer",
+			},
+			record: AuthStorageValue{
+				ID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
+				Role:    SeekerStr,
+				Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
+			},
+			wantFail:         true,
+			wantUnauth:       false,
+			wantStatusCode:   http.StatusInternalServerError,
+			wantErrorMessage: InternalErrorMsg,
 		},
 	}
 
@@ -476,7 +349,6 @@ func TestHandler_CreateResume(t *testing.T) {
 			req, _ := http.NewRequest("POST", "/resume", reader)
 
 			id1 := uuid.New()
-			log.Printf("id1 generated: %s\n", id1)
 
 			if !tc.wantFail {
 				mockUserService.
@@ -501,9 +373,6 @@ func TestHandler_CreateResume(t *testing.T) {
 			ctx := context.TODO()
 			if !tc.wantUnauth {
 				ctx = NewContext(req.Context(), tc.record)
-
-				log.Println("TEST Create resume req:")
-				log.Println(req)
 			}
 
 			router := mux.NewRouter()
@@ -518,7 +387,6 @@ func TestHandler_CreateResume(t *testing.T) {
 				if err != nil {
 					t.Errorf("corrupted returned id: %s", err)
 				} else {
-					log.Printf("id.Id after unmarshaling: %s\n", id.Id)
 					gotResume, _ := h.UserService.GetResume(uuid.MustParse(id.Id))
 
 					if rr.Code != http.StatusOK {
@@ -540,126 +408,26 @@ func TestHandler_CreateResume(t *testing.T) {
 }
 
 func TestHandler_DeleteResume(t *testing.T) {
-	ah := auth.AuthService{
-		Storage: auth.MapAuthStorage{
-			Storage: map[string]AuthStorageValue{
-				"aaaaaaaaaa": {
-					ID:      uuid.MustParse("6ba7b811-9dad-11d1-80b1-00c04fd430c8"),
-					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Role:    EmployerStr,
-				},
-				"cccccccc": {
-					ID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
-					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Role:    SeekerStr,
-				},
-				"cfv": {
-					ID:      uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
-					Expires: time.Now().In(auth.Loc).Add(24 * time.Hour).Format(auth.TimeFormat),
-					Role:    SeekerStr,
-				},
-			},
-			Mu: &sync.Mutex{},
-		},
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockUserService := mock_users.NewMockService(mockCtrl)
+	h := Handler{
+		UserService: mockUserService,
 	}
 
-	h := &Handler{
-		AuthService: ah,
-		UserService: users.UserService{
-			Storage: &users.MapUserStorage{
-				SekMu:  &sync.Mutex{},
-				EmplMu: &sync.Mutex{},
-				ResMu:  &sync.Mutex{},
-				VacMu:  &sync.Mutex{},
-				SeekerStorage: map[uuid.UUID]Seeker{
-					uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"): {
-						Email:      "some_another@mail.com",
-						FirstName:  "Petya",
-						SecondName: "Zyablikov",
-						Password:   "12345",
-						Resumes: []uuid.UUID{
-							uuid.MustParse("7aa7b810-9dad-11d1-72b5-04c04fd430c8"),
-						},
-					},
-					uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"): {
-						Email:      "dmasis@mail.com",
-						FirstName:  "Vova",
-						SecondName: "Sidorov",
-						Password:   "12345",
-						Resumes: []uuid.UUID{
-							uuid.MustParse("7ba7b810-9dad-12d1-80b1-00c04fd430c8"),
-						},
-					},
-				},
-				EmployerStorage: map[uuid.UUID]Employer{
-					uuid.MustParse("6ba7b811-9dad-11d1-80b1-00c04fd430c8"): {
-						CompanyName:      "MCDonalds",
-						Site:             "petushki.com",
-						Email:            "petushki@mail.com",
-						FirstName:        "Vova",
-						SecondName:       "Zyablikov",
-						Password:         "1234",
-						PhoneNumber:      "12345678911",
-						ExtraPhoneNumber: "12345678910",
-						City:             "Petushki",
-						EmplNum:          "322",
-						Vacancies:        make([]uuid.UUID, 0),
-					},
-				},
-				ResumeStorage: map[uuid.UUID]Resume{
-					uuid.MustParse("7ba7b810-9dad-12d1-80b1-00c04fd430c8"): {
-						OwnerID:     uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
-						FirstName:   "Vova",
-						SecondName:  "Zyablikov",
-						City:        "Moscow",
-						PhoneNumber: "12345678910",
-						BirthDate:   "1994-21-08",
-						Sex:         "male",
-						Citizenship: "Russia",
-						Experience:  "7 years",
-						Profession:  "programmer",
-						Position:    "middle",
-						Wage:        "100500",
-						Education:   "MSU",
-						About:       "Hello employer",
-					},
-					uuid.MustParse("7aa7b810-9dad-11d1-72b5-04c04fd430c8"): {
-						OwnerID:     uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
-						FirstName:   "Petr",
-						SecondName:  "Zyablikov",
-						City:        "Moscow",
-						PhoneNumber: "12345678910",
-						BirthDate:   "1994-21-08",
-						Sex:         "male",
-						Citizenship: "Russia",
-						Experience:  "8 years",
-						Profession:  "programmer",
-						Position:    "senior",
-						Wage:        "100500",
-						Education:   "MSU",
-						About:       "Hello employer",
-					},
-				},
-				VacancyStorage: map[uuid.UUID]Vacancy{},
-			},
-		},
-	}
 	tests := []struct {
 		name             string
 		pathArg          string
 		cookieValue      string
 		wantUnauth       bool
-=======
-	tests := []struct {
-		name             string
-		pathArg          string
->>>>>>> 0ffc1e987c6bc6b935425bf07d111edecc90a0f3
 		wantFail         bool
 		wantStatusCode   int
 		wantErrorMessage string
+		resume           Resume
+		record           AuthStorageValue
 	}{
 		{
-<<<<<<< HEAD
 			name:             "Test1",
 			pathArg:          "7aa7b810-9dad-11d1-72b5-04c04fd430c8",
 			cookieValue:      "aaaaaaaaaa",
@@ -667,6 +435,28 @@ func TestHandler_DeleteResume(t *testing.T) {
 			wantFail:         true,
 			wantStatusCode:   http.StatusForbidden,
 			wantErrorMessage: ForbiddenMsg,
+			resume: Resume{
+				ID:          uuid.MustParse("7aa7b810-9dad-11d1-72b5-04c04fd430c8"),
+				OwnerID:     uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
+				FirstName:   "Vova",
+				SecondName:  "Zyablikov",
+				City:        "Moscow",
+				PhoneNumber: "12345678910",
+				BirthDate:   "1994-21-08",
+				Sex:         "male",
+				Citizenship: "Russia",
+				Experience:  "7 years",
+				Profession:  "programmer",
+				Position:    "middle",
+				Wage:        "100500",
+				Education:   "MSU",
+				About:       "Hello employer",
+			},
+			record: AuthStorageValue{
+				ID:      uuid.MustParse("7ba7b810-9bad-12d1-80b1-00c04fd430c8"),
+				Role:    SeekerStr,
+				Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
+			},
 		},
 		{
 			name:             "Test2",
@@ -677,94 +467,127 @@ func TestHandler_DeleteResume(t *testing.T) {
 			wantErrorMessage: UnauthorizedMsg,
 		},
 		{
-			name:        "Test3",
-			pathArg:     "7aa7b810-9dad-11d1-72b5-04c04fd430c8",
-			cookieValue: "cccccccc",
-			wantFail:    false,
+			name:       "Test3",
+			pathArg:    "7aa7b810-9dad-11d1-72b5-04c04fd430c8",
+			wantFail:   false,
+			wantUnauth: false,
+			resume: Resume{
+				ID:          uuid.MustParse("7aa7b810-9dad-11d1-72b5-04c04fd430c8"),
+				OwnerID:     uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
+				FirstName:   "Vova",
+				SecondName:  "Zyablikov",
+				City:        "Moscow",
+				PhoneNumber: "12345678910",
+				BirthDate:   "1994-10-08",
+				Sex:         "male",
+				Citizenship: "Russia",
+				Experience:  "7 years",
+				Profession:  "programmer",
+				Position:    "middle",
+				Wage:        "100500",
+				Education:   "MSU",
+				About:       "Hello employer",
+			},
+			record: AuthStorageValue{
+				ID:      uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
+				Role:    SeekerStr,
+				Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
+			},
 		},
 		{
-			name:             "Test3",
-			pathArg:          "ываывадлд",
-			cookieValue:      "cccccccc",
+			name:             "Test4",
+			pathArg:          "11111111-9dad-11d1-80b1-00#|<>c04fd430c8",
+			wantUnauth:       false,
 			wantFail:         true,
 			wantStatusCode:   http.StatusBadRequest,
 			wantErrorMessage: InvalidIdMsg,
+			record: AuthStorageValue{
+				ID:      uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
+				Role:    SeekerStr,
+				Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
+			},
 		},
-=======
-			name:     "Test1",
-			pathArg:  "22222222-9dad-11d1-80b1-00c04fd435c8",
-			wantFail: false,
+		{
+			name:             "Test5",
+			pathArg:          "7aa7b810-9dad-11d1-72b5-04c04fd430c8",
+			wantUnauth:       false,
+			wantFail:         true,
+			wantStatusCode:   http.StatusInternalServerError,
+			wantErrorMessage: InternalErrorMsg,
+			resume: Resume{
+				ID:          uuid.MustParse("7aa7b810-9dad-11d1-72b5-04c04fd430c8"),
+				OwnerID:     uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
+				FirstName:   "Vova",
+				SecondName:  "Zyablikov",
+				City:        "Moscow",
+				PhoneNumber: "12345678910",
+				BirthDate:   "1994-10-08",
+				Sex:         "male",
+				Citizenship: "Russia",
+				Experience:  "7 years",
+				Profession:  "programmer",
+				Position:    "middle",
+				Wage:        "100500",
+				Education:   "MSU",
+				About:       "Hello employer",
+			},
+			record: AuthStorageValue{
+				ID:      uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
+				Role:    SeekerStr,
+				Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
+			},
 		},
-		// {
-		// 	name:             "Test2",
-		// 	pathArg:          "222222-9dad-11d1-80b1-00c04fd435c8",
-		// 	wantFail:         true,
-		// 	wantStatusCode:   http.StatusBadRequest,
-		// 	wantErrorMessage: InvalidIdMsg,
-		// },
-		// {
-		// 	name:             "Test3",
-		// 	pathArg:          "фвапвапвпа_аыва",
-		// 	wantFail:         true,
-		// 	wantStatusCode:   http.StatusBadRequest,
-		// 	wantErrorMessage: InvalidIdMsg,
-		// },
->>>>>>> 0ffc1e987c6bc6b935425bf07d111edecc90a0f3
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			path := fmt.Sprintf("/resume/%s", tc.pathArg)
-<<<<<<< HEAD
 			req, err := http.NewRequest("DELETE", path, nil)
-=======
-			req, err := http.NewRequest("GET", path, nil)
->>>>>>> 0ffc1e987c6bc6b935425bf07d111edecc90a0f3
+
 			if err != nil {
 				t.Fatal(err)
 			}
 
-<<<<<<< HEAD
-			if !tc.wantUnauth {
-				cookie := http.Cookie{
-					Name:  auth.CookieName,
-					Value: tc.cookieValue,
-				}
-
-				req.AddCookie(&cookie)
+			if !tc.wantFail {
+				mockUserService.
+					EXPECT().
+					DeleteResume(tc.resume.ID, tc.record).
+					Return(nil)
+				mockUserService.
+					EXPECT().
+					GetResume(tc.resume.ID).
+					Return(Resume{}, errors.New(InvalidIdMsg))
+			} else if !tc.wantUnauth && tc.wantErrorMessage != InvalidIdMsg {
+				mockUserService.
+					EXPECT().
+					DeleteResume(tc.resume.ID, tc.record).
+					Return(errors.New(tc.wantErrorMessage))
 			}
+
+			req.Header.Set("Content-Type", "application/json")
+
 			rr := httptest.NewRecorder()
 
+			ctx := context.TODO()
+			if !tc.wantUnauth {
+				ctx = NewContext(req.Context(), tc.record)
+			}
+
 			router := mux.NewRouter()
+
 			router.HandleFunc("/resume/{id}", h.DeleteResume)
-=======
-			rr := httptest.NewRecorder()
-
-			router := mux.NewRouter()
-			router.HandleFunc("/resume/{id}", h.GetResume)
->>>>>>> 0ffc1e987c6bc6b935425bf07d111edecc90a0f3
-			router.ServeHTTP(rr, req)
+			router.ServeHTTP(rr, req.WithContext(ctx))
 
 			if !tc.wantFail {
 				if rr.Code != http.StatusOK {
 					t.Error("status is not ok")
 				}
-<<<<<<< HEAD
 
-				gotResume, ok := h.UserService.Storage.GetResume(uuid.MustParse(tc.pathArg))
+				gotResume, err := h.UserService.GetResume(uuid.MustParse(tc.pathArg))
 
 				var empResume Resume
-				if ok != false && gotResume != empResume {
+				if err != nil && gotResume != empResume {
 					require.Equal(t, gotResume, empResume, "The two values should be the same.")
 				}
-=======
-				bytes, _ := ioutil.ReadAll(rr.Body)
-				var gotResume Resume
-				json.Unmarshal(bytes, &gotResume)
-
-				wantResume, _ := h.UserService.Storage.GetResume(uuid.MustParse(tc.pathArg))
-
-				require.Equal(t, wantResume, gotResume, "The two values should be the same.")
->>>>>>> 0ffc1e987c6bc6b935425bf07d111edecc90a0f3
 			} else {
 				bytes, _ := ioutil.ReadAll(rr.Body)
 				var gotError Error
@@ -775,8 +598,150 @@ func TestHandler_DeleteResume(t *testing.T) {
 			}
 		})
 	}
-<<<<<<< HEAD
 }
-=======
+
+func TestHandler_PutResume(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockUserService := mock_users.NewMockService(mockCtrl)
+	h := Handler{
+		UserService: mockUserService,
+	}
+
+	tests := []struct {
+		name             string
+		pathArg          string
+		resume           Resume
+		record           AuthStorageValue
+		wantFail         bool
+		wantUnauth       bool
+		wantStatusCode   int
+		wantErrorMessage string
+	}{
+		{
+			name:    "Test1",
+			pathArg: "7ba7b810-9dad-12d1-80b1-00c04fd430c8",
+			resume: Resume{
+				ID:          uuid.MustParse("7ba7b810-9dad-12d1-80b1-00c04fd430c8"),
+				OwnerID:     uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
+				FirstName:   "Petya",
+				SecondName:  "Zyablikov",
+				City:        "Kaliningrad",
+				PhoneNumber: "12345678910",
+				BirthDate:   "1994-21-08",
+				Sex:         "male",
+				Citizenship: "Sweeden",
+				Experience:  "15 years",
+				Profession:  "programmer",
+				Position:    "senior",
+				Wage:        "100500",
+				Education:   "MSU",
+				About:       "Hello employer",
+			},
+			record: AuthStorageValue{
+				ID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
+				Role:    SeekerStr,
+				Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
+			},
+		},
+		{
+			name:    "Test2",
+			pathArg: "7ba7b810-9dad-12d1-80b1-00c04fd430c8",
+			resume: Resume{
+				ID:          uuid.MustParse("7ba7b810-9dad-12d1-80b1-00c04fd430c8"),
+				OwnerID:     uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
+				FirstName:   "Petya",
+				SecondName:  "Zyablikov",
+				City:        "Kaliningrad",
+				PhoneNumber: "12345678910",
+				BirthDate:   "1994-21-08",
+				Sex:         "male",
+				Citizenship: "Sweeden",
+				Experience:  "15 years",
+				Profession:  "programmer",
+				Position:    "senior",
+				Wage:        "100500",
+				Education:   "MSU",
+				About:       "Hello employer",
+			},
+			wantFail:         true,
+			wantStatusCode:   http.StatusForbidden,
+			wantErrorMessage: ForbiddenMsg,
+			record: AuthStorageValue{
+				ID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c1"),
+				Role:    SeekerStr,
+				Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
+			},
+		},
+		{
+			name:             "Test3",
+			wantUnauth:       true,
+			pathArg:          "7ba7b810-9dad-12d1-80b1-00c04fd430c8",
+			resume:           Resume{},
+			wantFail:         true,
+			wantStatusCode:   http.StatusUnauthorized,
+			wantErrorMessage: UnauthorizedMsg,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			wantJSON, _ := json.Marshal(tc.resume)
+
+			reader := strings.NewReader(string(wantJSON))
+
+			path := fmt.Sprintf("/resume/%s", tc.pathArg)
+			req, err := http.NewRequest("PUT", path, reader)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if !tc.wantFail {
+				mockUserService.
+					EXPECT().
+					PutResume(tc.resume.ID, req.Body, tc.record).
+					Return(nil)
+				mockUserService.
+					EXPECT().
+					GetResume(tc.resume.ID).
+					Return(tc.resume, nil)
+			} else if !tc.wantUnauth {
+				mockUserService.
+					EXPECT().
+					PutResume(tc.resume.ID, req.Body, tc.record).
+					Return(errors.New(tc.wantErrorMessage))
+			}
+
+			req.Header.Set("Content-Type", "application/json")
+
+			ctx := context.TODO()
+			if !tc.wantUnauth {
+				ctx = NewContext(req.Context(), tc.record)
+			}
+
+			rr := httptest.NewRecorder()
+			router := mux.NewRouter()
+			router.HandleFunc("/resume/{id}", h.PutResume)
+			router.ServeHTTP(rr, req.WithContext(ctx))
+
+			if !tc.wantFail {
+				gotResume, _ := h.UserService.GetResume(uuid.MustParse(tc.pathArg))
+
+				if rr.Code != http.StatusOK {
+					t.Error("status is not ok")
+				}
+				if tc.resume != gotResume {
+					require.Equal(t, tc.resume, gotResume, "The two values should be the same.")
+				}
+			} else {
+				bytes, _ := ioutil.ReadAll(rr.Body)
+				var gotError Error
+				json.Unmarshal(bytes, &gotError)
+
+				require.Equal(t, tc.wantStatusCode, rr.Code, "The two values should be the same.")
+				require.Equal(t, tc.wantErrorMessage, gotError.Message, "The two values should be the same.")
+			}
+		})
+	}
 }
->>>>>>> 0ffc1e987c6bc6b935425bf07d111edecc90a0f3
