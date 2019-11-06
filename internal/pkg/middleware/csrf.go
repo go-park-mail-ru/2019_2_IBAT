@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gorilla/context"
 )
 
 func CSRFMiddleware(h http.Handler) http.Handler {
@@ -21,10 +20,11 @@ func CSRFMiddleware(h http.Handler) http.Handler {
 			(req.Method == http.MethodPost && (req.RequestURI == "/seeker" || 
 			req.RequestURI == "/employer")) || req.Method == http.MethodGet {
 		} else {
-			token := req.Header.Get("X-CSRF-Token")
+			token := req.Header.Get("X-Csrf-Token")
 
-			authInfo, ok := context.Get(req, AuthRec).(AuthStorageValue)
+			authInfo, ok := FromContext(req.Context())
 			if !ok {
+				res.Header().Set("Content-Type", "application/json; charset=UTF-8")
 				res.WriteHeader(http.StatusUnauthorized)
 				errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg}) //token msg
 				res.Write([]byte(errJSON))
@@ -35,6 +35,7 @@ func CSRFMiddleware(h http.Handler) http.Handler {
 
 			_, err := csrf.Tokens.Check(authInfo.ID.String(), cookie.Value, token)
 			if err != nil {
+				res.Header().Set("Content-Type", "application/json; charset=UTF-8")
 				res.WriteHeader(http.StatusUnauthorized)
 				errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg}) //token msg
 				res.Write([]byte(errJSON))

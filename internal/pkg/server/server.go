@@ -65,7 +65,7 @@ func NewServer() (*Server, error) {
 	router.Use(middleware.CorsMiddleware)
 	router.Use(AccessLogOut.AccessLogMiddleware)
 	router.Use(aS.AuthMiddleware)
-	// router.Use(middleware.CSRFMiddleware)
+	router.Use(middleware.CSRFMiddleware)
 
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
 

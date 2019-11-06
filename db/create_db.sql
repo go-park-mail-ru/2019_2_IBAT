@@ -111,8 +111,7 @@ VALUES((SELECT id FROM persons WHERE email = 'yandex@mail.ru'), 'Yandex', 'Yande
 INSERT INTO vacancies(id, own_id, profession, region, position, experience,
 wage_from, wage_to, type_of_employment, tasks, requirements, work_schedule,
 conditions, about)VALUES(gen_random_uuid(),
-(SELECT own_id FROM companies WHERE company_name = 'Mail.ru'),
-'frontend developer', 'middle', 'Moscow', '4 years', 125000, 130000, 'Полная занятость',
+(SELECT own_id FROM companies WHERE company_name = 'Mail.ru'), 'frontend developer', 'middle', 'Moscow', '4 years', 125000, 130000, 'Полная занятость',
 'write frontend', 'JS', 'Полный день','nice office, good team', 'the best IT company');
 
 INSERT INTO vacancies(id, own_id, profession, region, position, experience,
