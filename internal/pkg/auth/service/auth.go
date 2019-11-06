@@ -58,10 +58,7 @@ func (auth *AuthService) AuthMiddleware(h http.Handler) http.Handler {
 			log.Println("AuthMiddleware: No cookie detected")
 		} else {
 			log.Println(auth.Storage)
-			log.Println("AuthMiddleware: Get cookie start")
 			record, ok := auth.Storage.Get(cookie.Value)
-
-			log.Println("AuthMiddleware: Get cookie end")
 
 			if ok {
 				// context.Set(req, AuthRec, record)

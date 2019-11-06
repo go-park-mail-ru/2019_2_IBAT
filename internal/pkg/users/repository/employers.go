@@ -23,7 +23,7 @@ func (m *DBUserStorage) CreateEmployer(employerInput Employer) bool {
 
 	_, err = m.DbConn.Exec(
 		"INSERT INTO persons(id, email, first_name, second_name, password_hash, role)"+
-			"VALUES($1, $2, $3, $4, $5, $6)", employerInput.ID, employerInput.Email, employerInput.FirstName,
+			"VALUES($1, $2, $3, $4, $5, $6);", employerInput.ID, employerInput.Email, employerInput.FirstName,
 		employerInput.SecondName, employerInput.Password, EmployerStr,
 	)
 
@@ -34,9 +34,9 @@ func (m *DBUserStorage) CreateEmployer(employerInput Employer) bool {
 
 	_, err = m.DbConn.Exec(
 		"INSERT INTO companies(own_id, company_name, site, phone_number, "+
-			"extra_phone_number, city, empl_num)VALUES($1, $2, $3, $4, $5, $6, $7)",
+			"extra_phone_number, region, empl_num)VALUES($1, $2, $3, $4, $5, $6, $7);",
 		employerInput.ID, employerInput.CompanyName, employerInput.Site, employerInput.PhoneNumber,
-		employerInput.ExtraPhoneNumber, employerInput.City, employerInput.EmplNum,
+		employerInput.ExtraPhoneNumber, employerInput.Region, employerInput.EmplNum,
 	)
 
 	if err != nil {
@@ -60,7 +60,7 @@ func (m *DBUserStorage) GetEmployer(id uuid.UUID) (Employer, error) {
 
 	rows := m.DbConn.QueryRowx("SELECT p.id, p.email, c.company_name, p.first_name, p.second_name, c.site,"+
 		"c.empl_num, c.phone_number, c.extra_phone_number, c.spheres_of_work, p.path_to_image,"+
-		"c.city FROM persons as p JOIN companies as c ON p.id = c.own_id WHERE p.id = $1;", id) //and p.class
+		"c.region FROM persons as p JOIN companies as c ON p.id = c.own_id WHERE p.id = $1;", id) //and p.class
 
 	empl := Employer{}
 	_ = rows.StructScan(&empl)
@@ -68,7 +68,7 @@ func (m *DBUserStorage) GetEmployer(id uuid.UUID) (Employer, error) {
 	// 	return employers, err
 	// }
 
-	id_rows, err := m.DbConn.Query("SELECT v.id FROM vacancies AS v WHERE v.own_id = $1", empl.ID)
+	id_rows, err := m.DbConn.Query("SELECT v.id FROM vacancies AS v WHERE v.own_id = $1;", empl.ID)
 	if err != nil {
 		return empl, errors.New(InternalErrorMsg)
 	}
@@ -111,9 +111,9 @@ func (m *DBUserStorage) PutEmployer(employerInput EmployerReg, id uuid.UUID) boo
 
 	_, err = m.DbConn.Exec(
 		"UPDATE companies SET company_name = $1, site = $2, phone_number = $3, "+
-			"extra_phone_number = $4, city = $5, empl_num = $6 WHERE own_id = $7;",
+			"extra_phone_number = $4, region = $5, empl_num = $6 WHERE own_id = $7;",
 		employerInput.CompanyName, employerInput.Site, employerInput.PhoneNumber,
-		employerInput.ExtraPhoneNumber, employerInput.City, employerInput.EmplNum, id,
+		employerInput.ExtraPhoneNumber, employerInput.Region, employerInput.EmplNum, id,
 	)
 
 	if err != nil {
@@ -137,7 +137,7 @@ func (m *DBUserStorage) GetEmployers() ([]Employer, error) {
 	employers := []Employer{}
 
 	rows, err := m.DbConn.Queryx("SELECT p.id, p.email, c.company_name, p.first_name, p.second_name, c.site,"+
-		"c.empl_num, c.phone_number, c.extra_phone_number, c.spheres_of_work, p.path_to_image, c.city, "+
+		"c.empl_num, c.phone_number, c.extra_phone_number, c.spheres_of_work, p.path_to_image, c.region, "+
 		" c.description FROM persons as p JOIN companies as c ON p.id = c.own_id WHERE role = $1;", EmployerStr)
 	defer rows.Close()
 
@@ -152,7 +152,7 @@ func (m *DBUserStorage) GetEmployers() ([]Employer, error) {
 		// 	return employers, err
 		// }
 
-		id_rows, err := m.DbConn.Query("SELECT v.id FROM vacancies AS v WHERE v.own_id = $1", empl.ID)
+		id_rows, err := m.DbConn.Query("SELECT v.id FROM vacancies AS v WHERE v.own_id = $1;", empl.ID)
 		if err != nil {
 			return employers, errors.New(InternalErrorMsg)
 		}

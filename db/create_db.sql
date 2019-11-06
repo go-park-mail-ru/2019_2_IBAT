@@ -20,7 +20,7 @@ CREATE TABLE companies(
     own_id uuid REFERENCES persons (id) ON DELETE CASCADE UNIQUE,
     site VARCHAR (70) NOT NULL,
     --not not null
-    city VARCHAR (70),
+    region  VARCHAR (70),
     phone_number VARCHAR (70),
     extra_phone_number VARCHAR (70),
     
@@ -34,7 +34,7 @@ CREATE TABLE resumes(
     id uuid PRIMARY KEY,
     own_id uuid REFERENCES persons (id) ON DELETE CASCADE,
     email VARCHAR (355) NOT NULL,
-    city  VARCHAR (50) NOT NULL,
+    region  VARCHAR (70) NOT NULL,
     phone_number VARCHAR (30) NOT NULL,
     first_name VARCHAR (50) NOT NULL,
     second_name VARCHAR (70) NOT NULL,
@@ -95,7 +95,7 @@ VALUES(gen_random_uuid(), 'vasyapupkin@mail.ru', 'Vasya', 'Pupkin', 'iearoiqdsfw
 INSERT INTO persons(id, email, first_name, second_name, password_hash, role)
 VALUES(gen_random_uuid(), 'main@mail.ru', 'Vladimir', 'Lenin', 'iearoiqdsfwejfka', 'employer');
 
-INSERT INTO companies(own_id, company_name, site, city, spheres_of_work, empl_num,
+INSERT INTO companies(own_id, company_name, site, region, spheres_of_work, empl_num,
 description, phone_number, extra_phone_number)
 VALUES((SELECT id FROM persons WHERE email = 'main@mail.ru'), 'Mail.ru', 'Mail.ru',
 'Moscow', 'IT, business', 'more than 1000', 'best company that ever existed', '89266239478', '8926639479');
@@ -107,7 +107,6 @@ INSERT INTO companies(own_id, company_name, site, spheres_of_work, empl_num,
 description, phone_number, extra_phone_number)
 VALUES((SELECT id FROM persons WHERE email = 'yandex@mail.ru'), 'Yandex', 'Yandex.ru',
 'IT, business', 'more than 1000', 'not so bad', '89266239479', '8926639479');
-
 
 INSERT INTO vacancies(id, own_id, profession, region, position, experience,
 wage_from, wage_to, type_of_employment, tasks, requirements, work_schedule,

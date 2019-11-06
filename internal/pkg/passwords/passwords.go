@@ -16,17 +16,3 @@ func CheckPass(passHash []byte, plainPassword string) bool {
 	userPassHash := HashPass(salt, plainPassword)
 	return bytes.Equal(userPassHash, passHash)
 }
-
-// func passExample() {
-// 	pass := "love"
-
-// 	salt := make([]byte, 8)
-// 	rand.Read(salt)
-// 	fmt.Printf("salt: %x\n", salt)
-
-// 	hashedPass := hashPass(salt, pass)
-// 	fmt.Printf("hashedPass: %x\n", hashedPass)
-
-// 	passValid := checkPass(hashedPass, pass)
-// 	fmt.Printf("passValid: %v\n", passValid)
-// }

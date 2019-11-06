@@ -27,8 +27,8 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 	}
 
 	var vacancyReg Vacancy
-	id := uuid.New()
-	vacancyReg.ID = id
+	// id := uuid.New()
+	// vacancyReg.ID = id
 	vacancyReg.OwnerID = authInfo.ID
 
 	err = json.Unmarshal(bytes, &vacancyReg)
@@ -38,9 +38,10 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 		return uuid.UUID{}, errors.New(InvalidJSONMsg)
 	}
 
-	// id := uuid.New()
-	// vacancyReg.ID = id
-	// vacancyReg.OwnerID = authInfo.ID
+	id := uuid.New()
+	vacancyReg.ID = id
+	vacancyReg.OwnerID = authInfo.ID
+
 	ok := h.Storage.CreateVacancy(vacancyReg)
 
 	if !ok {
@@ -68,7 +69,11 @@ func (h *UserService) DeleteVacancy(vacancyId uuid.UUID, authInfo AuthStorageVal
 
 	vacancy, err := h.Storage.GetVacancy(vacancyId)
 
-	if vacancy.OwnerID != authInfo.ID || err != nil { //error wrap
+	if err != nil {
+		return errors.New(InvalidIdMsg)
+	}
+
+	if vacancy.OwnerID != authInfo.ID { //error wrap
 		return errors.New(ForbiddenMsg)
 	}
 

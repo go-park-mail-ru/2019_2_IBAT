@@ -18,7 +18,8 @@ func CSRFMiddleware(h http.Handler) http.Handler {
 		log.Printf("req.Method = %s \n", req.Method)
 
 		if (req.RequestURI == "/auth" && (req.Method == http.MethodPost || req.Method == http.MethodGet)) ||
-			(req.Method == http.MethodPost && (req.RequestURI == "/seeker" || req.RequestURI == "/employer")) || req.Method == http.MethodGet {
+			(req.Method == http.MethodPost && (req.RequestURI == "/seeker" || 
+			req.RequestURI == "/employer")) || req.Method == http.MethodGet {
 		} else {
 			token := req.Header.Get("X-CSRF-Token")
 

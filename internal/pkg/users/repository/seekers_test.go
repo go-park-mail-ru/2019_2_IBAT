@@ -234,55 +234,55 @@ func TestDBUserStorage_GetSeekers_Fail(t *testing.T) { //ADD SECOND SELECT TEST 
 // 	}
 // }
 
-func TestDBUserStorage_GetSeeker_Fail(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	defer db.Close()
-	sqlxDB := sqlx.NewDb(db, "sqlmock")
+// func TestDBUserStorage_GetSeeker_Fail(t *testing.T) {
+// 	db, mock, err := sqlmock.New()
+// 	defer db.Close()
+// 	sqlxDB := sqlx.NewDb(db, "sqlmock")
 
-	if err != nil {
-		t.Fatalf("cant create mock: %s", err)
-	}
-	defer sqlxDB.Close()
+// 	if err != nil {
+// 		t.Fatalf("cant create mock: %s", err)
+// 	}
+// 	defer sqlxDB.Close()
 
-	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642bbba")
-	rows := sqlmock.
-		NewRows([]string{"id", "email", "first_name", "second_name", "path_to_image"})
+// 	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642bbba")
+// 	rows := sqlmock.
+// 		NewRows([]string{"id", "email", "first_name", "second_name", "path_to_image"})
 
-	mock.
-		ExpectQuery("SELECT id, email, first_name, second_name," +
-			"path_to_image FROM persons WHERE").
-		WithArgs(id).
-		WillReturnRows(rows)
+// 	mock.
+// 		ExpectQuery("SELECT id, email, first_name, second_name," +
+// 			"path_to_image FROM persons WHERE").
+// 		WithArgs(id).
+// 		WillReturnRows(rows)
 
-	// mock.
-	// 	ExpectQuery("SELECT r.id FROM resumes AS r WHERE").
-	// 	WithArgs(id).
-	// 	WillReturnError(errors.New("GetSeeker: Invalid id"))
-	// mock.
-	// 	ExpectQuery("SELECT v.id, v.own_id, c.company_name, v.experience," +
-	// 		"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
-	// 		" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE").
-	// 	WithArgs(id).
-	// 	WillReturnError(errors.New("GetVacancy: error while querying"))
+// 	// mock.
+// 	// 	ExpectQuery("SELECT r.id FROM resumes AS r WHERE").
+// 	// 	WithArgs(id).
+// 	// 	WillReturnError(errors.New("GetSeeker: Invalid id"))
+// 	// mock.
+// 	// 	ExpectQuery("SELECT v.id, v.own_id, c.company_name, v.experience," +
+// 	// 		"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
+// 	// 		" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE").
+// 	// 	WithArgs(id).
+// 	// 	WillReturnError(errors.New("GetVacancy: error while querying"))
 
-	repo := DBUserStorage{
-		DbConn: sqlxDB,
-	}
+// 	repo := DBUserStorage{
+// 		DbConn: sqlxDB,
+// 	}
 
-	seeker, err := repo.GetSeeker(id)
-	fmt.Println(seeker)
+// 	seeker, err := repo.GetSeeker(id)
+// 	fmt.Println(seeker)
 
-	if err == nil {
-		fmt.Println(err)
-		t.Errorf("Expected err")
-		return
-	}
+// 	if err == nil {
+// 		fmt.Println(err)
+// 		t.Errorf("Expected err")
+// 		return
+// 	}
 
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
-		return
-	}
-}
+// 	if err := mock.ExpectationsWereMet(); err != nil {
+// 		t.Errorf("there were unfulfilled expectations: %s", err)
+// 		return
+// 	}
+// }
 
 // func TestDBUserStorage_CreateVacancy_Correct(t *testing.T) {
 // 	db, mock, err := sqlmock.New()

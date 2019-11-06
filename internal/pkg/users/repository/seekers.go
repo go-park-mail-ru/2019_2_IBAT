@@ -17,7 +17,7 @@ func (m *DBUserStorage) CreateSeeker(seekerInput Seeker) bool {
 
 	_, err := m.DbConn.Exec(
 		"INSERT INTO persons(id, email, first_name, second_name, password_hash, role)"+
-			"VALUES($1, $2, $3, $4, $5, $6)", seekerInput.ID, seekerInput.Email, seekerInput.FirstName,
+			"VALUES($1, $2, $3, $4, $5, $6);", seekerInput.ID, seekerInput.Email, seekerInput.FirstName,
 		seekerInput.SecondName, seekerInput.Password, SeekerStr,
 	)
 

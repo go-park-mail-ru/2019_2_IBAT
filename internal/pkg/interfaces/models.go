@@ -50,7 +50,7 @@ type EmployerReg struct {
 	PhoneNumber      string `json:"phone_number"`
 	ExtraPhoneNumber string `json:"extra_phone_number"`
 	Password         string `json:"password"`
-	City             string `json:"city"`
+	Region           string `json:"region"`
 	EmplNum          string `json:"empl_num"`
 }
 
@@ -65,7 +65,7 @@ type Seeker struct {
 } //add extra fields
 
 type Employer struct {
-	ID               uuid.UUID   `json:"id"                  db:"id"`
+	ID               uuid.UUID   `json:"id"                 db:"id"`
 	CompanyName      string      `json:"company_name"       db:"company_name"`
 	Site             string      `json:"site"               db:"site"`
 	FirstName        string      `json:"first_name"         db:"first_name"`
@@ -75,7 +75,7 @@ type Employer struct {
 	ExtraPhoneNumber string      `json:"extra_phone_number" db:"extra_phone_number"`
 	SpheresOfWork    string      `json:"spheres_of_work"    db:"spheres_of_work"`
 	Password         string      `json:"password"           db:"-"`
-	City             string      `json:"city"               db:"city"`
+	Region           string      `json:"region"             db:"region"`
 	EmplNum          string      `json:"empl_num"           db:"empl_num"`
 	PathToImg        string      `json:"path_to_img"        db:"path_to_image"`
 	Description      string      `json:"description"        db:"description"`
@@ -83,22 +83,24 @@ type Employer struct {
 } //add extra fields
 
 type Resume struct {
-	ID          uuid.UUID `json:"id"           db:"id"`
-	OwnerID     uuid.UUID `json:"own_id"       db:"own_id"`
-	FirstName   string    `json:"first_name"   db:"first_name"`
-	SecondName  string    `json:"second_name"  db:"second_name"`
-	City        string    `json:"city"         db:"city"`
-	Email       string    `json:"email"        db:"email"`
-	PhoneNumber string    `json:"phone_number" db:"phone_number"`
-	BirthDate   string    `json:"birth_date"   db:"birth_date"`
-	Sex         string    `json:"sex"          db:"sex"`
-	Citizenship string    `json:"citizenship"  db:"citizenship"`
-	Experience  string    `json:"experience"   db:"experience"`
-	Profession  string    `json:"profession"   db:"profession"`
-	Position    string    `json:"position"     db:"position"`
-	Wage        string    `json:"wage"         db:"wage"`
-	Education   string    `json:"education"    db:"education"`
-	About       string    `json:"about"        db:"about"`
+	ID               uuid.UUID `json:"id"                  db:"id"`
+	OwnerID          uuid.UUID `json:"own_id"              db:"own_id"`
+	FirstName        string    `json:"first_name"          db:"first_name"`
+	SecondName       string    `json:"second_name"         db:"second_name"`
+	Region           string    `json:"region"              db:"region"`
+	Email            string    `json:"email"               db:"email"`
+	PhoneNumber      string    `json:"phone_number"        db:"phone_number"`
+	BirthDate        string    `json:"birth_date"          db:"birth_date"`
+	Sex              string    `json:"sex"                 db:"sex"`
+	TypeOfEmployment string    `json:"type_of_employment"  db:"type_of_employment"`
+	WorkSchedule     string    `json:"work_schedule"       db:"work_schedule"`
+	Citizenship      string    `json:"citizenship"         db:"citizenship"`
+	Experience       string    `json:"experience"          db:"experience"`
+	Profession       string    `json:"profession"          db:"profession"`
+	Position         string    `json:"position"            db:"position"`
+	Wage             string    `json:"wage"                db:"wage"`
+	Education        string    `json:"education"           db:"education"`
+	About            string    `json:"about"               db:"about"`
 }
 
 type Message struct {
@@ -114,18 +116,21 @@ type Role struct {
 }
 
 type Vacancy struct {
-	ID           uuid.UUID `json:"id"            db:"id"`
-	OwnerID      uuid.UUID `json:"owner_id"      db:"own_id"` //should be escaped
-	CompanyName  string    `json:"company_name"  db:"company_name"`
-	Experience   string    `json:"experience"    db:"experience"`
-	Profession   string    `json:"profession"    db:"profession"`
-	Position     string    `json:"position"      db:"position"`
-	Tasks        string    `json:"tasks"         db:"tasks"`
-	Requirements string    `json:"requirements"  db:"requirements"`
-	WageFrom     string    `json:"wage_from"     db:"wage_from"`
-	WageTo       string    `json:"wage_to"       db:"wage_to"`
-	Conditions   string    `json:"conditions"    db:"conditions"`
-	About        string    `json:"about"         db:"about"`
+	ID               uuid.UUID `json:"id"                  db:"id"`
+	OwnerID          uuid.UUID `json:"owner_id"            db:"own_id"`
+	Region           string    `json:"region"              db:"region"`
+	CompanyName      string    `json:"company_name"        db:"company_name"`
+	Experience       string    `json:"experience"          db:"experience"`
+	Profession       string    `json:"profession"     	   db:"profession"`
+	Position         string    `json:"position"            db:"position"`
+	Tasks            string    `json:"tasks"               db:"tasks"`
+	Requirements     string    `json:"requirements"        db:"requirements"`
+	WageFrom         string    `json:"wage_from"           db:"wage_from"`
+	TypeOfEmployment string    `json:"type_of_employment"  db:"type_of_employment"`
+	WorkSchedule     string    `json:"work_schedule"       db:"work_schedule"`
+	WageTo           string    `json:"wage_to"             db:"wage_to"`
+	Conditions       string    `json:"conditions"          db:"conditions"`
+	About            string    `json:"about"               db:"about"`
 }
 
 type Respond struct {
@@ -145,11 +150,6 @@ type UserAuthInput struct {
 	Password string `json:"password"`
 }
 
-// type Handler struct {
-// 	Storage AuthStorage
-// 	Mu      *sync.Mutex
-// }
-
 type Error struct {
 	Message string            `json:"error"`
 	Params  map[string]string `json:"params"`
@@ -163,9 +163,7 @@ func NewContext(ctx context.Context, authInfo AuthStorageValue) context.Context 
 	return context.WithValue(ctx, AuthRec, authInfo)
 }
 
-// FromContext extracts the user IP address from ctx, if present.
 func FromContext(ctx context.Context) (AuthStorageValue, bool) {
-
 	authInfo, ok := ctx.Value(AuthRec).(AuthStorageValue)
 	return authInfo, ok
 }

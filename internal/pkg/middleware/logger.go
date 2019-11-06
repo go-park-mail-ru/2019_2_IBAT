@@ -9,8 +9,6 @@ import (
 
 type AccessLogger struct {
 	StdLogger *log.Logger
-	// ZapLogger    *zap.SugaredLogger
-	// LogrusLogger *logrus.Entry
 }
 
 func (ac AccessLogger) AccessLogMiddleware(next http.Handler) http.Handler {
@@ -26,18 +24,5 @@ func (ac AccessLogger) AccessLogMiddleware(next http.Handler) http.Handler {
 
 		ac.StdLogger.Printf("[%s] %s, %s %s\n",
 			r.Method, r.RemoteAddr, r.URL.Path, time.Since(start))
-
-		// ac.ZapLogger.Info(r.URL.Path,
-		// 	zap.String("method", r.Method),
-		// 	zap.String("remote_addr", r.RemoteAddr),
-		// 	zap.String("url", r.URL.Path),
-		// 	zap.Duration("work_time", time.Since(start)),
-		// )
-
-		// ac.LogrusLogger.WithFields(logrus.Fields{
-		// 	"method":      r.Method,
-		// 	"remote_addr": r.RemoteAddr,
-		// 	"work_time":   time.Since(start),
-		// }).Info(r.URL.Path)
 	})
 }

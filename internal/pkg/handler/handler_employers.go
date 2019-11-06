@@ -59,7 +59,8 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) { //+
 		Expires: expiresAt,
 	}
 
-	w.Header().Set("X-CSRF-Token", token)
+	w.Header().Set("Access-Control-Expose-Headers", "X-Csrf-Token")
+	w.Header().Set("X-Csrf-Token", token)
 	http.SetCookie(w, &cookie)
 	RoleJSON, _ := json.Marshal(Role{Role: authInfo.Role})
 

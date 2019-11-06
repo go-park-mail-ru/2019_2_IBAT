@@ -27,9 +27,9 @@ func (h *UserService) CreateResume(body io.ReadCloser, authInfo AuthStorageValue
 	}
 
 	var resumeReg Resume
-	id := uuid.New()
-	resumeReg.ID = id
-	resumeReg.OwnerID = authInfo.ID
+	// id := uuid.New()
+	// resumeReg.ID = id
+	// resumeReg.OwnerID = authInfo.ID
 	err = json.Unmarshal(bytes, &resumeReg)
 	if err != nil {
 		// log.Printf("Error while unmarshaling: %s", err)
@@ -37,9 +37,9 @@ func (h *UserService) CreateResume(body io.ReadCloser, authInfo AuthStorageValue
 		return uuid.UUID{}, errors.New(InvalidJSONMsg)
 	}
 
-	// id := uuid.New()
-	// resumeReg.ID = id
-	// resumeReg.OwnerID = authInfo.ID
+	id := uuid.New()
+	resumeReg.ID = id
+	resumeReg.OwnerID = authInfo.ID
 	ok := h.Storage.CreateResume(resumeReg)
 
 	if !ok {

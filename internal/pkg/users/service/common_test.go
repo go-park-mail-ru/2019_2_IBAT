@@ -21,9 +21,7 @@ func TestUserService_DeleteUser(t *testing.T) {
 	}
 
 	tests := []struct {
-		name string
-		// fields  fields
-		// args    args
+		name             string
 		record           AuthStorageValue
 		wantFail         bool
 		wantErrorMessage string

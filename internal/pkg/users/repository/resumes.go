@@ -11,10 +11,10 @@ import (
 
 func (m *DBUserStorage) CreateResume(resumeReg Resume) bool {
 	_, err := m.DbConn.Exec("INSERT INTO resumes(id, own_id, first_name, second_name, email, "+
-		"city, phone_number, birth_date, sex, citizenship, experience, profession, "+
+		"region, phone_number, birth_date, sex, citizenship, experience, profession, "+
 		"position, wage, education, about)"+
 		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16);",
-		resumeReg.ID, resumeReg.OwnerID, resumeReg.FirstName, resumeReg.SecondName, resumeReg.Email, resumeReg.City,
+		resumeReg.ID, resumeReg.OwnerID, resumeReg.FirstName, resumeReg.SecondName, resumeReg.Email, resumeReg.Region,
 		resumeReg.PhoneNumber, resumeReg.BirthDate, resumeReg.Sex, resumeReg.Citizenship, resumeReg.Experience,
 		resumeReg.Profession, resumeReg.Position, resumeReg.Wage, resumeReg.Education, resumeReg.About,
 	)
@@ -30,7 +30,7 @@ func (m *DBUserStorage) CreateResume(resumeReg Resume) bool {
 func (m *DBUserStorage) GetResume(id uuid.UUID) (Resume, error) {
 
 	row := m.DbConn.QueryRowx("SELECT id, own_id, first_name, second_name, email, "+
-		"city, phone_number, birth_date, sex, citizenship, experience, profession, "+
+		"region, phone_number, birth_date, sex, citizenship, experience, profession, "+
 		"position, wage, education, about FROM resumes WHERE id = $1;", id,
 	)
 
@@ -61,10 +61,10 @@ func (m *DBUserStorage) PutResume(resume Resume, userId uuid.UUID, resumeId uuid
 
 	_, err := m.DbConn.Exec("UPDATE resumes SET "+
 		"first_name = $1, second_name = $2, email = $3, "+
-		"city = $4, phone_number = $5, birth_date = $6, sex = $7, citizenship = $8, "+
+		"region = $4, phone_number = $5, birth_date = $6, sex = $7, citizenship = $8, "+
 		"experience = $9, profession = $10, position = $11, wage = $12, education = $13, about = $14 "+
 		"WHERE id = $15 AND own_id = $16;",
-		resume.FirstName, resume.SecondName, resume.Email, resume.City, resume.PhoneNumber,
+		resume.FirstName, resume.SecondName, resume.Email, resume.Region, resume.PhoneNumber,
 		resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience, resume.Profession,
 		resume.Position, resume.Wage, resume.Education, resume.About, resumeId, userId,
 	)
@@ -82,7 +82,7 @@ func (m *DBUserStorage) GetResumes() ([]Resume, error) {
 	resumes := []Resume{}
 
 	rows, err := m.DbConn.Queryx("SELECT id, own_id, first_name, second_name, email, " +
-		"city, phone_number, birth_date, sex, citizenship, experience, profession, " +
+		"region, phone_number, birth_date, sex, citizenship, experience, profession, " +
 		"position, wage, education, about FROM resumes;",
 	)
 	if err != nil {

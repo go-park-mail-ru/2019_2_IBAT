@@ -52,11 +52,11 @@ func (m *DBUserStorage) GetResponds(record AuthStorageValue, params map[string]s
 		if record.Role == EmployerStr {
 			rows, _ = m.DbConn.Queryx("SELECT DISTINCT r.resume_id, r.vacancy_id, r.status "+
 				"FROM vacancies AS v  JOIN responds AS r ON v.id = r.vacancy_id "+
-				"JOIN persons AS p ON v.own_id = $1", record.ID) ///fix join
+				"JOIN persons AS p ON v.own_id = $1;", record.ID) ///fix join
 		} else if record.Role == SeekerStr {
 			rows, _ = m.DbConn.Queryx("SELECT DISTINCT r.resume_id, r.vacancy_id, r.status "+
 				"FROM resumes AS res JOIN responds AS r ON res.id = r.resume_id "+
-				"JOIN persons AS p ON res.own_id = $1", record.ID) ///fix join
+				"JOIN persons AS p ON res.own_id = $1;", record.ID) ///fix join
 		}
 
 	}

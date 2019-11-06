@@ -22,7 +22,7 @@ func TestDBUserStorage_GetResumes_Correct(t *testing.T) {
 	}
 
 	rows := sqlmock.
-		NewRows([]string{"id", "own_id", "email", "city", "phone_number",
+		NewRows([]string{"id", "own_id", "email", "region", "phone_number",
 			"first_name", "second_name", "birth_date", "sex", "citizenship",
 			"profession", "position", "experience", "education", "wage", "about",
 		})
@@ -31,7 +31,7 @@ func TestDBUserStorage_GetResumes_Correct(t *testing.T) {
 			ID:      uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
 			OwnerID: uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
 			// Email:       "",
-			City:        "Moscow",
+			Region:      "Moscow",
 			PhoneNumber: "12345678910",
 			FirstName:   "Vova",
 			SecondName:  "Zyablikov",
@@ -49,7 +49,7 @@ func TestDBUserStorage_GetResumes_Correct(t *testing.T) {
 			ID:          uuid.MustParse("f14c6104-3431-413b-ab4e-e31c8642ad8a"),
 			OwnerID:     uuid.MustParse("92b77777-bac7-4597-ab71-7b5fbe53052d"),
 			Email:       "email@mail.ru",
-			City:        "Moscow",
+			Region:      "Moscow",
 			PhoneNumber: "12345678910",
 			FirstName:   "Petya",
 			SecondName:  "Zyablikov",
@@ -66,7 +66,7 @@ func TestDBUserStorage_GetResumes_Correct(t *testing.T) {
 	}
 
 	for _, item := range expect {
-		rows = rows.AddRow(item.ID.String(), item.OwnerID.String(), item.Email, item.City, item.PhoneNumber, item.FirstName,
+		rows = rows.AddRow(item.ID.String(), item.OwnerID.String(), item.Email, item.Region, item.PhoneNumber, item.FirstName,
 			item.SecondName, item.BirthDate, item.Sex, item.Citizenship, item.Profession,
 			item.Position, item.Experience, item.Education, item.Wage, item.About,
 		)
@@ -74,7 +74,7 @@ func TestDBUserStorage_GetResumes_Correct(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT id, own_id, first_name, second_name, email, " +
-			"city, phone_number, birth_date, sex, citizenship, experience, profession, " +
+			"region, phone_number, birth_date, sex, citizenship, experience, profession, " +
 			"position, wage, education, about FROM resumes").
 		WithArgs().
 		WillReturnRows(rows)
@@ -110,7 +110,7 @@ func TestDBUserStorage_GetResumes_Fail(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT id, own_id, first_name, second_name, email, " +
-			"city, phone_number, birth_date, sex, citizenship, experience, profession, " +
+			"region, phone_number, birth_date, sex, citizenship, experience, profession, " +
 			"position, wage, education, about FROM resumes").
 		WithArgs().
 		WillReturnError(errors.New("GetResume: error while querying"))
@@ -149,7 +149,7 @@ func TestDBUserStorage_GetResume_Correct(t *testing.T) {
 			ID:          uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
 			OwnerID:     uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
 			Email:       "",
-			City:        "Moscow",
+			Region:      "Moscow",
 			PhoneNumber: "12345678910",
 			FirstName:   "Vova",
 			SecondName:  "Zyablikov",
@@ -167,16 +167,16 @@ func TestDBUserStorage_GetResume_Correct(t *testing.T) {
 
 	rows := sqlmock.
 		NewRows([]string{"id", "own_id", "first_name", "second_name", "email",
-			"city", "phone_number", "birth_date", "sex", "citizenship",
+			"region", "phone_number", "birth_date", "sex", "citizenship",
 			"experience", "profession", "position", "wage", "education", "about",
-		}).AddRow(expect[0].ID.String(), expect[0].OwnerID.String(), expect[0].FirstName, expect[0].SecondName, expect[0].Email, expect[0].City,
+		}).AddRow(expect[0].ID.String(), expect[0].OwnerID.String(), expect[0].FirstName, expect[0].SecondName, expect[0].Email, expect[0].Region,
 		expect[0].PhoneNumber, expect[0].BirthDate, expect[0].Sex, expect[0].Citizenship, expect[0].Experience,
 		expect[0].Profession, expect[0].Position, expect[0].Wage, expect[0].Education, expect[0].About,
 	)
 	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a")
 	mock.
 		ExpectQuery("SELECT id, own_id, first_name, second_name, email, " +
-			"city, phone_number, birth_date, sex, citizenship, experience, profession, " +
+			"region, phone_number, birth_date, sex, citizenship, experience, profession, " +
 			"position, wage, education, about FROM resumes").
 		WithArgs(id).
 		WillReturnRows(rows)
@@ -214,7 +214,7 @@ func TestDBUserStorage_GetResume_Fail(t *testing.T) {
 	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642bbba")
 	mock.
 		ExpectQuery("SELECT id, own_id, first_name, second_name, email, " +
-			"city, phone_number, birth_date, sex, citizenship, experience, profession, " +
+			"region, phone_number, birth_date, sex, citizenship, experience, profession, " +
 			"position, wage, education, about FROM resumes").
 		WithArgs(id).
 		WillReturnError(errors.New("GetResume: error while querying"))
@@ -251,7 +251,7 @@ func TestDBUserStorage_CreateResume_Correct(t *testing.T) {
 		ID:          uuid.MustParse("11b77a73-bac7-4597-ab71-7b5fbe53052d"),
 		OwnerID:     uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
 		Email:       "email@mail.ru",
-		City:        "Moscow",
+		Region:      "Moscow",
 		PhoneNumber: "12345678910",
 		FirstName:   "Vova",
 		SecondName:  "Zyablikov",
@@ -269,7 +269,7 @@ func TestDBUserStorage_CreateResume_Correct(t *testing.T) {
 	mock.
 		ExpectExec(`INSERT INTO resumes`).
 		WithArgs(
-			resume.ID, resume.OwnerID, resume.FirstName, resume.SecondName, resume.Email, resume.City,
+			resume.ID, resume.OwnerID, resume.FirstName, resume.SecondName, resume.Email, resume.Region,
 			resume.PhoneNumber, resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience,
 			resume.Profession, resume.Position, resume.Wage, resume.Education, resume.About,
 		).
@@ -301,7 +301,7 @@ func TestDBUserStorage_CreateResume_False(t *testing.T) {
 		ID:          uuid.MustParse("11b77a73-bac7-4597-ab71-7b5fbe53052d"),
 		OwnerID:     uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
 		Email:       "email@mail.ru",
-		City:        "Moscow",
+		Region:      "Moscow",
 		PhoneNumber: "12345678910",
 		BirthDate:   "1999-112-100",
 		Citizenship: "Russia",
@@ -316,7 +316,7 @@ func TestDBUserStorage_CreateResume_False(t *testing.T) {
 	mock.
 		ExpectExec(`INSERT INTO resumes`).
 		WithArgs(
-			resume.ID, resume.OwnerID, resume.FirstName, resume.SecondName, resume.Email, resume.City,
+			resume.ID, resume.OwnerID, resume.FirstName, resume.SecondName, resume.Email, resume.Region,
 			resume.PhoneNumber, resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience,
 			resume.Profession, resume.Position, resume.Wage, resume.Education, resume.About,
 		).
@@ -367,7 +367,7 @@ func TestDBUserStorage_DeleteResume_Correct(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT id, own_id, first_name, second_name, email, " +
-			"city, phone_number, birth_date, sex, citizenship, experience, profession, " +
+			"region, phone_number, birth_date, sex, citizenship, experience, profession, " +
 			"position, wage, education, about FROM resumes").
 		WithArgs(id).
 		WillReturnError(fmt.Errorf("bad query"))
@@ -436,7 +436,7 @@ func TestDBUserStorage_PutResume_Correct(t *testing.T) {
 		ID:          uuid.MustParse("11b77a73-bac7-4597-ab71-7b5fbe53052d"),
 		OwnerID:     uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
 		Email:       "ema@mail.ru",
-		City:        "Moscow",
+		Region:      "Moscow",
 		PhoneNumber: "12345678910",
 		FirstName:   "Vova",
 		SecondName:  "Zyablikov",
@@ -454,7 +454,7 @@ func TestDBUserStorage_PutResume_Correct(t *testing.T) {
 	mock.
 		ExpectExec(`UPDATE resumes SET`).
 		WithArgs(
-			resume.FirstName, resume.SecondName, resume.Email, resume.City, resume.PhoneNumber,
+			resume.FirstName, resume.SecondName, resume.Email, resume.Region, resume.PhoneNumber,
 			resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience, resume.Profession,
 			resume.Position, resume.Wage, resume.Education, resume.About, resume.ID, resume.OwnerID,
 		).
@@ -489,7 +489,7 @@ func TestDBUserStorage_PutResume_False(t *testing.T) {
 		ID:          uuid.MustParse("11b77a73-bac7-4597-ab71-7b5fbe53052d"),
 		OwnerID:     uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
 		Email:       "email@mail.ru",
-		City:        "Moscow",
+		Region:      "Moscow",
 		PhoneNumber: "12345678910",
 		BirthDate:   "1999-112-100",
 		Citizenship: "Russia",
@@ -504,7 +504,7 @@ func TestDBUserStorage_PutResume_False(t *testing.T) {
 	mock.
 		ExpectExec(`UPDATE resumes SET`).
 		WithArgs(
-			resume.FirstName, resume.SecondName, resume.Email, resume.City, resume.PhoneNumber,
+			resume.FirstName, resume.SecondName, resume.Email, resume.Region, resume.PhoneNumber,
 			resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience, resume.Profession,
 			resume.Position, resume.Wage, resume.Education, resume.About, resume.ID, resume.OwnerID,
 		).

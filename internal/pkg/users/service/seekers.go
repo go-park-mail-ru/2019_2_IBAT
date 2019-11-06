@@ -21,8 +21,8 @@ func (h *UserService) CreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
 	}
 
 	var newSeekerReg Seeker
-	id := uuid.New()
-	newSeekerReg.ID = id
+	// id := uuid.New()
+	// newSeekerReg.ID = id
 	err = json.Unmarshal(bytes, &newSeekerReg)
 	if err != nil {
 		// log.Printf("Error while unmarshaling: %s", err)
@@ -30,9 +30,8 @@ func (h *UserService) CreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
 		return uuid.UUID{}, errors.New(InvalidJSONMsg)
 	}
 
-	// id := uuid.New()
-	// newSeekerReg.ID = id
-
+	id := uuid.New()
+	newSeekerReg.ID = id
 	ok := h.Storage.CreateSeeker(newSeekerReg)
 	if !ok {
 		// log.Println("Here inside users")
