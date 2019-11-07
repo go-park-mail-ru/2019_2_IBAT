@@ -127,11 +127,7 @@ func paramsToQuery(params map[string]interface{}) string {
 	}
 
 	if params["wage_from"] != nil {
-		query = append(query, "wage_from >= :wage_from")
-	}
-
-	if params["wage_to"] != nil {
-		query = append(query, "wage_from <= :wage_to")
+		query = append(query, "wage_to >= :wage_from")
 	}
 
 	if params["experience"] != nil {

@@ -52,6 +52,7 @@ type EmployerReg struct {
 	Password         string `json:"password"`
 	Region           string `json:"region"`
 	EmplNum          string `json:"empl_num"`
+	//SpheresOfWork    string      `json:"spheres_of_work"    db:"spheres_of_work"`
 }
 
 type Seeker struct {
@@ -121,7 +122,7 @@ type Vacancy struct {
 	Region           string    `json:"region"              db:"region"`
 	CompanyName      string    `json:"company_name"        db:"company_name"`
 	Experience       string    `json:"experience"          db:"experience"`
-	Profession       string    `json:"profession"     	   db:"profession"`
+	Profession       string    `json:"profession"     db:"profession"`
 	Position         string    `json:"position"            db:"position"`
 	Tasks            string    `json:"tasks"               db:"tasks"`
 	Requirements     string    `json:"requirements"        db:"requirements"`

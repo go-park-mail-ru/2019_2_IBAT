@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"net/http"
+	"net/url"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -14,28 +15,7 @@ import (
 func (h *Handler) GetVacancies(w http.ResponseWriter, r *http.Request) { //+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-	query := r.URL.Query()
-	params := make(map[string]interface{})
-
-	//separate func
-	if query.Get("region") != "" {
-		params["region"] = query.Get("region")
-	}
-	if query.Get("wage_from") != "" {
-		params["wage_from"] = query.Get("wage_from")
-	}
-	if query.Get("wage_to") != "" {
-		params["wage_to"] = query.Get("wage_to")
-	}
-	if query.Get("experience") != "" {
-		params["experience"] = query.Get("experience")
-	}
-	if query.Get("type_of_employment") != "" {
-		params["type_of_employment"] = query.Get("type_of_employment")
-	}
-	if query.Get("work_schedule") != "" {
-		params["work_schedule"] = query.Get("work_schedule")
-	}
+	params := h.ParseVacanciesQuery(r.URL.Query())
 
 	log.Printf("Params map length: %d\n", len(params))
 
@@ -181,4 +161,26 @@ func (h *Handler) PutVacancy(w http.ResponseWriter, r *http.Request) { //+
 		w.Write([]byte(errJSON))
 		return
 	}
+}
+
+func (h *Handler) ParseVacanciesQuery(query url.Values) map[string]interface{} {
+	params := make(map[string]interface{})
+
+	if query.Get("region") != "" {
+		params["region"] = query.Get("region")
+	}
+	if query.Get("wage") != "" {
+		params["wage_from"] = query.Get("wage")
+	}
+	if query.Get("experience") != "" {
+		params["experience"] = query.Get("experience")
+	}
+	if query.Get("type_of_employment") != "" {
+		params["type_of_employment"] = query.Get("type_of_employment")
+	}
+	if query.Get("work_schedule") != "" {
+		params["work_schedule"] = query.Get("work_schedule")
+	}
+
+	return params
 }

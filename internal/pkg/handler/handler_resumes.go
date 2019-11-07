@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"net/http"
+	"net/url"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -174,4 +175,29 @@ func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) {
 	resumesJSON, _ := json.Marshal(resumes)
 
 	w.Write([]byte(resumesJSON))
+}
+
+func (h *Handler) ParseResumesQuery(query url.Values) map[string]interface{} {
+	params := make(map[string]interface{})
+
+	if query.Get("region") != "" {
+		params["region"] = query.Get("region")
+	}
+	if query.Get("wage_from") != "" {
+		params["wage_from"] = query.Get("wage_from")
+	}
+	if query.Get("wage_to") != "" {
+		params["wage_to"] = query.Get("wage_to")
+	}
+	if query.Get("experience") != "" {
+		params["experience"] = query.Get("experience")
+	}
+	if query.Get("type_of_employment") != "" {
+		params["type_of_employment"] = query.Get("type_of_employment")
+	}
+	if query.Get("work_schedule") != "" {
+		params["work_schedule"] = query.Get("work_schedule")
+	}
+
+	return params
 }
