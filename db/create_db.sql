@@ -124,8 +124,7 @@ conditions, about)VALUES(gen_random_uuid(),
 INSERT INTO vacancies(id, own_id, profession, region, position, experience,
 wage_from, wage_to, type_of_employment, tasks, requirements, work_schedule,
 conditions, about)VALUES(gen_random_uuid(),
-(SELECT own_id FROM companies WHERE company_name = 'Yandex'),
-'backend developer', 'middle', 'Moscow', '4 years', 125000, 250000, 'Полная занятость',
+(SELECT own_id FROM companies WHERE company_name = 'Yandex'), 'backend developer', 'middle', 'Moscow', '4 years', 125000, 250000, 'Полная занятость',
 'write backend', 'Go', 'Удаленная работа','nice office, good team', 'top 2 IT company');
 
 
@@ -135,3 +134,11 @@ conditions, about)VALUES(gen_random_uuid(),
 (SELECT own_id FROM companies WHERE company_name = 'Yandex'),
 'data scientist', 'middle', 'Moscow', '5 years', 150000, 300000, 'Полная занятость',
 'write II', 'Python, math', 'Удаленная работа','nice office, good team', 'top 2 IT company');
+
+
+CREATE DATABASE 
+WITH OWNER "postgres"
+ENCODING 'UTF8'
+LC_COLLATE = 'ru_RU.UTF-8'
+LC_CTYPE = 'ru_RU.UTF-8'
+TEMPLATE = template0;
