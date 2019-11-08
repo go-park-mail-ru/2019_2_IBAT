@@ -98,7 +98,6 @@ func (m *DBUserStorage) GetVacancies(params map[string]interface{}) ([]Vacancy, 
 	}
 
 	var rows *sqlx.Rows
-	defer rows.Close()
 
 	if query != "" {
 		rows, err = nmst.Queryx(params)
@@ -107,6 +106,7 @@ func (m *DBUserStorage) GetVacancies(params map[string]interface{}) ([]Vacancy, 
 			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
 			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id;")
 	}
+	defer rows.Close()
 
 	if err != nil {
 		log.Println("GetVacancies: error while query")

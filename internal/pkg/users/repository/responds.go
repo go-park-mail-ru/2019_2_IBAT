@@ -46,7 +46,6 @@ func (m *DBUserStorage) GetResponds(record AuthStorageValue, params map[string]s
 	responds := []Respond{}
 	log.Println("GetResponds: start")
 	var rows *sqlx.Rows
-	defer rows.Close()
 
 	if params["resumeid"] == "" && params["vacancyid"] == "" {
 		if record.Role == EmployerStr {
@@ -84,6 +83,7 @@ func (m *DBUserStorage) GetResponds(record AuthStorageValue, params map[string]s
 		rows, _ = m.DbConn.Queryx("SELECT resume_id, vacancy_id, status"+
 			" FROM responds WHERE vacancy_id = $1;", params["vacancyid"])
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var respond Respond

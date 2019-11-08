@@ -2,10 +2,11 @@ DROP TABLE companies;
 DROP TABLE offers;
 DROP TABLE responds;
 DROP TABLE resumes;
+DROP TABLE favorite_vacancies;
 DROP TABLE vacancies;
 DROP TABLE persons;
-DROP TABLE favorites_resumes;
-DROP TABLE favorites_vacancies;
+
+-- DROP TABLE favorites_resumes;
 
 CREATE TABLE persons(
     id uuid PRIMARY KEY,
@@ -14,7 +15,7 @@ CREATE TABLE persons(
     email VARCHAR (355) UNIQUE NOT NULL,
     password_hash VARCHAR (70) NOT NULL,
     role VARCHAR (50) NOT NULL,
-    path_to_image VARCHAR (50)
+    path_to_image VARCHAR (50) DEFAULT ''
 );
 
 CREATE TABLE companies(
@@ -22,14 +23,14 @@ CREATE TABLE companies(
     own_id uuid REFERENCES persons (id) ON DELETE CASCADE UNIQUE NOT NULL,
     site VARCHAR (70) NOT NULL,
     --not not null
-    region  VARCHAR (70),
-    phone_number VARCHAR (70),
-    extra_phone_number VARCHAR (70),
+    region  VARCHAR (70) DEFAULT '',
+    phone_number VARCHAR (70) DEFAULT '',
+    extra_phone_number VARCHAR (70) DEFAULT '',
     
-    spheres_of_work TEXT,
+    spheres_of_work TEXT DEFAULT '',
     -- must be done by tags
-    empl_num VARCHAR(70),
-    description TEXT
+    empl_num VARCHAR(70) DEFAULT '',
+    description TEXT DEFAULT ''
 );
 
 CREATE TABLE resumes(
@@ -40,37 +41,37 @@ CREATE TABLE resumes(
     phone_number VARCHAR (30) NOT NULL,
     first_name VARCHAR (50) NOT NULL,
     second_name VARCHAR (70) NOT NULL,
-    birth_date   DATE,
+    birth_date   DATE NOT NULL,
     sex VARCHAR (30) NOT NULL,
 
-    type_of_employment VARCHAR (50),
-	work_schedule VARCHAR (50),
-    citizenship VARCHAR (70),
-    profession VARCHAR (70),
+    type_of_employment VARCHAR (50) DEFAULT '',
+	work_schedule VARCHAR (50) DEFAULT '',
+    citizenship VARCHAR (70) DEFAULT '',
+    profession VARCHAR (70 DEFAULT ''),
     -- must be done by tags
-    position    VARCHAR (70),
-    experience  TEXT,
-    education TEXT,
-    wage  MONEY,
-    about  TEXT
+    position    VARCHAR (70) DEFAULT '',
+    experience  TEXT DEFAULT '',
+    education TEXT DEFAULT '',
+    wage  MONEY DEFAULT '',
+    about  TEXT DEFAULT ''
 );
 
 CREATE TABLE vacancies(
     id uuid PRIMARY KEY,
     own_id uuid REFERENCES persons (id) ON DELETE CASCADE NOT NULL,
 
-    region     VARCHAR (70),
+    region     VARCHAR (70) DEFAULT '',
     profession VARCHAR (70) NOT NULL,
     position    VARCHAR (70),
-    experience  TEXT,
-    wage_from  MONEY,
-    wage_to    MONEY,
-    tasks TEXT,
-    type_of_employment VARCHAR (70),
-    work_schedule      VARCHAR (70),
-    requirements TEXT,
-    conditions TEXT,
-    about  TEXT
+    experience  TEXT DEFAULT '',
+    wage_from  MONEY DEFAULT '',
+    wage_to    MONEY DEFAULT '',
+    tasks TEXT DEFAULT '',
+    type_of_employment VARCHAR (70) DEFAULT '',
+    work_schedule      VARCHAR (70) DEFAULT '',
+    requirements TEXT DEFAULT '',
+    conditions TEXT DEFAULT '',
+    about  TEXT DEFAULT ''
 );
 
 

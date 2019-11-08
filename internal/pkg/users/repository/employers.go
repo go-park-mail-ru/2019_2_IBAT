@@ -148,9 +148,10 @@ func (m *DBUserStorage) GetEmployers(params map[string]interface{}) ([]Employer,
 	if query != "" {
 		nmst, err = m.DbConn.PrepareNamed("SELECT p.id, p.email, c.company_name, p.first_name, p.second_name, c.site," +
 			"c.empl_num, c.phone_number, c.extra_phone_number, c.spheres_of_work, p.path_to_image, c.region, " +
-			" c.description FROM persons as p JOIN companies as c ON p.id = c.own_id WHERE " + query + " AND role = employer;")
+			" c.description FROM persons as p JOIN companies as c ON p.id = c.own_id WHERE p.role = 'employer' AND " + query + ";")
+
 		if err != nil {
-			log.Println("GetEmployers: error while preparing statement")
+			log.Printf("GetEmployers: error while preparing statement - %s", err)
 			return employers, errors.New(InternalErrorMsg)
 		}
 	} else {
@@ -158,7 +159,6 @@ func (m *DBUserStorage) GetEmployers(params map[string]interface{}) ([]Employer,
 	}
 
 	var rows *sqlx.Rows
-	defer rows.Close()
 
 	if query != "" {
 		rows, err = nmst.Queryx(params)
@@ -167,28 +167,32 @@ func (m *DBUserStorage) GetEmployers(params map[string]interface{}) ([]Employer,
 			"c.empl_num, c.phone_number, c.extra_phone_number, c.spheres_of_work, p.path_to_image, c.region, "+
 			" c.description FROM persons as p JOIN companies as c ON p.id = c.own_id WHERE role = $1;", EmployerStr)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		empl := Employer{}
-		_ = rows.StructScan(&empl)
-		// if err != nil {
-		// 	return employers, err
-		// }
+		err = rows.StructScan(&empl)
+		if err != nil {
+			log.Printf("GetEmployers: error while scanning employers- %s", err)
+			return employers, err
+		}
 
 		id_rows, _ := m.DbConn.Query("SELECT v.id FROM vacancies AS v WHERE v.own_id = $1;", empl.ID)
-		// if err != nil {
-		// 	return employers, errors.New(InternalErrorMsg)
-		// }
+		if err != nil {
+			log.Printf("GetEmployers: error querying vacancies - %s", err)
+			return employers, errors.New(InternalErrorMsg)
+		}
 		defer id_rows.Close()
 
 		vacancies := make([]uuid.UUID, 0)
 
 		for id_rows.Next() {
 			var id uuid.UUID
-			_ = id_rows.Scan(&id)
-			// if err != nil {
-			// 	return employers, err
-			// }
+			err = id_rows.Scan(&id)
+			if err != nil {
+				log.Printf("GetEmployers: error scanning vacancies - %s", err)
+				return employers, err
+			}
 			vacancies = append(vacancies, id)
 		}
 
