@@ -4,6 +4,8 @@ DROP TABLE responds;
 DROP TABLE resumes;
 DROP TABLE vacancies;
 DROP TABLE persons;
+DROP TABLE favorites_resumes;
+DROP TABLE favorites_vacancies;
 
 CREATE TABLE persons(
     id uuid PRIMARY KEY,
@@ -86,6 +88,20 @@ CREATE TABLE responds(
     PRIMARY KEY(resume_id, vacancy_id)
 );
 
+-- CREATE TABLE favorites_resumes(
+--     status VARCHAR (70) NOT NULL,
+--     employer_id uuid REFERENCES persons (id) ON DELETE CASCADE NOT NULL,
+--     resume_id uuid REFERENCES vacancies (id) ON DELETE CASCADE NOT NULL ,
+--     PRIMARY KEY(resume_id, vacancy_id)
+-- );
+
+-- CREATE TABLE favorites_vacancies(
+--     status VARCHAR (70) NOT NULL,
+--     seeker_id uuid REFERENCES persons (id) ON DELETE CASCADE NOT NULL,
+--     vacancy_id uuid REFERENCES vacancies (id) ON DELETE CASCADE NOT NULL ,
+--     PRIMARY KEY(resume_id, vacancy_id)
+-- );
+
 
 INSERT INTO persons(id, email, first_name, second_name, password_hash, role)
 VALUES(gen_random_uuid(), 'vladle@mail.ru', 'Vlad', 'Lee', 'iearoiqwejfka', 'seeker');
@@ -141,21 +157,21 @@ conditions, about)VALUES(gen_random_uuid(),
 
 INSERT INTO resumes(id, own_id, email,  first_name, second_name, region, phone_number, birth_date, sex,
 citizenship, profession, position, education, wage, about, type_of_employment, work_schedule, experience)
-VALUES(gen_random_uuid(), (SELECT own_id FROM persons WHERE email = 'vladle@mail.ru'),
+VALUES(gen_random_uuid(), (SELECT id FROM persons WHERE email = 'vladle@mail.ru'),
 'vladle@mail.ru', 'Vlad', 'Lee', 'Москва', '89266211479', '1991-10-10', 'мужской', 'русское',
 'фронтенд-разработчик', 'middle', 'МГТУ', '123000', 'Хороший парень', 'Полная занятость', 'Удаленная работа',
 'Более 6 лет');
 
 INSERT INTO resumes(id, own_id, email,  first_name, second_name, region, phone_number, birth_date, sex,
 citizenship, profession, position, education, wage, about, type_of_employment, work_schedule, experience)
-VALUES(gen_random_uuid(), (SELECT own_id FROM persons WHERE email = 'vladle@mail.ru'),
+VALUES(gen_random_uuid(), (SELECT id FROM persons WHERE email = 'vladle@mail.ru'),
 'vladle@mail.ru', 'Vlad', 'Lee', 'Москва', '89266211479', '1991-10-10', 'мужской', 'русское',
 'бэкенд-разработчик', 'middle', 'МГТУ', '123000', 'Хороший парень', 'Полная занятость', 'Удаленная работа',
 'От 3 до 6 лет');
    
 INSERT INTO resumes(id, own_id, email,  first_name, second_name, region, phone_number, birth_date, sex,
 citizenship, profession, position, education, wage, about, type_of_employment, work_schedule, experience)
-VALUES(gen_random_uuid(), (SELECT own_id FROM persons WHERE email = 'vladle@mail.ru'),
+VALUES(gen_random_uuid(), (SELECT id FROM persons WHERE email = 'vladle@mail.ru'),
 'vasyapupkin@mail.ru', 'Вася', 'Пупкин', 'Москва', '89236211479', '1998-10-10', 'мужской', 'русское',
 'дата-саентист', 'middle', 'МГУ', '170000', 'Хороший парень', 'Полная занятость', 'Полный день',
 'Более 6 лет');

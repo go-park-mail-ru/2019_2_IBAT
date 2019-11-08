@@ -104,6 +104,9 @@ func NewServer() (*Server, error) {
 	router.HandleFunc("/responds", h.GetResponds).Methods(http.MethodGet, http.MethodOptions)
 	router.HandleFunc("/respond", h.CreateRespond).Methods(http.MethodPost, http.MethodOptions)
 
+	// router.HandleFunc("/favorites", h.GetFavorites).Methods(http.MethodGet, http.MethodOptions)
+	// router.HandleFunc("/favorite", h.CreateFavorite).Methods(http.MethodPost, http.MethodOptions)
+
 	server.Router = router
 
 	return server, nil
