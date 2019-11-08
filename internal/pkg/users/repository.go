@@ -27,7 +27,7 @@ type Repository interface {
 
 	GetEmployers() ([]Employer, error)
 	GetSeekers() ([]Seeker, error)
-	GetResumes() ([]Resume, error)
+	GetResumes(params map[string]interface{}) ([]Resume, error)
 	GetVacancies(params map[string]interface{}) ([]Vacancy, error)
 
 	GetResponds(record AuthStorageValue, params map[string]string) ([]Respond, error)

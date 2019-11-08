@@ -109,6 +109,6 @@ func (h *UserService) PutResume(resumeId uuid.UUID, body io.ReadCloser, authInfo
 	return nil
 }
 
-func (h *UserService) GetResumes() ([]Resume, error) {
-	return h.Storage.GetResumes()
+func (h *UserService) GetResumes(params map[string]interface{}) ([]Resume, error) {
+	return h.Storage.GetResumes(params)
 }

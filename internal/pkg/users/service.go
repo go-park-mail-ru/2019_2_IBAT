@@ -32,7 +32,7 @@ type Service interface {
 
 	GetEmployers() ([]Employer, error)
 	GetSeekers() ([]Seeker, error)
-	GetResumes() ([]Resume, error)
+	GetResumes(params map[string]interface{}) ([]Resume, error)
 	GetVacancies(params map[string]interface{}) ([]Vacancy, error)
 
 	SetImage(id uuid.UUID, class string, imageName string) bool

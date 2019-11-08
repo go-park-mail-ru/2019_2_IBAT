@@ -17,7 +17,7 @@ CREATE TABLE persons(
 
 CREATE TABLE companies(
     company_name VARCHAR (70) PRIMARY KEY,
-    own_id uuid REFERENCES persons (id) ON DELETE CASCADE UNIQUE,
+    own_id uuid REFERENCES persons (id) ON DELETE CASCADE UNIQUE NOT NULL,
     site VARCHAR (70) NOT NULL,
     --not not null
     region  VARCHAR (70),
@@ -32,7 +32,7 @@ CREATE TABLE companies(
 
 CREATE TABLE resumes(
     id uuid PRIMARY KEY,
-    own_id uuid REFERENCES persons (id) ON DELETE CASCADE,
+    own_id uuid REFERENCES persons (id) ON DELETE CASCADE NOT NULL,
     email VARCHAR (355) NOT NULL,
     region  VARCHAR (70) NOT NULL,
     phone_number VARCHAR (30) NOT NULL,
@@ -41,6 +41,8 @@ CREATE TABLE resumes(
     birth_date   DATE,
     sex VARCHAR (30) NOT NULL,
 
+    type_of_employment VARCHAR (50),
+	work_schedule VARCHAR (50),
     citizenship VARCHAR (70),
     profession VARCHAR (70),
     -- must be done by tags
@@ -118,13 +120,13 @@ INSERT INTO vacancies(id, own_id, profession, region, position, experience,
 wage_from, wage_to, type_of_employment, tasks, requirements, work_schedule,
 conditions, about)VALUES(gen_random_uuid(),
 (SELECT own_id FROM companies WHERE company_name = 'Mail.ru'),
-'backend developer', 'middle', 'Moscow', '4 years', 80000, 120000, 'Полная занятость',
+'backend developer', 'middle', 'Moscow', 'Более 6 лет', 80000, 120000, 'Полная занятость',
 'write backend', 'Go', 'Полный день', 'nice office, good team', 'the best IT company');
 
 INSERT INTO vacancies(id, own_id, profession, region, position, experience,
 wage_from, wage_to, type_of_employment, tasks, requirements, work_schedule,
 conditions, about)VALUES(gen_random_uuid(),
-(SELECT own_id FROM companies WHERE company_name = 'Yandex'), 'backend developer', 'middle', 'Moscow', '4 years', 125000, 250000, 'Полная занятость',
+(SELECT own_id FROM companies WHERE company_name = 'Yandex'), 'backend developer', 'middle', 'Moscow', 'От 3 до 6 лет', 125000, 250000, 'Полная занятость',
 'write backend', 'Go', 'Удаленная работа','nice office, good team', 'top 2 IT company');
 
 
@@ -132,13 +134,28 @@ INSERT INTO vacancies(id, own_id, profession, region, position, experience,
 wage_from, wage_to, type_of_employment, tasks, requirements, work_schedule,
 conditions, about)VALUES(gen_random_uuid(),
 (SELECT own_id FROM companies WHERE company_name = 'Yandex'),
-'data scientist', 'middle', 'Moscow', '5 years', 150000, 300000, 'Полная занятость',
+'data scientist', 'middle', 'Moscow', 'Более 6 лет', 150000, 300000, 'Полная занятость',
 'write II', 'Python, math', 'Удаленная работа','nice office, good team', 'top 2 IT company');
 
 
-CREATE DATABASE 
-WITH OWNER "postgres"
-ENCODING 'UTF8'
-LC_COLLATE = 'ru_RU.UTF-8'
-LC_CTYPE = 'ru_RU.UTF-8'
-TEMPLATE = template0;
+
+INSERT INTO resumes(id, own_id, email,  first_name, second_name, region, phone_number, birth_date, sex,
+citizenship, profession, position, education, wage, about, type_of_employment, work_schedule, experience)
+VALUES(gen_random_uuid(), (SELECT own_id FROM persons WHERE email = 'vladle@mail.ru'),
+'vladle@mail.ru', 'Vlad', 'Lee', 'Москва', '89266211479', '1991-10-10', 'мужской', 'русское',
+'фронтенд-разработчик', 'middle', 'МГТУ', '123000', 'Хороший парень', 'Полная занятость', 'Удаленная работа',
+'Более 6 лет');
+
+INSERT INTO resumes(id, own_id, email,  first_name, second_name, region, phone_number, birth_date, sex,
+citizenship, profession, position, education, wage, about, type_of_employment, work_schedule, experience)
+VALUES(gen_random_uuid(), (SELECT own_id FROM persons WHERE email = 'vladle@mail.ru'),
+'vladle@mail.ru', 'Vlad', 'Lee', 'Москва', '89266211479', '1991-10-10', 'мужской', 'русское',
+'бэкенд-разработчик', 'middle', 'МГТУ', '123000', 'Хороший парень', 'Полная занятость', 'Удаленная работа',
+'От 3 до 6 лет');
+   
+INSERT INTO resumes(id, own_id, email,  first_name, second_name, region, phone_number, birth_date, sex,
+citizenship, profession, position, education, wage, about, type_of_employment, work_schedule, experience)
+VALUES(gen_random_uuid(), (SELECT own_id FROM persons WHERE email = 'vladle@mail.ru'),
+'vasyapupkin@mail.ru', 'Вася', 'Пупкин', 'Москва', '89236211479', '1998-10-10', 'мужской', 'русское',
+'дата-саентист', 'middle', 'МГУ', '170000', 'Хороший парень', 'Полная занятость', 'Полный день',
+'Более 6 лет');

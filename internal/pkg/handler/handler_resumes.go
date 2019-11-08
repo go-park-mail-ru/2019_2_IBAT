@@ -16,8 +16,6 @@ func (h *Handler) CreateResume(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-	// log.Println("Create resume req:")
-	// log.Println(r)
 	authInfo, ok := FromContext(r.Context())
 
 	if !ok {
@@ -170,7 +168,11 @@ func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-	resumes, _ := h.UserService.GetResumes() //error handling
+	params := h.ParseResumesQuery(r.URL.Query())
+
+	log.Printf("Params map length: %d\n", len(params))
+
+	resumes, _ := h.UserService.GetResumes(params) //error handling
 
 	resumesJSON, _ := json.Marshal(resumes)
 
