@@ -68,10 +68,10 @@ func (m *DBUserStorage) GetEmployer(id uuid.UUID) (Employer, error) {
 	// 	return employers, err
 	// }
 
-	id_rows, err := m.DbConn.Query("SELECT v.id FROM vacancies AS v WHERE v.own_id = $1;", empl.ID)
-	if err != nil {
-		return empl, errors.New(InternalErrorMsg)
-	}
+	id_rows, _ := m.DbConn.Query("SELECT v.id FROM vacancies AS v WHERE v.own_id = $1;", empl.ID)
+	// if err != nil {
+	// 	return empl, errors.New(InternalErrorMsg)
+	// }
 	defer id_rows.Close()
 
 	vacancies := make([]uuid.UUID, 0)
@@ -152,10 +152,10 @@ func (m *DBUserStorage) GetEmployers() ([]Employer, error) {
 		// 	return employers, err
 		// }
 
-		id_rows, err := m.DbConn.Query("SELECT v.id FROM vacancies AS v WHERE v.own_id = $1;", empl.ID)
-		if err != nil {
-			return employers, errors.New(InternalErrorMsg)
-		}
+		id_rows, _ := m.DbConn.Query("SELECT v.id FROM vacancies AS v WHERE v.own_id = $1;", empl.ID)
+		// if err != nil {
+		// 	return employers, errors.New(InternalErrorMsg)
+		// }
 		defer id_rows.Close()
 
 		vacancies := make([]uuid.UUID, 0)
