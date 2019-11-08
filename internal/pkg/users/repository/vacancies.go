@@ -31,12 +31,9 @@ func (m *DBUserStorage) CreateVacancy(vacancyReg Vacancy) bool {
 func (m *DBUserStorage) GetVacancy(id uuid.UUID) (Vacancy, error) {
 
 	row := m.DbConn.QueryRowx("SELECT v.id, v.own_id, c.company_name, v.experience,"+
-		"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about"+
-		" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE id = $1;", id)
-
-	// row := m.DbConn.QueryRowx("SELECT v.id, v.own_id, c.company_name, v.experience "+
-	// 	// "v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about"+
-	// 	" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE id = $1", id)
+		"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
+		"v.region, v.type_of_employment, v.work_schedule "+
+		"FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE id = $1;", id)
 
 	var vacancy Vacancy
 	err := row.StructScan(&vacancy)
@@ -89,8 +86,9 @@ func (m *DBUserStorage) GetVacancies(params map[string]interface{}) ([]Vacancy, 
 
 	if query != "" {
 		nmst, err = m.DbConn.PrepareNamed("SELECT v.id, v.own_id, c.company_name, v.experience, " +
-			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about " +
-			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE " + query)
+			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
+			"v.region, v.type_of_employment, v.work_schedule " +
+			"FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE " + query)
 		if err != nil {
 			log.Println("GetVacancies: error while preparing statement")
 			return vacancies, errors.New(InternalErrorMsg)

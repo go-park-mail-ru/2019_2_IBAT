@@ -59,7 +59,8 @@ func (m *DBUserStorage) CreateEmployer(employerInput Employer) bool {
 func (m *DBUserStorage) GetEmployer(id uuid.UUID) (Employer, error) {
 
 	rows := m.DbConn.QueryRowx("SELECT p.id, p.email, c.company_name, p.first_name, p.second_name, c.site,"+
-		"c.empl_num, c.phone_number, c.extra_phone_number, c.spheres_of_work, p.path_to_image,"+
+		"c.empl_num, c.phone_number, c.extra_phone_number, c.spheres_of_work, p.path_to_image, "+
+		"c.description, "+
 		"c.region FROM persons as p JOIN companies as c ON p.id = c.own_id WHERE p.id = $1;", id) //and p.class
 
 	empl := Employer{}
