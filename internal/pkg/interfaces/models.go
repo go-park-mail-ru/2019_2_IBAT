@@ -145,6 +145,11 @@ type Respond struct {
 // 	VacancyID uuid.UUID `json:"vacancy_id"       db:"vacancy_id"`
 // }
 
+type FavoriteVacancy struct {
+	PersonID  uuid.UUID `json:"person_id"        db:"person_id"`
+	VacancyID uuid.UUID `json:"vacancy_id"       db:"vacancy_id"`
+}
+
 type AuthStorageValue struct {
 	ID      uuid.UUID
 	Expires string

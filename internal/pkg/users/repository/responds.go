@@ -10,14 +10,13 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (m *DBUserStorage) CreateRespond(respond Respond, userId uuid.UUID) (uuid.UUID, bool) {
-	id := uuid.New()
+func (m *DBUserStorage) CreateRespond(respond Respond, userId uuid.UUID) bool {
 	fmt.Printf("respond.ResumeID: %s\n", respond.ResumeID)
 
 	resume, err := m.GetResume(respond.ResumeID)
 	if err != nil {
 		fmt.Println("CreateRespond: no such resume error")
-		return id, false
+		return false
 	}
 
 	if resume.OwnerID != userId {
@@ -26,7 +25,7 @@ func (m *DBUserStorage) CreateRespond(respond Respond, userId uuid.UUID) (uuid.U
 		fmt.Printf("resume.OwnerID: %s\n", resume.OwnerID)
 
 		fmt.Println("CreateRespond: forbidden error")
-		return id, false
+		return false
 	}
 
 	_, err = m.DbConn.Exec("INSERT INTO responds(resume_id, vacancy_id, status)"+
@@ -36,10 +35,10 @@ func (m *DBUserStorage) CreateRespond(respond Respond, userId uuid.UUID) (uuid.U
 
 	if err != nil {
 		fmt.Println("CreateRespond: error while creating")
-		return id, false
+		return false
 	}
 
-	return id, true
+	return true
 }
 
 func (m *DBUserStorage) GetResponds(record AuthStorageValue, params map[string]string) ([]Respond, error) {

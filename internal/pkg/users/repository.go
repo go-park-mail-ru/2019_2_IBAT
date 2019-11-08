@@ -12,7 +12,8 @@ type Repository interface {
 	CreateResume(resumeReg Resume) bool
 	CreateVacancy(vacancyReg Vacancy) bool
 
-	CreateRespond(respond Respond, userId uuid.UUID) (uuid.UUID, bool)
+	CreateRespond(respond Respond, userId uuid.UUID) bool
+	CreateFavorite(favVac FavoriteVacancy) bool
 
 	DeleteUser(id uuid.UUID) error
 	DeleteResume(id uuid.UUID) error
@@ -31,6 +32,7 @@ type Repository interface {
 	GetVacancies(params map[string]interface{}) ([]Vacancy, error)
 
 	GetResponds(record AuthStorageValue, params map[string]string) ([]Respond, error)
+	GetFavoriteVacancies(record AuthStorageValue) ([]Vacancy, error)
 
 	GetSeeker(id uuid.UUID) (Seeker, error)
 	GetEmployer(id uuid.UUID) (Employer, error)

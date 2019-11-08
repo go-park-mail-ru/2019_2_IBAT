@@ -1,56 +1,47 @@
 package handler
 
-// import (
-// 	. "2019_2_IBAT/internal/pkg/interfaces"
-// 	"encoding/json"
+import (
+	. "2019_2_IBAT/internal/pkg/interfaces"
+	"encoding/json"
 
-// 	"net/http"
-// )
+	"net/http"
+)
 
-// func (h *Handler) GetFavorites(w http.ResponseWriter, r *http.Request) { //+
-// 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+func (h *Handler) CreateFavorite(w http.ResponseWriter, r *http.Request) { //+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-// 	authInfo, ok := FromContext(r.Context())
-// 	if !ok {
-// 		w.WriteHeader(http.StatusUnauthorized)
-// 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-// 		w.Write([]byte(errJSON))
-// 	}
+	authInfo, ok := FromContext(r.Context())
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
+		w.Write([]byte(errJSON))
+		return
+	}
 
-// 	v := r.URL.Query()
-// 	params := make(map[string]string)
-// 	params["vacancyid"] = v.Get("vacancyid")
-// 	params["resumeid"] = v.Get("resumeid")
-// 	fmt.Printf("vacancyid = %s, resumeid = %s", params["vacancyid"], params["resumeid"])
+	err := h.UserService.CreateFavorite(r.Body, authInfo)
+	if err != nil {
+		w.WriteHeader(http.StatusForbidden)
+		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
+		w.Write([]byte(errJSON))
+		return
+	}
 
-// 	responds, _ := h.UserService.GetResponds(authInfo, params) //error handling
+}
 
-// 	respondsJSON, _ := json.Marshal(responds)
+func (h *Handler) GetFavoriteVacancies(w http.ResponseWriter, r *http.Request) { //+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-// 	w.Write([]byte(respondsJSON))
+	authInfo, ok := FromContext(r.Context())
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
+		w.Write([]byte(errJSON))
+	}
 
-// }
+	vacancies, _ := h.UserService.GetFavoriteVacancies(authInfo) //error handling
 
-// func (h *Handler) CreateFavorite(w http.ResponseWriter, r *http.Request) { //+
-// 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	respondsJSON, _ := json.Marshal(vacancies)
 
-// 	authInfo, ok := FromContext(r.Context())
-// 	if !ok {
-// 		w.WriteHeader(http.StatusUnauthorized)
-// 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-// 		w.Write([]byte(errJSON))
-// 		return
-// 	}
+	w.Write([]byte(respondsJSON))
 
-// 	id, err := h.UserService.CreateRespond(r.Body, authInfo)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusForbidden)
-// 		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
-// 		w.Write([]byte(errJSON))
-// 		return
-// 	}
-
-// 	idJSON, _ := json.Marshal(Id{Id: id.String()})
-
-// 	w.Write([]byte(idJSON))
-// }
+}

@@ -43,15 +43,11 @@ func (h *Handler) CreateRespond(w http.ResponseWriter, r *http.Request) { //+
 		return
 	}
 
-	id, err := h.UserService.CreateRespond(r.Body, authInfo)
+	err := h.UserService.CreateRespond(r.Body, authInfo)
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
 		w.Write([]byte(errJSON))
 		return
 	}
-
-	idJSON, _ := json.Marshal(Id{Id: id.String()})
-
-	w.Write([]byte(idJSON))
 }

@@ -95,12 +95,11 @@ CREATE TABLE responds(
 --     PRIMARY KEY(resume_id, vacancy_id)
 -- );
 
--- CREATE TABLE favorites_vacancies(
---     status VARCHAR (70) NOT NULL,
---     seeker_id uuid REFERENCES persons (id) ON DELETE CASCADE NOT NULL,
---     vacancy_id uuid REFERENCES vacancies (id) ON DELETE CASCADE NOT NULL ,
---     PRIMARY KEY(resume_id, vacancy_id)
--- );
+CREATE TABLE favorite_vacancies(
+    person_id uuid REFERENCES persons (id) ON DELETE CASCADE NOT NULL,
+    vacancy_id uuid REFERENCES vacancies (id) ON DELETE CASCADE NOT NULL ,
+    PRIMARY KEY(person_id, vacancy_id)
+);
 
 
 INSERT INTO persons(id, email, first_name, second_name, password_hash, role)

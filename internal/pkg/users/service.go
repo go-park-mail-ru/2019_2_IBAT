@@ -27,8 +27,11 @@ type Service interface {
 	GetResume(resumeId uuid.UUID) (Resume, error)
 	PutResume(resumeId uuid.UUID, body io.ReadCloser, authInfo AuthStorageValue) error
 
-	CreateRespond(body io.ReadCloser, authInfo AuthStorageValue) (uuid.UUID, error)
+	CreateRespond(body io.ReadCloser, authInfo AuthStorageValue) error
 	GetResponds(authInfo AuthStorageValue, params map[string]string) ([]Respond, error)
+
+	CreateFavorite(body io.ReadCloser, authInfo AuthStorageValue) error
+	GetFavoriteVacancies(authInfo AuthStorageValue) ([]Vacancy, error)
 
 	GetEmployers() ([]Employer, error)
 	GetSeekers() ([]Seeker, error)
