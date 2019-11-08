@@ -34,6 +34,10 @@ func (m *DBUserStorage) GetVacancy(id uuid.UUID) (Vacancy, error) {
 		"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about"+
 		" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE id = $1;", id)
 
+	// row := m.DbConn.QueryRowx("SELECT v.id, v.own_id, c.company_name, v.experience "+
+	// 	// "v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about"+
+	// 	" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE id = $1", id)
+
 	var vacancy Vacancy
 	err := row.StructScan(&vacancy)
 	if err != nil {
