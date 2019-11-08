@@ -1,6 +1,7 @@
-package handler
+package middleware
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -12,21 +13,22 @@ var (
 			"localhost:8080",
 		},
 		AllowMethods:     []string{"GET", "DELETE", "POST", "PUT"},
-		AllowHeaders:     []string{"Content-Type"},
+		AllowHeaders:     []string{"Content-Type", "X-Content-Type-Options", "X-Csrf-Token"},
 		AllowCredentials: true,
 	}
 )
 
 type CorsData struct {
-	AllowOrigins []string
-	AllowMethods []string
-	AllowHeaders []string
-	// MaxAge           int
+	AllowOrigins     []string
+	AllowMethods     []string
+	AllowHeaders     []string
 	AllowCredentials bool
 }
 
 func CorsMiddleware(h http.Handler) http.Handler {
 	var mw http.HandlerFunc = func(res http.ResponseWriter, req *http.Request) {
+		fmt.Println(req.Context())
+		fmt.Println("Request was accepted")
 		val, ok := req.Header["Origin"]
 		if ok {
 			res.Header().Set("Access-Control-Allow-Origin", val[0])
@@ -39,7 +41,6 @@ func CorsMiddleware(h http.Handler) http.Handler {
 			return
 		}
 
-		// res.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		h.ServeHTTP(res, req)
 	}
 

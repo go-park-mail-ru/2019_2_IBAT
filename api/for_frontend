@@ -1,0 +1,77 @@
+/vacancies/   GET
+
+"region"
+"wage"
+"experience"
+"type_of_employment"
+"work_schedule"
+
+/resumes/     GET
+
+"region"
+"wage_from"
+"wage_to"
+"experience"
+"type_of_employment"
+"work_schedule"
+
+
+type Resume struct {
+	ID               uuid.UUID `json:"id"                  db:"id"`
+	OwnerID          uuid.UUID `json:"own_id"              db:"own_id"`
+	FirstName        string    `json:"first_name"          db:"first_name"`
+	SecondName       string    `json:"second_name"         db:"second_name"`
+	Region           string    `json:"region"              db:"region"`
+	Email            string    `json:"email"               db:"email"`
+	PhoneNumber      string    `json:"phone_number"        db:"phone_number"`
+	BirthDate        string    `json:"birth_date"          db:"birth_date"`
+	Sex              string    `json:"sex"                 db:"sex"`
+	TypeOfEmployment string    `json:"type_of_employment"  db:"type_of_employment"`
+	WorkSchedule     string    `json:"work_schedule"       db:"work_schedule"`
+	Citizenship      string    `json:"citizenship"         db:"citizenship"`
+	Experience       string    `json:"experience"          db:"experience"`
+	Profession       string    `json:"profession"          db:"profession"`
+	Position         string    `json:"position"            db:"position"`
+	Wage             string    `json:"wage"                db:"wage"`
+	Education        string    `json:"education"           db:"education"`
+	About            string    `json:"about"               db:"about"`
+}
+
+
+type Vacancy struct {
+	ID               uuid.UUID `json:"id"                  db:"id"`
+	OwnerID          uuid.UUID `json:"owner_id"            db:"own_id"`
+	Region           string    `json:"region"              db:"region"`
+	CompanyName      string    `json:"company_name"        db:"company_name"`
+	Experience       string    `json:"experience"          db:"experience"`
+	Profession       string    `json:"profession"     	   db:"profession"`
+	Position         string    `json:"position"            db:"position"`
+	Tasks            string    `json:"tasks"               db:"tasks"`
+	Requirements     string    `json:"requirements"        db:"requirements"`
+	WageFrom         string    `json:"wage_from"           db:"wage_from"`
+	TypeOfEmployment string    `json:"type_of_employment"  db:"type_of_employment"`
+	WorkSchedule     string    `json:"work_schedule"       db:"work_schedule"`
+	WageTo           string    `json:"wage_to"             db:"wage_to"`
+	Conditions       string    `json:"conditions"          db:"conditions"`
+	About            string    `json:"about"               db:"about"`
+}
+
+type SeekerReg struct {
+	Email      string `json:"email"`
+	FirstName  string `json:"first_name"`
+	SecondName string `json:"second_name"`
+	Password   string `json:"password"`
+}
+
+type EmployerReg struct {
+	CompanyName      string `json:"company_name"`
+	Site             string `json:"site"`
+	FirstName        string `json:"first_name"`
+	SecondName       string `json:"second_name"`
+	Email            string `json:"email"`
+	PhoneNumber      string `json:"phone_number"`
+	ExtraPhoneNumber string `json:"extra_phone_number"`
+	Password         string `json:"password"`
+	Region           string `json:"region"`
+	EmplNum          string `json:"empl_num"`
+}
