@@ -33,6 +33,7 @@ func (m *DBUserStorage) GetFavoriteVacancies(record AuthStorageValue) ([]Vacancy
 		"FROM favorite_vacancies AS fv "+
 		"JOIN vacancies AS v ON (fv.vacancy_id = v.id) "+
 		"JOIN companies AS c ON v.own_id = c.own_id WHERE fv.person_id = $1;", record.ID) //fux query
+	defer rows.Close()
 
 	if err != nil {
 		log.Println("GetVacancies: error while query")

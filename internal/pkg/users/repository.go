@@ -26,7 +26,7 @@ type Repository interface {
 	PutResume(resume Resume, userId uuid.UUID, resumeId uuid.UUID) bool
 	PutVacancy(vacavcy Vacancy, userId uuid.UUID, resumeId uuid.UUID) bool
 
-	GetEmployers() ([]Employer, error)
+	GetEmployers(params map[string]interface{}) ([]Employer, error)
 	GetSeekers() ([]Seeker, error)
 	GetResumes(params map[string]interface{}) ([]Resume, error)
 	GetVacancies(params map[string]interface{}) ([]Vacancy, error)

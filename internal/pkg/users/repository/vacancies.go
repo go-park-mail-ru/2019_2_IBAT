@@ -98,6 +98,8 @@ func (m *DBUserStorage) GetVacancies(params map[string]interface{}) ([]Vacancy, 
 	}
 
 	var rows *sqlx.Rows
+	defer rows.Close()
+
 	if query != "" {
 		rows, err = nmst.Queryx(params)
 	} else {

@@ -68,6 +68,6 @@ func (h *UserService) GetEmployer(id uuid.UUID) (Employer, error) {
 	return h.Storage.GetEmployer(id)
 }
 
-func (h *UserService) GetEmployers() ([]Employer, error) {
-	return h.Storage.GetEmployers()
+func (h *UserService) GetEmployers(params map[string]interface{}) ([]Employer, error) {
+	return h.Storage.GetEmployers(params)
 }

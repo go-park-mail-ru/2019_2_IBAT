@@ -46,6 +46,7 @@ func (m *DBUserStorage) GetResponds(record AuthStorageValue, params map[string]s
 	responds := []Respond{}
 	log.Println("GetResponds: start")
 	var rows *sqlx.Rows
+	defer rows.Close()
 
 	if params["resumeid"] == "" && params["vacancyid"] == "" {
 		if record.Role == EmployerStr {

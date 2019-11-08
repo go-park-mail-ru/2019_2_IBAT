@@ -2,10 +2,13 @@ package repository
 
 import (
 	. "2019_2_IBAT/internal/pkg/interfaces"
+	"log"
+	"strings"
 
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 )
 
@@ -134,16 +137,35 @@ func (m *DBUserStorage) PutEmployer(employerInput EmployerReg, id uuid.UUID) boo
 	return true
 }
 
-func (m *DBUserStorage) GetEmployers() ([]Employer, error) {
+func (m *DBUserStorage) GetEmployers(params map[string]interface{}) ([]Employer, error) {
 	employers := []Employer{}
 
-	rows, err := m.DbConn.Queryx("SELECT p.id, p.email, c.company_name, p.first_name, p.second_name, c.site,"+
-		"c.empl_num, c.phone_number, c.extra_phone_number, c.spheres_of_work, p.path_to_image, c.region, "+
-		" c.description FROM persons as p JOIN companies as c ON p.id = c.own_id WHERE role = $1;", EmployerStr)
+	query := paramsEmplToQuery(params)
+
+	var nmst *sqlx.NamedStmt
+	var err error
+
+	if query != "" {
+		nmst, err = m.DbConn.PrepareNamed("SELECT p.id, p.email, c.company_name, p.first_name, p.second_name, c.site," +
+			"c.empl_num, c.phone_number, c.extra_phone_number, c.spheres_of_work, p.path_to_image, c.region, " +
+			" c.description FROM persons as p JOIN companies as c ON p.id = c.own_id WHERE " + query + " AND role = employer;")
+		if err != nil {
+			log.Println("GetEmployers: error while preparing statement")
+			return employers, errors.New(InternalErrorMsg)
+		}
+	} else {
+		log.Println("GetEmployers: query is empty")
+	}
+
+	var rows *sqlx.Rows
 	defer rows.Close()
 
-	if err != nil {
-		return employers, errors.New(InternalErrorMsg)
+	if query != "" {
+		rows, err = nmst.Queryx(params)
+	} else {
+		rows, err = m.DbConn.Queryx("SELECT p.id, p.email, c.company_name, p.first_name, p.second_name, c.site,"+
+			"c.empl_num, c.phone_number, c.extra_phone_number, c.spheres_of_work, p.path_to_image, c.region, "+
+			" c.description FROM persons as p JOIN companies as c ON p.id = c.own_id WHERE role = $1;", EmployerStr)
 	}
 
 	for rows.Next() {
@@ -175,4 +197,26 @@ func (m *DBUserStorage) GetEmployers() ([]Employer, error) {
 	}
 
 	return employers, nil
+}
+
+func paramsEmplToQuery(params map[string]interface{}) string {
+	var query []string
+
+	if params["company_name"] != nil {
+		query = append(query, "company_name = :company_name")
+	} else {
+
+		if params["empl_num"] != nil {
+			query = append(query, "empl_num >= :empl_num")
+		}
+
+		if params["region"] != nil {
+			query = append(query, "region = :region")
+		}
+	}
+
+	str := strings.Join(query, " AND ")
+
+	log.Printf("Query: %s", str)
+	return str
 }

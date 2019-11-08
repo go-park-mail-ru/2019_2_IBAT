@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"net/http"
+	"net/url"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -95,7 +96,9 @@ func (h *Handler) GetEmployerById(w http.ResponseWriter, r *http.Request) { //+
 
 func (h *Handler) GetEmployers(w http.ResponseWriter, r *http.Request) { //+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	employers, err := h.UserService.GetEmployers()
+
+	params := h.ParseEmplQuery(r.URL.Query())
+	employers, err := h.UserService.GetEmployers(params)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -107,4 +110,21 @@ func (h *Handler) GetEmployers(w http.ResponseWriter, r *http.Request) { //+
 	employerJSON, _ := json.Marshal(employers)
 
 	w.Write([]byte(employerJSON))
+}
+
+func (h *Handler) ParseEmplQuery(query url.Values) map[string]interface{} {
+	params := make(map[string]interface{})
+
+	if query.Get("company_name") != "" {
+		params["company_name"] = query.Get("company_name")
+	} else {
+		if query.Get("empl_num") != "" {
+			params["empl_num"] = query.Get("empl_num")
+		}
+		if query.Get("region") != "" {
+			params["region"] = query.Get("region")
+		}
+	}
+
+	return params
 }

@@ -33,7 +33,7 @@ type Service interface {
 	CreateFavorite(body io.ReadCloser, authInfo AuthStorageValue) error
 	GetFavoriteVacancies(authInfo AuthStorageValue) ([]Vacancy, error)
 
-	GetEmployers() ([]Employer, error)
+	GetEmployers(params map[string]interface{}) ([]Employer, error)
 	GetSeekers() ([]Seeker, error)
 	GetResumes(params map[string]interface{}) ([]Resume, error)
 	GetVacancies(params map[string]interface{}) ([]Vacancy, error)
