@@ -65,6 +65,7 @@ func (h *UserService) PutEmployer(body io.ReadCloser, id uuid.UUID) error {
 }
 
 func (h *UserService) GetEmployer(id uuid.UUID) (Employer, error) {
+	log.Println("GetEmployer Service Start")
 	return h.Storage.GetEmployer(id)
 }
 

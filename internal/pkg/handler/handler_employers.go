@@ -71,7 +71,7 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) { //+
 func (h *Handler) GetEmployerById(w http.ResponseWriter, r *http.Request) { //+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	emplId, err := uuid.Parse(mux.Vars(r)["id"])
-
+	log.Println("GetEmployerById Hadler Start")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})

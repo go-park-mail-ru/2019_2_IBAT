@@ -13,7 +13,7 @@ CREATE TABLE persons(
     first_name VARCHAR (50) NOT NULL,
     second_name VARCHAR (70) NOT NULL,
     email VARCHAR (355) UNIQUE NOT NULL,
-    password_hash VARCHAR (70) NOT NULL,
+    password_hash VARCHAR (255) NOT NULL,
     role VARCHAR (50) NOT NULL,
     path_to_image VARCHAR (50) DEFAULT ''
 );
@@ -47,7 +47,7 @@ CREATE TABLE resumes(
     type_of_employment VARCHAR (50) DEFAULT '',
 	work_schedule VARCHAR (50) DEFAULT '',
     citizenship VARCHAR (70) DEFAULT '',
-    profession VARCHAR (70) DEFAULT '',
+    -- profession VARCHAR (70) DEFAULT '',
     -- must be done by tags
     position    VARCHAR (70) DEFAULT '',
     experience  TEXT DEFAULT '',
@@ -61,7 +61,7 @@ CREATE TABLE vacancies(
     own_id uuid REFERENCES persons (id) ON DELETE CASCADE NOT NULL,
 
     region     VARCHAR (70) DEFAULT '',
-    profession VARCHAR (70) NOT NULL,
+    -- profession VARCHAR (70) NOT NULL,
     position    VARCHAR (70),
     experience  TEXT DEFAULT '',
     wage_from  MONEY DEFAULT '',

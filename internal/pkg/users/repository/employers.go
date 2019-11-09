@@ -23,6 +23,7 @@ func (m *DBUserStorage) CreateEmployer(employerInput Employer) bool {
 	// salt := make([]byte, 8)
 	// rand.Read(salt)
 	// employerInput.Password = string(passwords.HashPass(salt, employerInput.Password))
+	// fmt.Printf("Password hash: %s\n", employerInput.Password)
 
 	_, err = m.DbConn.Exec(
 		"INSERT INTO persons(id, email, first_name, second_name, password_hash, role)"+
@@ -60,7 +61,7 @@ func (m *DBUserStorage) CreateEmployer(employerInput Employer) bool {
 }
 
 func (m *DBUserStorage) GetEmployer(id uuid.UUID) (Employer, error) {
-
+	log.Println("GetEmployer Repository Start")
 	row := m.DbConn.QueryRowx("SELECT p.id, p.email, c.company_name, p.first_name, p.second_name, c.site,"+
 		"c.empl_num, c.phone_number, c.extra_phone_number, c.spheres_of_work, p.path_to_image, "+
 		"c.description, "+
