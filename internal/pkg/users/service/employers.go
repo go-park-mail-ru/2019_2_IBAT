@@ -15,6 +15,8 @@ import (
 
 func (h *UserService) CreateEmployer(body io.ReadCloser) (uuid.UUID, error) { //should do this part by one r with if?
 	bytes, err := ioutil.ReadAll(body)
+	defer body.Close()
+
 	if err != nil {
 		log.Printf("error while reading body: %s", err)
 		return uuid.UUID{}, errors.New(BadRequestMsg)
