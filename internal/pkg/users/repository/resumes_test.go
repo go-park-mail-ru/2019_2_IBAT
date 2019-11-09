@@ -28,9 +28,9 @@ func TestDBUserStorage_GetResumes_Correct(t *testing.T) {
 		})
 	expect := []Resume{
 		{
-			ID:      uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
-			OwnerID: uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
-			// Email:       "",
+			ID:          uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
+			OwnerID:     uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
+			Email:       "",
 			Region:      "Moscow",
 			PhoneNumber: "12345678910",
 			FirstName:   "Vova",
@@ -75,7 +75,7 @@ func TestDBUserStorage_GetResumes_Correct(t *testing.T) {
 	mock.
 		ExpectQuery("SELECT id, own_id, first_name, second_name, email, " +
 			"region, phone_number, birth_date, sex, citizenship, experience, profession, " +
-			"position, wage, education, about FROM resumes").
+			"position, wage, education, about, work_schedule, type_of_employment FROM resumes").
 		WithArgs().
 		WillReturnRows(rows)
 
@@ -83,7 +83,8 @@ func TestDBUserStorage_GetResumes_Correct(t *testing.T) {
 		DbConn: sqlxDB,
 	}
 
-	resumes, err := repo.GetResumes()
+	dummy_map := make(map[string]interface{})
+	resumes, err := repo.GetResumes(dummy_map)
 
 	if err != nil {
 		t.Errorf("unexpected err: %s", err)
@@ -111,7 +112,7 @@ func TestDBUserStorage_GetResumes_Fail(t *testing.T) {
 	mock.
 		ExpectQuery("SELECT id, own_id, first_name, second_name, email, " +
 			"region, phone_number, birth_date, sex, citizenship, experience, profession, " +
-			"position, wage, education, about FROM resumes").
+			"position, wage, education, about, work_schedule, type_of_employment FROM resumes").
 		WithArgs().
 		WillReturnError(errors.New("GetResume: error while querying"))
 
@@ -119,7 +120,8 @@ func TestDBUserStorage_GetResumes_Fail(t *testing.T) {
 		DbConn: sqlxDB,
 	}
 
-	resumes, err := repo.GetResumes()
+	dummy_map := make(map[string]interface{})
+	resumes, err := repo.GetResumes(dummy_map)
 	fmt.Println(resumes)
 
 	if err == nil {
@@ -146,38 +148,41 @@ func TestDBUserStorage_GetResume_Correct(t *testing.T) {
 
 	expect := []Resume{
 		{
-			ID:          uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
-			OwnerID:     uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
-			Email:       "",
-			Region:      "Moscow",
-			PhoneNumber: "12345678910",
-			FirstName:   "Vova",
-			SecondName:  "Zyablikov",
-			BirthDate:   "1999-01-08",
-			Sex:         "male",
-			Citizenship: "Russia",
-			Profession:  "programmer",
-			Position:    "middle",
-			Experience:  "7 years",
-			Education:   "MSU",
-			Wage:        "100 500.00 руб",
-			About:       "Hello employer",
+			ID:               uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
+			OwnerID:          uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
+			Email:            "",
+			Region:           "Moscow",
+			PhoneNumber:      "12345678910",
+			FirstName:        "Vova",
+			SecondName:       "Zyablikov",
+			BirthDate:        "1999-01-08",
+			Sex:              "male",
+			Citizenship:      "Russia",
+			Profession:       "programmer",
+			Position:         "middle",
+			Experience:       "7 years",
+			Education:        "MSU",
+			Wage:             "100 500.00 руб",
+			About:            "Hello employer",
+			TypeOfEmployment: "",
+			WorkSchedule:     "",
 		},
 	}
 
 	rows := sqlmock.
 		NewRows([]string{"id", "own_id", "first_name", "second_name", "email",
 			"region", "phone_number", "birth_date", "sex", "citizenship",
-			"experience", "profession", "position", "wage", "education", "about",
+			"experience", "profession", "position", "wage", "education", "about", "work_schedule", "type_of_employment",
 		}).AddRow(expect[0].ID.String(), expect[0].OwnerID.String(), expect[0].FirstName, expect[0].SecondName, expect[0].Email, expect[0].Region,
 		expect[0].PhoneNumber, expect[0].BirthDate, expect[0].Sex, expect[0].Citizenship, expect[0].Experience,
 		expect[0].Profession, expect[0].Position, expect[0].Wage, expect[0].Education, expect[0].About,
+		expect[0].WorkSchedule, expect[0].TypeOfEmployment,
 	)
 	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a")
 	mock.
 		ExpectQuery("SELECT id, own_id, first_name, second_name, email, " +
 			"region, phone_number, birth_date, sex, citizenship, experience, profession, " +
-			"position, wage, education, about FROM resumes").
+			"position, wage, education, about, work_schedule, type_of_employment FROM resumes").
 		WithArgs(id).
 		WillReturnRows(rows)
 
@@ -215,7 +220,7 @@ func TestDBUserStorage_GetResume_Fail(t *testing.T) {
 	mock.
 		ExpectQuery("SELECT id, own_id, first_name, second_name, email, " +
 			"region, phone_number, birth_date, sex, citizenship, experience, profession, " +
-			"position, wage, education, about FROM resumes").
+			"position, wage, education, about, work_schedule, type_of_employment FROM resumes").
 		WithArgs(id).
 		WillReturnError(errors.New("GetResume: error while querying"))
 
@@ -368,7 +373,7 @@ func TestDBUserStorage_DeleteResume_Correct(t *testing.T) {
 	mock.
 		ExpectQuery("SELECT id, own_id, first_name, second_name, email, " +
 			"region, phone_number, birth_date, sex, citizenship, experience, profession, " +
-			"position, wage, education, about FROM resumes").
+			"position, wage, education, about, work_schedule, type_of_employment FROM resumes").
 		WithArgs(id).
 		WillReturnError(fmt.Errorf("bad query"))
 

@@ -21,7 +21,7 @@ func (m *DBUserStorage) CreateVacancy(vacancyReg Vacancy) bool {
 	)
 
 	if err != nil {
-		fmt.Println("CreateVacancy: error while creating")
+		fmt.Printf("CreateVacancy: %s\n", err)
 		return false
 	}
 
@@ -38,21 +38,19 @@ func (m *DBUserStorage) GetVacancy(id uuid.UUID) (Vacancy, error) {
 	var vacancy Vacancy
 	err := row.StructScan(&vacancy)
 	if err != nil {
-		log.Println("GetVacancy: error while querying")
-		return Vacancy{}, errors.New(InvalidIdMsg)
+		fmt.Printf("CreateVacancy: %s\n", err)
+		return vacancy, errors.New(InvalidIdMsg)
 	}
-	log.Println("Storage: GetVacancy\n vacancy:")
-	log.Println(vacancy)
 
 	return vacancy, nil
 }
 
 func (m *DBUserStorage) DeleteVacancy(id uuid.UUID) error {
-	_, err := m.DbConn.Exec("DELETE FROM vacancies WHERE id = $1;", id)
+	_, err := m.DbConn.Exec("DELETE FROM vacancies WHERE id = $1;", id) //check fi invalid id or internal error
 
 	if err != nil {
-		fmt.Println("DeleteVacancy: error while deleting")
-		return err
+		fmt.Printf("DeleteVacancy: %s\n", err)
+		return errors.New(InvalidIdMsg)
 	}
 
 	return nil
@@ -69,7 +67,7 @@ func (m *DBUserStorage) PutVacancy(vacancy Vacancy, userId uuid.UUID, vacancyId 
 	)
 
 	if err != nil {
-		fmt.Println(BadRequestMsg)
+		fmt.Printf("PutVacancy: %s\n", err)
 		return false
 	}
 
@@ -89,8 +87,9 @@ func (m *DBUserStorage) GetVacancies(params map[string]interface{}) ([]Vacancy, 
 			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
 			"v.region, v.type_of_employment, v.work_schedule " +
 			"FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE " + query)
+
 		if err != nil {
-			log.Println("GetVacancies: error while preparing statement")
+			fmt.Printf("GetVacancies: %s\n", err)
 			return vacancies, errors.New(InternalErrorMsg)
 		}
 	} else {
@@ -106,16 +105,22 @@ func (m *DBUserStorage) GetVacancies(params map[string]interface{}) ([]Vacancy, 
 			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
 			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id;")
 	}
-	defer rows.Close()
 
 	if err != nil {
-		log.Println("GetVacancies: error while query")
+		fmt.Printf("GetVacancies: %s\n", err)
 		return vacancies, errors.New(InternalErrorMsg)
 	}
+
+	defer rows.Close()
+
 	for rows.Next() {
 		var vacancy Vacancy
 
-		_ = rows.StructScan(&vacancy)
+		err = rows.StructScan(&vacancy)
+		if err != nil {
+			fmt.Printf("GetVacancies: %s\n", err)
+			return vacancies, errors.New(InternalErrorMsg)
+		}
 
 		vacancies = append(vacancies, vacancy)
 	}

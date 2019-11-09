@@ -3,7 +3,6 @@ package repository
 import (
 	. "2019_2_IBAT/internal/pkg/interfaces"
 	"fmt"
-	"log"
 
 	"github.com/pkg/errors"
 )
@@ -16,7 +15,7 @@ func (m *DBUserStorage) CreateFavorite(favVac FavoriteVacancy) bool {
 	)
 
 	if err != nil {
-		fmt.Println("CreateFavorite: error while creating")
+		fmt.Printf("CreateFavorite: %s\n", err)
 		return false
 	}
 
@@ -36,14 +35,18 @@ func (m *DBUserStorage) GetFavoriteVacancies(record AuthStorageValue) ([]Vacancy
 	defer rows.Close()
 
 	if err != nil {
-		log.Println("GetVacancies: error while query")
+		fmt.Printf("GetFavoriteVacancies: %s\n", err)
 		return vacancies, errors.New(InternalErrorMsg)
 	}
+
 	for rows.Next() {
 		var vacancy Vacancy
 
-		_ = rows.StructScan(&vacancy)
-
+		err = rows.StructScan(&vacancy)
+		if err != nil {
+			fmt.Printf("GetFavoriteVacancies: %s\n", err)
+			return vacancies, errors.New(InternalErrorMsg)
+		}
 		vacancies = append(vacancies, vacancy)
 	}
 

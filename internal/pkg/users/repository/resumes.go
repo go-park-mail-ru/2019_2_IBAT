@@ -22,7 +22,7 @@ func (m *DBUserStorage) CreateResume(resumeReg Resume) bool {
 	)
 
 	if err != nil {
-		fmt.Println("CreateResume: error while creating")
+		fmt.Printf("GetResponds: %s\n", err)
 		return false
 	}
 
@@ -33,17 +33,15 @@ func (m *DBUserStorage) GetResume(id uuid.UUID) (Resume, error) {
 
 	row := m.DbConn.QueryRowx("SELECT id, own_id, first_name, second_name, email, "+
 		"region, phone_number, birth_date, sex, citizenship, experience, profession, "+
-		"position, wage, education, about, work_schedule, type_of_employment, email FROM resumes WHERE id = $1;", id,
+		"position, wage, education, about, work_schedule, type_of_employment FROM resumes WHERE id = $1;", id,
 	)
 
 	var resume Resume
 	err := row.StructScan(&resume)
 	if err != nil {
-		log.Println("GetResume: error while querying")
-		return Resume{}, errors.New(InvalidIdMsg)
+		fmt.Printf("GetResume: %s\n", err)
+		return resume, errors.New(InvalidIdMsg)
 	}
-	log.Println("Storage: GetResume\n Resume:")
-	log.Println(resume)
 
 	return resume, nil
 }
@@ -52,7 +50,7 @@ func (m *DBUserStorage) DeleteResume(id uuid.UUID) error {
 	_, err := m.DbConn.Exec("DELETE FROM resumes WHERE id = $1;", id)
 
 	if err != nil {
-		fmt.Println("DeleteResume: error while deleting")
+		fmt.Printf("DeleteResume: %s\n", err)
 		return errors.New(InternalErrorMsg)
 	}
 
@@ -72,7 +70,7 @@ func (m *DBUserStorage) PutResume(resume Resume, userId uuid.UUID, resumeId uuid
 	)
 
 	if err != nil {
-		fmt.Println("PutResume: error while changing")
+		fmt.Printf("PutResume: %s\n", err)
 		return false
 	}
 
@@ -80,10 +78,8 @@ func (m *DBUserStorage) PutResume(resume Resume, userId uuid.UUID, resumeId uuid
 }
 
 func (m *DBUserStorage) GetResumes(params map[string]interface{}) ([]Resume, error) {
-
 	resumes := []Resume{}
 
-	log.Printf("Params: %s\n\n", params)
 	query := paramsToResumesQuery(params)
 
 	var nmst *sqlx.NamedStmt
@@ -95,7 +91,7 @@ func (m *DBUserStorage) GetResumes(params map[string]interface{}) ([]Resume, err
 			"position, wage, education, about, work_schedule, type_of_employment FROM resumes WHERE " + query)
 
 		if err != nil {
-			log.Println("GetResumes: error while preparing statement")
+			fmt.Printf("GetResumes: %s\n", err)
 			return resumes, errors.New(InternalErrorMsg)
 		}
 	} else {
@@ -111,17 +107,21 @@ func (m *DBUserStorage) GetResumes(params map[string]interface{}) ([]Resume, err
 			"position, wage, education, about, work_schedule, type_of_employment FROM resumes;",
 		)
 	}
-
 	if err != nil {
-		log.Println("GetVacancies: error while query")
+		fmt.Printf("GetResumes: %s\n", err)
 		return resumes, errors.New(InternalErrorMsg)
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var resume Resume
 
-		_ = rows.StructScan(&resume)
+		err = rows.StructScan(&resume)
 
+		if err != nil {
+			fmt.Printf("GetResumes: %s\n", err)
+			return resumes, errors.New(InternalErrorMsg)
+		}
 		resumes = append(resumes, resume)
 	}
 

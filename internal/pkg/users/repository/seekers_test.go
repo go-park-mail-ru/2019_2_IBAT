@@ -21,47 +21,6 @@ import (
 // // 	defer db.Close()
 // // }
 
-// seekers := []Seeker{}
-
-// 	rows, err := m.DbConn.Queryx("SELECT id, email, first_name, second_name,"+
-// 		"path_to_image FROM persons WHERE role = $1;", SeekerStr)
-// 	defer rows.Close()
-
-// 	if err != nil {
-// 		fmt.Println("GetSeeker: error while query seekers")
-// 		return seekers, err
-// 	}
-
-// 	for rows.Next() {
-// 		seek := Seeker{}
-// 		_ = rows.StructScan(&seek)
-// 		// if err != nil {
-// 		// 	return seekers, err
-// 		// }
-
-// 		id_rows, err := m.DbConn.Query("SELECT v.id FROM resumes AS v WHERE v.own_id = $1;", seek.ID)
-// 		if err != nil {
-// 			fmt.Println("GetSeeker: error while query resumes")
-// 			return seekers, err
-// 		}
-// 		defer id_rows.Close()
-
-// 		resumes := make([]uuid.UUID, 0)
-
-// 		for id_rows.Next() {
-// 			var id uuid.UUID
-// 			_ = id_rows.Scan(&id)
-// 			// if err != nil {
-// 			// 	return employers, err
-// 			// }
-// 			resumes = append(resumes, id)
-// 		}
-
-// 		seek.Resumes = resumes
-// 		seekers = append(seekers, seek)
-// 	}
-
-// 	return seekers, nil
 func TestDBUserStorage_GetSeekers_Correct(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	defer db.Close()
@@ -174,65 +133,65 @@ func TestDBUserStorage_GetSeekers_Fail(t *testing.T) { //ADD SECOND SELECT TEST 
 
 }
 
-// func TestDBUserStorage_GetSeeker_Correct(t *testing.T) {
-// 	db, mock, err := sqlmock.New()
-// 	defer db.Close()
-// 	sqlxDB := sqlx.NewDb(db, "sqlmock")
+func TestDBUserStorage_GetSeeker_Correct(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	defer db.Close()
+	sqlxDB := sqlx.NewDb(db, "sqlmock")
 
-// 	if err != nil {
-// 		t.Fatalf("cant create mock: %s", err)
-// 	}
-// 	defer sqlxDB.Close()
+	if err != nil {
+		t.Fatalf("cant create mock: %s", err)
+	}
+	defer sqlxDB.Close()
 
-// 	rows := sqlmock.
-// 		NewRows([]string{"id", "email", "first_name", "second_name", "path_to_image"})
-// 	rows_resumes_id1 := sqlmock.NewRows([]string{"id"})
+	rows := sqlmock.
+		NewRows([]string{"id", "email", "first_name", "second_name", "path_to_image"})
+	rows_resumes_id1 := sqlmock.NewRows([]string{"id"})
 
-// 	expect := Seeker{
-// 		ID:         uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
-// 		Email:      "some@mail.ru",
-// 		FirstName:  "Victor",
-// 		SecondName: "Timofeev",
-// 		PathToImg:  "",
-// 		Resumes:    []uuid.UUID{uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d")},
-// 	}
+	expect := Seeker{
+		ID:         uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
+		Email:      "some@mail.ru",
+		FirstName:  "Victor",
+		SecondName: "Timofeev",
+		PathToImg:  "",
+		Resumes:    []uuid.UUID{uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d")},
+	}
 
-// 	rows = rows.AddRow(expect.ID.String(), expect.Email, expect.FirstName,
-// 		expect.SecondName, expect.PathToImg,
-// 	)
+	rows = rows.AddRow(expect.ID.String(), expect.Email, expect.FirstName,
+		expect.SecondName, expect.PathToImg,
+	)
 
-// 	mock.
-// 		ExpectQuery("SELECT id, email, first_name, second_name," +
-// 			"path_to_image FROM persons WHERE").
-// 		WithArgs(expect.ID).
-// 		WillReturnRows(rows)
+	mock.
+		ExpectQuery("SELECT id, email, first_name, second_name, " +
+			"path_to_image FROM persons WHERE").
+		WithArgs(expect.ID).
+		WillReturnRows(rows)
 
-// 	rows_resumes_id1 = rows_resumes_id1.AddRow(uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d").String())
+	rows_resumes_id1 = rows_resumes_id1.AddRow(uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d").String())
 
-// 	mock.
-// 		ExpectQuery("SELECT r.id FROM resumes AS r WHERE").
-// 		WithArgs(expect.ID).
-// 		WillReturnRows(rows_resumes_id1)
+	mock.
+		ExpectQuery("SELECT r.id FROM resumes AS r WHERE").
+		WithArgs(expect.ID).
+		WillReturnRows(rows_resumes_id1)
 
-// 	repo := DBUserStorage{
-// 		DbConn: sqlxDB,
-// 	}
+	repo := DBUserStorage{
+		DbConn: sqlxDB,
+	}
 
-// 	item, err := repo.GetSeeker(expect.ID)
+	item, err := repo.GetSeeker(expect.ID)
 
-// 	if err != nil {
-// 		t.Errorf("unexpected err: %s", err)
-// 		return
-// 	}
-// 	if err := mock.ExpectationsWereMet(); err != nil {
-// 		t.Errorf("there were unfulfilled expectations: %s", err)
-// 		return
-// 	}
-// 	if !reflect.DeepEqual(item, expect) {
-// 		t.Errorf("results not match,\n want\n%v,\n have\n %v\n", expect, item)
-// 		return
-// 	}
-// }
+	if err != nil {
+		t.Errorf("unexpected err: %s", err)
+		return
+	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+		return
+	}
+	if !reflect.DeepEqual(item, expect) {
+		t.Errorf("results not match,\n want\n%v,\n have\n %v\n", expect, item)
+		return
+	}
+}
 
 // func TestDBUserStorage_GetSeeker_Fail(t *testing.T) {
 // 	db, mock, err := sqlmock.New()
@@ -249,15 +208,15 @@ func TestDBUserStorage_GetSeekers_Fail(t *testing.T) { //ADD SECOND SELECT TEST 
 // 		NewRows([]string{"id", "email", "first_name", "second_name", "path_to_image"})
 
 // 	mock.
-// 		ExpectQuery("SELECT id, email, first_name, second_name," +
-// 			"path_to_image FROM persons WHERE").
+// 		ExpectQuery("SELECT id, email, first_name, second_name, " +
+// 			"path_to_image FROM persons WHERE ").
 // 		WithArgs(id).
 // 		WillReturnRows(rows)
 
-// 	// mock.
-// 	// 	ExpectQuery("SELECT r.id FROM resumes AS r WHERE").
-// 	// 	WithArgs(id).
-// 	// 	WillReturnError(errors.New("GetSeeker: Invalid id"))
+// 	mock.
+// 		ExpectQuery("SELECT r.id FROM resumes AS r WHERE").
+// 		WithArgs(id).
+// 		WillReturnError(errors.New("GetSeeker: Invalid id"))
 // 	// mock.
 // 	// 	ExpectQuery("SELECT v.id, v.own_id, c.company_name, v.experience," +
 // 	// 		"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +

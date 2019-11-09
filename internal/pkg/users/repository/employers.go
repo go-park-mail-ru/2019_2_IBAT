@@ -15,7 +15,7 @@ import (
 func (m *DBUserStorage) CreateEmployer(employerInput Employer) bool {
 	tx, err := m.DbConn.Begin()
 	if err != nil {
-		fmt.Println("error while creating user")
+		fmt.Printf("CreateEmployer: %s\n", err)
 		return false
 	}
 	// id := uuid.New()
@@ -31,7 +31,7 @@ func (m *DBUserStorage) CreateEmployer(employerInput Employer) bool {
 	)
 
 	if err != nil {
-		fmt.Println("error while creating person")
+		fmt.Printf("CreateEmployer: %s\n", err)
 		return false
 	}
 
@@ -43,7 +43,7 @@ func (m *DBUserStorage) CreateEmployer(employerInput Employer) bool {
 	)
 
 	if err != nil {
-		fmt.Println("error while creating company")
+		fmt.Printf("CreateEmployer: %s\n", err)
 		tx.Rollback()
 		return false
 	}
@@ -51,7 +51,7 @@ func (m *DBUserStorage) CreateEmployer(employerInput Employer) bool {
 	err = tx.Commit()
 
 	if err != nil {
-		fmt.Println("error while creating user")
+		fmt.Printf("CreateEmployer: %s\n", err)
 		tx.Rollback()
 		return false
 	}
@@ -61,31 +61,34 @@ func (m *DBUserStorage) CreateEmployer(employerInput Employer) bool {
 
 func (m *DBUserStorage) GetEmployer(id uuid.UUID) (Employer, error) {
 
-	rows := m.DbConn.QueryRowx("SELECT p.id, p.email, c.company_name, p.first_name, p.second_name, c.site,"+
+	row := m.DbConn.QueryRowx("SELECT p.id, p.email, c.company_name, p.first_name, p.second_name, c.site,"+
 		"c.empl_num, c.phone_number, c.extra_phone_number, c.spheres_of_work, p.path_to_image, "+
 		"c.description, "+
 		"c.region FROM persons as p JOIN companies as c ON p.id = c.own_id WHERE p.id = $1;", id) //and p.class
 
 	empl := Employer{}
-	_ = rows.StructScan(&empl)
-	// if err != nil {
-	// 	return employers, err
-	// }
+	err := row.StructScan(&empl)
+	if err != nil {
+		fmt.Printf("GetEmployer: %s\n", err)
+		return empl, err
+	}
 
-	id_rows, _ := m.DbConn.Query("SELECT v.id FROM vacancies AS v WHERE v.own_id = $1;", empl.ID)
-	// if err != nil {
-	// 	return empl, errors.New(InternalErrorMsg)
-	// }
+	id_rows, err := m.DbConn.Query("SELECT v.id FROM vacancies AS v WHERE v.own_id = $1;", empl.ID)
+	if err != nil {
+		fmt.Printf("GetEmployer: %s\n", err)
+		return empl, errors.New(InternalErrorMsg)
+	}
 	defer id_rows.Close()
 
 	vacancies := make([]uuid.UUID, 0)
 
 	for id_rows.Next() {
 		var id uuid.UUID
-		_ = id_rows.Scan(&id)
-		// if err != nil {
-		// 	return employers, err
-		// }
+		err = id_rows.Scan(&id)
+		if err != nil {
+			fmt.Printf("GetEmployer: %s\n", err)
+			return empl, err
+		}
 		vacancies = append(vacancies, id)
 	}
 
@@ -98,7 +101,7 @@ func (m *DBUserStorage) PutEmployer(employerInput EmployerReg, id uuid.UUID) boo
 	tx, err := m.DbConn.Begin()
 
 	if err != nil {
-		fmt.Println("error while changing employer")
+		fmt.Printf("PutEmployer: %s\n", err)
 		return false
 	}
 
@@ -109,7 +112,7 @@ func (m *DBUserStorage) PutEmployer(employerInput EmployerReg, id uuid.UUID) boo
 	)
 
 	if err != nil {
-		fmt.Println("error while changing employer")
+		fmt.Printf("PutEmployer: %s\n", err)
 		return false
 	}
 
@@ -121,7 +124,7 @@ func (m *DBUserStorage) PutEmployer(employerInput EmployerReg, id uuid.UUID) boo
 	)
 
 	if err != nil {
-		fmt.Println("error while changing employer")
+		fmt.Printf("PutEmployer: %s\n", err)
 		tx.Rollback()
 		return false
 	}
@@ -129,7 +132,7 @@ func (m *DBUserStorage) PutEmployer(employerInput EmployerReg, id uuid.UUID) boo
 	err = tx.Commit()
 
 	if err != nil {
-		fmt.Println("error while changing employer")
+		fmt.Printf("PutEmployer: %s\n", err)
 		tx.Rollback()
 		return false
 	}
@@ -167,19 +170,24 @@ func (m *DBUserStorage) GetEmployers(params map[string]interface{}) ([]Employer,
 			"c.empl_num, c.phone_number, c.extra_phone_number, c.spheres_of_work, p.path_to_image, c.region, "+
 			" c.description FROM persons as p JOIN companies as c ON p.id = c.own_id WHERE role = $1;", EmployerStr)
 	}
+
+	if err != nil {
+		log.Printf("GetEmployers: %s", err)
+		return employers, errors.New(InternalErrorMsg)
+	}
 	defer rows.Close()
 
 	for rows.Next() {
 		empl := Employer{}
 		err = rows.StructScan(&empl)
 		if err != nil {
-			log.Printf("GetEmployers: error while scanning employers- %s", err)
+			fmt.Printf("GetEmployers: %s\n", err)
 			return employers, err
 		}
 
-		id_rows, _ := m.DbConn.Query("SELECT v.id FROM vacancies AS v WHERE v.own_id = $1;", empl.ID)
+		id_rows, err := m.DbConn.Query("SELECT v.id FROM vacancies AS v WHERE v.own_id = $1;", empl.ID)
 		if err != nil {
-			log.Printf("GetEmployers: error querying vacancies - %s", err)
+			fmt.Printf("GetEmployers: %s\n", err)
 			return employers, errors.New(InternalErrorMsg)
 		}
 		defer id_rows.Close()
@@ -190,7 +198,7 @@ func (m *DBUserStorage) GetEmployers(params map[string]interface{}) ([]Employer,
 			var id uuid.UUID
 			err = id_rows.Scan(&id)
 			if err != nil {
-				log.Printf("GetEmployers: error scanning vacancies - %s", err)
+				fmt.Printf("GetEmployers: %s\n", err)
 				return employers, err
 			}
 			vacancies = append(vacancies, id)

@@ -15,15 +15,13 @@ type DBUserStorage struct {
 func (m *DBUserStorage) DeleteUser(id uuid.UUID) error {
 	_, err := m.DbConn.Exec("DELETE FROM persons WHERE id = $1", id)
 	if err != nil {
-		fmt.Println("DeleteUser: error while deleting")
+		fmt.Printf("DeleteUser: %s\n", err)
 		return errors.New("DeleteUser: error while deleting")
 	}
 	return nil
 }
 
 func (m *DBUserStorage) CheckUser(email string, password string) (uuid.UUID, string, bool) {
-
-	// password = passwords.CheckPass()
 	row := m.DbConn.QueryRow("SELECT id, role, password_hash FROM persons "+
 		"WHERE email = $1", email)
 
@@ -36,6 +34,9 @@ func (m *DBUserStorage) CheckUser(email string, password string) (uuid.UUID, str
 	// 	return resId, class, false
 	// }
 	if password != string(password_hash) || err != nil {
+		if err != nil {
+			fmt.Printf("CheckUser: %s\n", err)
+		}
 		return resId, class, false
 	}
 	return resId, class, true
@@ -48,7 +49,7 @@ func (m *DBUserStorage) SetImage(id uuid.UUID, class string, imageName string) b
 	)
 
 	if err != nil {
-		fmt.Println("error while setting image to user")
+		fmt.Printf("SetImage: %s\n", err)
 		return false
 	}
 

@@ -162,8 +162,8 @@ func TestDBUserStorage_GetVacancy_Correct(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT v.id, v.own_id, c.company_name, v.experience," +
-			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
-			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE").
+			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
+			"v.region, v.type_of_employment, v.work_schedule FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE").
 		WithArgs().
 		WillReturnRows(rows)
 
@@ -201,8 +201,8 @@ func TestDBUserStorage_GetVacancy_Fail(t *testing.T) {
 	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642bbba")
 	mock.
 		ExpectQuery("SELECT v.id, v.own_id, c.company_name, v.experience," +
-			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
-			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE").
+			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
+			"v.region, v.type_of_employment, v.work_schedule FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE").
 		WithArgs(id).
 		WillReturnError(errors.New("GetVacancy: error while querying"))
 
@@ -347,8 +347,8 @@ func TestDBUserStorage_DeleteVacancy_Correct(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT v.id, v.own_id, c.company_name, v.experience," +
-			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
-			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE").
+			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
+			"v.region, v.type_of_employment, v.work_schedule FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE").
 		WithArgs(id).
 		WillReturnError(errors.New("GetVacancy: error while querying"))
 

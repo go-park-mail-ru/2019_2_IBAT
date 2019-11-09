@@ -22,7 +22,7 @@ func (m *DBUserStorage) CreateSeeker(seekerInput Seeker) bool {
 	)
 
 	if err != nil {
-		fmt.Println("error while creating user")
+		fmt.Printf("CreateSeeker: %s\n", err)
 		return false
 	}
 
@@ -35,21 +35,22 @@ func (m *DBUserStorage) GetSeekers() ([]Seeker, error) { //not tested
 	rows, err := m.DbConn.Queryx("SELECT id, email, first_name, second_name,"+
 		"path_to_image FROM persons WHERE role = $1;", SeekerStr)
 	if err != nil {
-		fmt.Println("GetSeeker: error while query seekers")
+		fmt.Printf("GetSeekers: %s\n", err)
 		return seekers, errors.New(InternalErrorMsg)
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		seek := Seeker{}
-		_ = rows.StructScan(&seek)
-		// if err != nil {
-		// 	return seekers, err
-		// }
+		err = rows.StructScan(&seek)
+		if err != nil {
+			fmt.Printf("GetSeekers: %s\n", err)
+			return seekers, errors.New(InternalErrorMsg)
+		}
 
 		id_rows, err := m.DbConn.Query("SELECT r.id FROM resumes AS r WHERE r.own_id = $1;", seek.ID)
 		if err != nil {
-			fmt.Println("GetSeeker: error while query resumes") //fix
+			fmt.Printf("GetSeekers: %s\n", err)
 			return seekers, errors.New(InternalErrorMsg)
 		}
 		defer id_rows.Close()
@@ -58,10 +59,11 @@ func (m *DBUserStorage) GetSeekers() ([]Seeker, error) { //not tested
 
 		for id_rows.Next() {
 			var id uuid.UUID
-			_ = id_rows.Scan(&id)
-			// if err != nil {
-			// 	return employers, err
-			// }
+			err = id_rows.Scan(&id)
+			if err != nil {
+				fmt.Printf("GetSeekers: %s\n", err)
+				return seekers, errors.New(InternalErrorMsg)
+			}
 			resumes = append(resumes, id)
 		}
 
@@ -74,19 +76,20 @@ func (m *DBUserStorage) GetSeekers() ([]Seeker, error) { //not tested
 
 func (m *DBUserStorage) GetSeeker(id uuid.UUID) (Seeker, error) {
 
-	rows := m.DbConn.QueryRowx("SELECT id, email, first_name, second_name,"+
+	row := m.DbConn.QueryRowx("SELECT id, email, first_name, second_name,"+
 		" path_to_image FROM persons WHERE id = $1;", id)
 
 	seeker := Seeker{}
-	_ = rows.StructScan(&seeker)
-	// if err != nil {
-	// 	return seekers, err
-	// }
+	err := row.StructScan(&seeker)
+	if err != nil {
+		fmt.Printf("GetSeeker: %s\n", err)
+		return seeker, errors.New(InternalErrorMsg)
+	}
 
 	id_rows, err := m.DbConn.Query("SELECT r.id FROM resumes AS r WHERE r.own_id = $1;", seeker.ID)
 
 	if err != nil {
-		fmt.Println("GetSeeker: error while query resumes")
+		fmt.Printf("GetSeeker: %s\n", err)
 		return seeker, errors.New(InternalErrorMsg)
 	}
 	defer id_rows.Close()
@@ -95,10 +98,13 @@ func (m *DBUserStorage) GetSeeker(id uuid.UUID) (Seeker, error) {
 
 	for id_rows.Next() {
 		var id uuid.UUID
-		_ = id_rows.Scan(&id)
-		// if err != nil {
-		// 	return employers, err
-		// }
+		err = id_rows.Scan(&id)
+
+		if err != nil {
+			fmt.Printf("GetSeeker: %s\n", err)
+			return seeker, errors.New(InternalErrorMsg)
+		}
+
 		resumes = append(resumes, id)
 	}
 
@@ -116,7 +122,7 @@ func (m *DBUserStorage) PutSeeker(seekerInput SeekerReg, id uuid.UUID) bool {
 	)
 
 	if err != nil {
-		fmt.Println("error while changing user")
+		fmt.Printf("PutSeeker: %s\n", err)
 		return false
 	}
 

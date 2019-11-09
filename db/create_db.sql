@@ -47,7 +47,7 @@ CREATE TABLE resumes(
     type_of_employment VARCHAR (50) DEFAULT '',
 	work_schedule VARCHAR (50) DEFAULT '',
     citizenship VARCHAR (70) DEFAULT '',
-    profession VARCHAR (70 DEFAULT ''),
+    profession VARCHAR (70) DEFAULT '',
     -- must be done by tags
     position    VARCHAR (70) DEFAULT '',
     experience  TEXT DEFAULT '',
