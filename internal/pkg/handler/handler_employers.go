@@ -18,6 +18,7 @@ import (
 func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) { //+
 	defer r.Body.Close()
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	log.Println("CreateEmployer Start")
 
 	uuid, err := h.UserService.CreateEmployer(r.Body)
 	if err != nil {
@@ -71,8 +72,10 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) { //+
 func (h *Handler) GetEmployerById(w http.ResponseWriter, r *http.Request) { //+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	emplId, err := uuid.Parse(mux.Vars(r)["id"])
-	log.Println("GetEmployerById Hadler Start")
+	log.Println("GetEmployerById Handler Start")
+
 	if err != nil {
+		log.Printf("GetEmployerById Parse id error: %s\n", err)
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
 		w.Write([]byte(errJSON))
