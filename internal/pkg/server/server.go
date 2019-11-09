@@ -4,7 +4,6 @@ import (
 	"flag"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	auth_rep "2019_2_IBAT/internal/pkg/auth/repository"
@@ -24,6 +23,17 @@ import (
 	"github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 )
+
+// func init() {
+// 	f, err := os.OpenFile("testlogfile", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+// 	if err != nil {
+// 		log.Fatalf("error opening file: %v", err)
+// 	}
+// 	// defer f.Close()
+
+// 	log.SetOutput(f)
+// 	log.Println("This is a test log entry")
+// }
 
 type Server struct {
 	Router *mux.Router
@@ -59,11 +69,12 @@ func NewServer() (*Server, error) {
 		UserService: &uS,
 	}
 
-	AccessLogOut := new(middleware.AccessLogger)
-	AccessLogOut.StdLogger = log.New(os.Stdout, "STD ", log.LUTC|log.Lshortfile)
+	loger := middleware.NewLogger()
+	// AccessLogOut := new(middleware.AccessLogger)
+	// AccessLogOut.StdLogger = log.New(os.Stdout, "STD ", log.LUTC|log.Lshortfile)
 
 	router.Use(middleware.CorsMiddleware)
-	router.Use(AccessLogOut.AccessLogMiddleware)
+	router.Use(loger.AccessLogMiddleware)
 	router.Use(aS.AuthMiddleware)
 	router.Use(middleware.CSRFMiddleware)
 

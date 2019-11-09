@@ -1,28 +1,41 @@
 package middleware
 
 import (
-	"fmt"
+	// "fmt"
 	"log"
 	"net/http"
 	"time"
+	"os"
 )
 
-type AccessLogger struct {
+type Logger struct {
 	StdLogger *log.Logger
+	f *os.File
 }
 
-func (ac AccessLogger) AccessLogMiddleware(next http.Handler) http.Handler {
+func (ac Logger) AccessLogMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
+		log.Printf("LOG START [%s] %s, %s \n",
+		r.Method, r.RemoteAddr, r.URL.Path)
+
 		next.ServeHTTP(w, r)
 
-		fmt.Printf("FMT [%s] %s, %s %s\n\n",
-			r.Method, r.RemoteAddr, r.URL.Path, time.Since(start))
-
-		log.Printf("LOG [%s] %s, %s %s\n",
-			r.Method, r.RemoteAddr, r.URL.Path, time.Since(start))
-
-		ac.StdLogger.Printf("[%s] %s, %s %s\n",
+		log.Printf("LOG END [%s] %s, %s %s\n\n\n",
 			r.Method, r.RemoteAddr, r.URL.Path, time.Since(start))
 	})
+}
+
+func NewLogger() Logger {
+	loger := Logger{}
+	
+	f, err := os.OpenFile("testlogfile", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}
+	loger.f = f
+
+
+	log.SetOutput(loger.f)
+	return loger
 }
