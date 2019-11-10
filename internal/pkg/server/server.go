@@ -16,7 +16,6 @@ import (
 	// . "2019_2_IBAT/internal/pkg/interfaces"
 	"2019_2_IBAT/internal/pkg/middleware"
 
-	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx"
 
@@ -46,15 +45,27 @@ func NewServer() (*Server, error) {
 
 	router := mux.NewRouter()
 
-	redisAddr := flag.String("addr", "redis://user:@localhost:6379/0", "redis addr")
+	redisAddr := flag.String("redisServer", ":6379", "")
+	// redisAddr := flag.String("addr", "redis://user:@localhost:6379/0", "redis addr")
 
-	redisConn, err := redis.DialURL(*redisAddr)
-	if err != nil {
-		log.Fatalf("cant connect to redis")
-	}
+	// redisConn, err := redis.DialURL(*redisAddr)
+	// if err != nil {
+	// 	log.Fatalf("cant connect to redis")
+	// }
+
+	//   var (
+	// 	pool *redis.Pool
+	// 	redisServer = flag.String("redisServer", ":6379", "")
+	//   )
+
+	//   func main() {
+	// 	flag.Parse()
+	// 	pool = newPool(*redisServer)
+	// 	...
+	//   }
 
 	aS := auth_serv.AuthService{
-		Storage: auth_rep.NewSessionManager(redisConn),
+		Storage: auth_rep.NewSessionManager(auth_rep.RedNewPool(*redisAddr)),
 	}
 
 	uS := usServ.UserService{

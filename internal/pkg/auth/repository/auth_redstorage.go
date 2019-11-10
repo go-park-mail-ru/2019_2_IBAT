@@ -23,18 +23,23 @@ func init() {
 }
 
 type SessionManager struct {
-	redisConn redis.Conn
+	// redisConn redis.Conn
+	redisPool *redis.Pool
 }
 
-func NewSessionManager(conn redis.Conn) *SessionManager {
+func NewSessionManager(pool *redis.Pool) *SessionManager {
 	return &SessionManager{
-		redisConn: conn,
+		redisPool: pool,
 	}
 }
 
 func (st *SessionManager) Get(cookie string) (AuthStorageValue, bool) {
 	log.Println("AuthStorage: Get started")
-	data, err := redis.Bytes(st.redisConn.Do("GET", cookie))
+	redisConn := st.redisPool.Get()
+	defer redisConn.Close()
+
+	data, err := redis.Bytes(redisConn.Do("GET", cookie))
+	// defer redisConn.Close()
 	if err != nil {
 		log.Println("AuthStorage: Can not get auth info:", err)
 		return AuthStorageValue{}, false
@@ -60,7 +65,7 @@ func (st *SessionManager) Get(cookie string) (AuthStorageValue, bool) {
 
 	if diff < 0 {
 		// delete(st.Storage, cookie)
-		_, _ = redis.String(st.redisConn.Do("DEL", cookie))
+		_, _ = redis.String(redisConn.Do("DEL", cookie))
 
 		return AuthStorageValue{}, false
 	}
@@ -80,7 +85,9 @@ func (st *SessionManager) Set(id uuid.UUID, class string) (AuthStorageValue, str
 	cookie := generateCookie()
 	dataSerialized, _ := json.Marshal(record)
 
-	result, err := redis.String(st.redisConn.Do("SET", cookie, dataSerialized))
+	redisConn := st.redisPool.Get()
+	defer redisConn.Close()
+	result, err := redis.String(redisConn.Do("SET", cookie, dataSerialized))
 
 	if err != nil {
 		return AuthStorageValue{}, "", err
@@ -94,7 +101,10 @@ func (st *SessionManager) Set(id uuid.UUID, class string) (AuthStorageValue, str
 }
 
 func (st *SessionManager) Delete(cookie string) bool {
-	_, err := redis.Int(st.redisConn.Do("DEL", cookie))
+	redisConn := st.redisPool.Get()
+	defer redisConn.Close()
+
+	_, err := redis.Int(redisConn.Do("DEL", cookie))
 
 	if err != nil {
 		return false
@@ -116,3 +126,22 @@ func generateCookie() string {
 
 	return b.String()
 }
+
+func RedNewPool(addr string) *redis.Pool {
+	return &redis.Pool{
+		MaxIdle:     3,
+		IdleTimeout: 240 * time.Second,
+		Dial:        func() (redis.Conn, error) { return redis.Dial("tcp", addr) },
+	}
+}
+
+//   var (
+// 	pool *redis.Pool
+// 	redisServer = flag.String("redisServer", ":6379", "")
+//   )
+
+//   func main() {
+// 	flag.Parse()
+// 	pool = newPool(*redisServer)
+// 	...
+//   }

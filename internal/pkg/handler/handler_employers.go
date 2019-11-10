@@ -74,7 +74,7 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) { //+
 func (h *Handler) GetEmployerById(w http.ResponseWriter, r *http.Request) { //+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	id_string := mux.Vars(r)["id"]
-	log.Println("GetEmployerById id_string: %s", id_string)
+	log.Printf("GetEmployerById id_string: %s\n", id_string)
 	emplId, err := uuid.Parse(id_string)
 	log.Println("GetEmployerById Handler Start")
 
@@ -137,3 +137,16 @@ func (h *Handler) ParseEmplQuery(query url.Values) map[string]interface{} {
 }
 
 // write tcp 127.0.0.1:37786->127.0.0.1:6379: use of closed network connection
+// Can not get auth info: redigo: unexpected response line
+// (possible server error or unsupported concurrent read by application)
+
+// fail
+// &{GET /employer/1668c0b9-653d-4a93-83b9-e8b32187c18f HTTP/2.0 2 0
+// 	map[Accept:[*/*] Accept-Encoding:[gzip, deflate, br] Accept-Language:
+// 	[ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7] Cookie:[session-id=uoa7If53qWDgQdFR3DrGSeZXL9nLnBZT]
+// 	Origin:[http://localhost:8080] Referer:[http://localhost:8080/]
+// 	User-Agent:[Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
+// 	(KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36]]
+// 	0xc0000751a0 <nil> 0 [] false 82.146.43.113:8080 map[]
+// 	map[] <nil> map[] 93.171.198.4:37498 /employer/1668c0b9-653d-4a93-83b9-e8b32187c18f
+// 	0xc000268c60 <nil> <nil> 0xc0000260d0}
