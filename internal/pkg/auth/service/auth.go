@@ -69,8 +69,12 @@ func (auth *AuthService) AuthMiddleware(h http.Handler) http.Handler {
 			}
 		}
 
+		reqWithCxt := req.WithContext(ctx)
+		log.Println("CTX")
+		log.Println(reqWithCxt)
 		log.Println("AuthMiddleware: passing to serve")
-		h.ServeHTTP(res, req.WithContext(ctx))
+
+		h.ServeHTTP(res, reqWithCxt)
 	}
 
 	return mw
