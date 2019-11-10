@@ -16,6 +16,7 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/pkg/errors v0.8.1
 	github.com/stretchr/testify v1.4.0
+	golang.org/x/blog v0.0.0-20191108185507-584205eb2c4d // indirect
 	golang.org/x/crypto v0.0.0-20190911031432-227b76d455e7
 	golang.org/x/tools v0.0.0-20191105231337-689d0f08e67a // indirect
 	golang.org/x/tools/gopls v0.1.7 // indirect
