@@ -64,6 +64,8 @@ func (auth *AuthService) AuthMiddleware(h http.Handler) http.Handler {
 				// context.Set(req, AuthRec, record)
 				ctx = NewContext(req.Context(), record)
 				log.Println("AuthMiddleware: auth_record was setted")
+			} else {
+				log.Println("AuthMiddleware: failed to set auth_record")
 			}
 		}
 

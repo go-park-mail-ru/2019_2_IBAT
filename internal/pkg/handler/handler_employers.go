@@ -28,6 +28,8 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) { //+
 		return
 	}
 
+	log.Println("CreateEmployer Employer was created")
+
 	authInfo, cookieValue, err := h.AuthService.CreateSession(uuid, EmployerStr)
 
 	if err != nil {
@@ -133,3 +135,5 @@ func (h *Handler) ParseEmplQuery(query url.Values) map[string]interface{} {
 
 	return params
 }
+
+// write tcp 127.0.0.1:37786->127.0.0.1:6379: use of closed network connection
