@@ -13,7 +13,6 @@ import (
 	usRep "2019_2_IBAT/internal/pkg/users/repository"
 	usServ "2019_2_IBAT/internal/pkg/users/service"
 
-	// . "2019_2_IBAT/internal/pkg/interfaces"
 	"2019_2_IBAT/internal/pkg/middleware"
 
 	"github.com/gorilla/mux"
@@ -22,17 +21,6 @@ import (
 	"github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
 )
-
-// func init() {
-// 	f, err := os.OpenFile("testlogfile", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-// 	if err != nil {
-// 		log.Fatalf("error opening file: %v", err)
-// 	}
-// 	// defer f.Close()
-
-// 	log.SetOutput(f)
-// 	log.Println("This is a test log entry")
-// }
 
 type Server struct {
 	Router *mux.Router
@@ -46,23 +34,6 @@ func NewServer() (*Server, error) {
 	router := mux.NewRouter()
 
 	redisAddr := flag.String("redisServer", ":6379", "")
-	// redisAddr := flag.String("addr", "redis://user:@localhost:6379/0", "redis addr")
-
-	// redisConn, err := redis.DialURL(*redisAddr)
-	// if err != nil {
-	// 	log.Fatalf("cant connect to redis")
-	// }
-
-	//   var (
-	// 	pool *redis.Pool
-	// 	redisServer = flag.String("redisServer", ":6379", "")
-	//   )
-
-	//   func main() {
-	// 	flag.Parse()
-	// 	pool = newPool(*redisServer)
-	// 	...
-	//   }
 
 	aS := auth_serv.AuthService{
 		Storage: auth_rep.NewSessionManager(auth_rep.RedNewPool(*redisAddr)),

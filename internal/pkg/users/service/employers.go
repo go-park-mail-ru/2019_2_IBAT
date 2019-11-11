@@ -33,6 +33,7 @@ func (h *UserService) CreateEmployer(body io.ReadCloser) (uuid.UUID, error) {
 
 	id := uuid.New()
 	newEmployerReg.ID = id
+	newEmployerReg.PathToImg = DefaultImg
 	ok := h.Storage.CreateEmployer(newEmployerReg)
 
 	if !ok {

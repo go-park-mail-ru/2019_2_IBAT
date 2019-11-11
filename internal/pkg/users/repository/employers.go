@@ -26,9 +26,9 @@ func (m *DBUserStorage) CreateEmployer(employerInput Employer) bool {
 	// fmt.Printf("Password hash: %s\n", employerInput.Password)
 
 	_, err = m.DbConn.Exec(
-		"INSERT INTO persons(id, email, first_name, second_name, password_hash, role)"+
-			"VALUES($1, $2, $3, $4, $5, $6);", employerInput.ID, employerInput.Email, employerInput.FirstName,
-		employerInput.SecondName, employerInput.Password, EmployerStr,
+		"INSERT INTO persons(id, email, first_name, second_name, password_hash, role, path_to_image)"+
+			"VALUES($1, $2, $3, $4, $5, $6, $7);", employerInput.ID, employerInput.Email, employerInput.FirstName,
+		employerInput.SecondName, employerInput.Password, EmployerStr, employerInput.PathToImg,
 	)
 
 	if err != nil {

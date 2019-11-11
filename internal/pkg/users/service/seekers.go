@@ -32,6 +32,7 @@ func (h *UserService) CreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
 
 	id := uuid.New()
 	newSeekerReg.ID = id
+	newSeekerReg.PathToImg = DefaultImg
 	ok := h.Storage.CreateSeeker(newSeekerReg)
 	if !ok {
 		// log.Println("Here inside users")

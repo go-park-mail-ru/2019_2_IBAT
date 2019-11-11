@@ -16,9 +16,9 @@ func (m *DBUserStorage) CreateSeeker(seekerInput Seeker) bool {
 	// seekerInput.Password = string(passwords.HashPass(salt, seekerInput.Password))
 
 	_, err := m.DbConn.Exec(
-		"INSERT INTO persons(id, email, first_name, second_name, password_hash, role)"+
-			"VALUES($1, $2, $3, $4, $5, $6);", seekerInput.ID, seekerInput.Email, seekerInput.FirstName,
-		seekerInput.SecondName, seekerInput.Password, SeekerStr,
+		"INSERT INTO persons(id, email, first_name, second_name, password_hash, role, path_to_image)"+
+			"VALUES($1, $2, $3, $4, $5, $6, $7);", seekerInput.ID, seekerInput.Email, seekerInput.FirstName,
+		seekerInput.SecondName, seekerInput.Password, SeekerStr, seekerInput.PathToImg,
 	)
 
 	if err != nil {
