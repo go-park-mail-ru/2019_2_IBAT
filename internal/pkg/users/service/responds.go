@@ -47,7 +47,7 @@ func (h *UserService) CreateRespond(body io.ReadCloser, record AuthStorageValue)
 func (h *UserService) GetResponds(authInfo AuthStorageValue, params map[string]string) ([]Respond, error) {
 	responds := []Respond{}
 
-	if params["resumeid"] != "" && params["vacancyid"] != "" {
+	if params["resume_id"] != "" && params["vacancy_id"] != "" {
 		return responds, errors.New("Invalid message")
 	}
 

@@ -20,8 +20,8 @@ func (h *Handler) GetResponds(w http.ResponseWriter, r *http.Request) { //+
 
 	v := r.URL.Query()
 	params := make(map[string]string)
-	params["vacancyid"] = v.Get("vacancyid")
-	params["resumeid"] = v.Get("resumeid")
+	params["vacancy_id"] = v.Get("vacancy_id")
+	params["resume_id"] = v.Get("resume_id")
 	fmt.Printf("vacancyid = %s, resumeid = %s", params["vacancyid"], params["resumeid"])
 
 	responds, _ := h.UserService.GetResponds(authInfo, params) //error handling
