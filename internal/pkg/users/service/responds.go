@@ -48,7 +48,7 @@ func (h *UserService) GetResponds(authInfo AuthStorageValue, params map[string]s
 	responds := []Respond{}
 
 	if params["resume_id"] != "" && params["vacancy_id"] != "" {
-		return responds, errors.New("Invalid message")
+		return responds, errors.New(BadRequestMsg)
 	}
 
 	responds, err := h.Storage.GetResponds(authInfo, params)
