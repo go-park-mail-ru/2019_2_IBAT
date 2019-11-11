@@ -13,7 +13,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (h *UserService) CreateEmployer(body io.ReadCloser) (uuid.UUID, error) { //should do this part by one r with if?
+func (h *UserService) CreateEmployer(body io.ReadCloser) (uuid.UUID, error) {
 	bytes, err := ioutil.ReadAll(body)
 	defer body.Close()
 

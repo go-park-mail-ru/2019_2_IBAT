@@ -3,7 +3,6 @@ package service
 import (
 	"2019_2_IBAT/internal/pkg/auth"
 	. "2019_2_IBAT/internal/pkg/interfaces"
-	"context"
 
 	"log"
 	"net/http"
@@ -53,7 +52,6 @@ func (auth *AuthService) AuthMiddleware(h http.Handler) http.Handler {
 		log.Println("AuthMiddleware: started")
 		cookie, err := req.Cookie(CookieName)
 
-		ctx := context.TODO()
 		if err != nil {
 			log.Println("AuthMiddleware: No cookie detected")
 		} else {
@@ -62,19 +60,20 @@ func (auth *AuthService) AuthMiddleware(h http.Handler) http.Handler {
 
 			if ok {
 				// context.Set(req, AuthRec, record)
-				ctx = NewContext(req.Context(), record)
-				log.Println("AuthMiddleware: auth_record was setted")
+				ctx := NewContext(req.Context(), record)
+
+				reqWithCxt := req.WithContext(ctx)
+
+				h.ServeHTTP(res, reqWithCxt)
+
+				return
 			} else {
 				log.Println("AuthMiddleware: failed to set auth_record")
 			}
+
 		}
 
-		reqWithCxt := req.WithContext(ctx)
-		log.Println("CTX")
-		log.Println(reqWithCxt)
-		log.Println("AuthMiddleware: passing to serve")
-
-		h.ServeHTTP(res, reqWithCxt)
+		h.ServeHTTP(res, req)
 	}
 
 	return mw
