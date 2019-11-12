@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -27,50 +27,8 @@ type CorsData struct {
 	AllowCredentials bool
 }
 
-// func CorsMiddleware(h http.Handler) http.Handler {
-// 	var mw http.HandlerFunc = func(res http.ResponseWriter, req *http.Request) {
-// 		// fmt.Println(req.Context())
-// 		// fmt.Println("Request was accepted")
-
-// 		val, _ := req.Header["Origin"]
-// 		// if ok {
-// 		// 	res.Header().Set("Access-Control-Allow-Origin", val[0])
-// 		// 	res.Header().Set("Access-Control-Allow-Credentials", strconv.FormatBool(corsData.AllowCredentials))
-// 		// }
-// 		// var flag bool
-// 		// for _, header := range corsData.AllowOrigins {
-// 		// 	if val[0] == header {
-// 		// 		flag = true
-// 		// 	}
-// 		// }
-
-// 		// // val, ok := req.Header["Origin"]
-// 		// // if ok {
-// 		// // res.Header().Set("Access-Control-Allow-Origin", strings.Join(corsData.AllowOrigins, ", "))
-// 		// // res.Header().Set("Access-Control-Allow-Credentials", strconv.FormatBool(corsData.AllowCredentials))
-// 		// // }
-// 		// if !flag {
-// 		// 	res.WriteHeader(http.StatusBadRequest)
-// 		// 	return
-// 		// }
-// 		if req.Method == "OPTIONS" {
-// 			// res.Header().Set("Access-Control-Allow-Origin", strings.Join(corsData.AllowOrigins, ", "))
-// 			res.Header().Set("Access-Control-Allow-Methods", strings.Join(corsData.AllowMethods, ", "))
-// 			res.Header().Set("Access-Control-Allow-Headers", strings.Join(corsData.AllowHeaders, ", "))
-// 			// res.Header().Set("Access-Control-Allow-Credentials", strconv.FormatBool(corsData.AllowCredentials))
-// 			return
-//		}
-
-// 		h.ServeHTTP(res, req)
-// 	}
-
-// 	return mw
-// }
-
 func CorsMiddleware(h http.Handler) http.Handler {
 	var mw http.HandlerFunc = func(res http.ResponseWriter, req *http.Request) {
-		fmt.Println(req.Context())
-		fmt.Println("Request was accepted")
 		val, ok := req.Header["Origin"]
 		if ok {
 			// var flag bool
@@ -83,18 +41,16 @@ func CorsMiddleware(h http.Handler) http.Handler {
 			if flag {
 				res.Header().Set("Access-Control-Allow-Origin", val[0])
 				res.Header().Set("Access-Control-Allow-Credentials", strconv.FormatBool(corsData.AllowCredentials))
+				log.Println("Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set")
 			} else {
+				log.Println("StatusForbidden: headers not set")
 				res.WriteHeader(http.StatusForbidden)
 				return
 			}
-
 		}
-		// else {
-		// 	res.WriteHeader(http.StatusForbidden)
-		// 	return
-		// }
 
 		if req.Method == "OPTIONS" {
+			log.Println("Access-Control-Allow-Methods and Access-Control-Allow-Headers headers were set")
 			res.Header().Set("Access-Control-Allow-Methods", strings.Join(corsData.AllowMethods, ", "))
 			res.Header().Set("Access-Control-Allow-Headers", strings.Join(corsData.AllowHeaders, ", "))
 			return

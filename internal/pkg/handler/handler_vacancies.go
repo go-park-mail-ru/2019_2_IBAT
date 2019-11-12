@@ -15,11 +15,17 @@ import (
 func (h *Handler) GetVacancies(w http.ResponseWriter, r *http.Request) { //+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
+	authInfo, ok := FromContext(r.Context())
+
+	if !ok {
+		authInfo = AuthStorageValue{} //check if nil possible
+	}
+
 	params := h.ParseVacanciesQuery(r.URL.Query())
 
 	log.Printf("Params map length: %d\n", len(params))
 
-	vacancies, _ := h.UserService.GetVacancies(params) //err handle
+	vacancies, _ := h.UserService.GetVacancies(authInfo, params) //err handle
 
 	vacanciesJSON, _ := json.Marshal(vacancies)
 

@@ -74,7 +74,7 @@ func (m *DBUserStorage) PutVacancy(vacancy Vacancy, userId uuid.UUID, vacancyId 
 	return true
 }
 
-func (m *DBUserStorage) GetVacancies(params map[string]interface{}) ([]Vacancy, error) {
+func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[string]interface{}) ([]Vacancy, error) {
 	vacancies := []Vacancy{}
 	log.Printf("Params: %s\n\n", params)
 	query := paramsToQuery(params)

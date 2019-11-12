@@ -129,6 +129,7 @@ type Vacancy struct {
 	WorkSchedule     string    `json:"work_schedule"       db:"work_schedule"`
 	WageTo           string    `json:"wage_to"             db:"wage_to"`
 	Conditions       string    `json:"conditions"          db:"conditions"`
+	Favorite         bool      `json:"favorite"            db:"favorite"`
 	About            string    `json:"about"               db:"about"`
 }
 

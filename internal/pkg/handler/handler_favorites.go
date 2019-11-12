@@ -36,6 +36,7 @@ func (h *Handler) GetFavoriteVacancies(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
 		w.Write([]byte(errJSON))
+		return
 	}
 
 	vacancies, _ := h.UserService.GetFavoriteVacancies(authInfo) //error handling

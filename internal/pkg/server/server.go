@@ -55,8 +55,8 @@ func NewServer() (*Server, error) {
 	// AccessLogOut := new(middleware.AccessLogger)
 	// AccessLogOut.StdLogger = log.New(os.Stdout, "STD ", log.LUTC|log.Lshortfile)
 
-	router.Use(middleware.CorsMiddleware)
 	router.Use(loger.AccessLogMiddleware)
+	router.Use(middleware.CorsMiddleware)
 	router.Use(aS.AuthMiddleware)
 	router.Use(middleware.CSRFMiddleware)
 

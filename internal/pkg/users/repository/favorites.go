@@ -25,8 +25,8 @@ func (m *DBUserStorage) CreateFavorite(favVac FavoriteVacancy) bool {
 func (m *DBUserStorage) GetFavoriteVacancies(record AuthStorageValue) ([]Vacancy, error) {
 	vacancies := []Vacancy{}
 
-	rows, err := m.DbConn.Queryx("SELECT v.id, v.own_id, c.company_name, v.experience,"+
-		"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
+	rows, err := m.DbConn.Queryx("SELECT v.id, v.own_id, c.company_name, v.experience, "+
+		"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
 		"v.region, v.type_of_employment, v.work_schedule "+
 
 		"FROM favorite_vacancies AS fv "+

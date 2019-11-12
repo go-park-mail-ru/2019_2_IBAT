@@ -115,6 +115,6 @@ func (h *UserService) PutVacancy(vacancyId uuid.UUID, body io.ReadCloser, authIn
 	return nil
 }
 
-func (h *UserService) GetVacancies(params map[string]interface{}) ([]Vacancy, error) {
-	return h.Storage.GetVacancies(params)
+func (h *UserService) GetVacancies(authInfo AuthStorageValue, params map[string]interface{}) ([]Vacancy, error) {
+	return h.Storage.GetVacancies(authInfo, params)
 }
