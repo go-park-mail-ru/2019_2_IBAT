@@ -12,15 +12,6 @@ import (
 	sqlmock "gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
-// func init() {
-// 	/* load test data */
-// 	db, mock, err := sqlmock.New()
-// 	if err != nil {
-// 		t.Fatalf("cant create mock: %s", err)
-// 	}
-// 	defer db.Close()
-// }
-
 func TestDBUserStorage_GetVacancies_Correct(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	defer db.Close()
@@ -31,7 +22,7 @@ func TestDBUserStorage_GetVacancies_Correct(t *testing.T) {
 	}
 
 	rows := sqlmock.
-		NewRows([]string{"id", "own_id", "company_name", "experience", "profession",
+		NewRows([]string{"id", "own_id", "company_name", "experience",
 			"position", "tasks", "requirements", "wage_from", "wage_to", "conditions", "about",
 		})
 	expect := []Vacancy{
@@ -40,8 +31,7 @@ func TestDBUserStorage_GetVacancies_Correct(t *testing.T) {
 			OwnerID:      uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
 			CompanyName:  "MC",
 			Experience:   "7 years",
-			Profession:   "cleaner",
-			Position:     "mid",
+			Position:     "cleaner",
 			Tasks:        "cleaning rooms",
 			Requirements: "work for 24 hours per week",
 			WageFrom:     "100 500 руб",
@@ -53,14 +43,14 @@ func TestDBUserStorage_GetVacancies_Correct(t *testing.T) {
 
 	for _, item := range expect {
 		rows = rows.AddRow(item.ID.String(), item.OwnerID.String(), item.CompanyName, item.Experience,
-			item.Profession, item.Position, item.Tasks, item.Requirements,
+			item.Position, item.Tasks, item.Requirements,
 			item.WageFrom, item.WageTo, item.Conditions, item.About,
 		)
 	}
 
 	mock.
 		ExpectQuery("SELECT v.id, v.own_id, c.company_name, v.experience," +
-			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
+			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
 			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id;").
 		WithArgs().
 		WillReturnRows(rows)
@@ -97,7 +87,7 @@ func TestDBUserStorage_GetVacancies_Fail(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT v.id, v.own_id, c.company_name, v.experience," +
-			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
+			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
 			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id;").
 		WithArgs().
 		WillReturnError(errors.New("GetVacancies: error while querying"))
@@ -133,7 +123,7 @@ func TestDBUserStorage_GetVacancy_Correct(t *testing.T) {
 	defer sqlxDB.Close()
 
 	rows := sqlmock.
-		NewRows([]string{"id", "own_id", "company_name", "experience", "profession",
+		NewRows([]string{"id", "own_id", "company_name", "experience",
 			"position", "tasks", "requirements", "wage_from", "wage_to", "conditions", "about",
 		})
 	expect := []Vacancy{
@@ -142,7 +132,6 @@ func TestDBUserStorage_GetVacancy_Correct(t *testing.T) {
 			OwnerID:      uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
 			CompanyName:  "MC",
 			Experience:   "7 years",
-			Profession:   "cleaner",
 			Position:     "mid",
 			Tasks:        "cleaning rooms",
 			Requirements: "work for 24 hours per week",
@@ -155,14 +144,14 @@ func TestDBUserStorage_GetVacancy_Correct(t *testing.T) {
 
 	for _, item := range expect {
 		rows = rows.AddRow(item.ID.String(), item.OwnerID.String(), item.CompanyName, item.Experience,
-			item.Profession, item.Position, item.Tasks, item.Requirements,
+			item.Position, item.Tasks, item.Requirements,
 			item.WageFrom, item.WageTo, item.Conditions, item.About,
 		)
 	}
 
 	mock.
 		ExpectQuery("SELECT v.id, v.own_id, c.company_name, v.experience," +
-			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
+			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
 			"v.region, v.type_of_employment, v.work_schedule FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE").
 		WithArgs().
 		WillReturnRows(rows)
@@ -201,7 +190,7 @@ func TestDBUserStorage_GetVacancy_Fail(t *testing.T) {
 	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642bbba")
 	mock.
 		ExpectQuery("SELECT v.id, v.own_id, c.company_name, v.experience," +
-			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
+			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
 			"v.region, v.type_of_employment, v.work_schedule FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE").
 		WithArgs(id).
 		WillReturnError(errors.New("GetVacancy: error while querying"))
@@ -239,7 +228,6 @@ func TestDBUserStorage_CreateVacancy_Correct(t *testing.T) {
 		OwnerID:      uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
 		CompanyName:  "MC",
 		Experience:   "7 years",
-		Profession:   "cleaner",
 		Position:     "mid",
 		Tasks:        "cleaning rooms",
 		Requirements: "work for 24 hours per week",
@@ -252,7 +240,7 @@ func TestDBUserStorage_CreateVacancy_Correct(t *testing.T) {
 	mock.
 		ExpectExec(`INSERT INTO vacancies`).
 		WithArgs(
-			vacancy.ID, vacancy.OwnerID, vacancy.Experience, vacancy.Profession, vacancy.Position, vacancy.Tasks,
+			vacancy.ID, vacancy.OwnerID, vacancy.Experience, vacancy.Position, vacancy.Tasks,
 			vacancy.Requirements, vacancy.Conditions, vacancy.WageFrom, vacancy.WageTo, vacancy.About,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
@@ -284,7 +272,6 @@ func TestDBUserStorage_CreateVacancy_False(t *testing.T) {
 		OwnerID:      uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
 		CompanyName:  "MC",
 		Experience:   "7 years",
-		Profession:   "cleaner",
 		Position:     "mid",
 		Tasks:        "cleaning rooms",
 		Requirements: "work for 24 hours per week",
@@ -297,7 +284,7 @@ func TestDBUserStorage_CreateVacancy_False(t *testing.T) {
 	mock.
 		ExpectExec(`INSERT INTO vacancies`).
 		WithArgs(
-			vacancy.ID, vacancy.OwnerID, vacancy.Experience, vacancy.Profession, vacancy.Position, vacancy.Tasks,
+			vacancy.ID, vacancy.OwnerID, vacancy.Experience, vacancy.Position, vacancy.Tasks,
 			vacancy.Requirements, vacancy.Conditions, vacancy.WageFrom, vacancy.WageTo, vacancy.About,
 		).
 		WillReturnError(fmt.Errorf("bad query"))
@@ -347,7 +334,7 @@ func TestDBUserStorage_DeleteVacancy_Correct(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT v.id, v.own_id, c.company_name, v.experience," +
-			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
+			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
 			"v.region, v.type_of_employment, v.work_schedule FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE").
 		WithArgs(id).
 		WillReturnError(errors.New("GetVacancy: error while querying"))
@@ -414,7 +401,6 @@ func TestDBUserStorage_PutVacancy_Correct(t *testing.T) {
 		OwnerID:      uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
 		CompanyName:  "MC",
 		Experience:   "7 years",
-		Profession:   "cleaner",
 		Position:     "mid",
 		Tasks:        "cleaning rooms",
 		Requirements: "work for 24 hours per week",
@@ -427,7 +413,7 @@ func TestDBUserStorage_PutVacancy_Correct(t *testing.T) {
 	mock.
 		ExpectExec(`UPDATE vacancies SET`).
 		WithArgs(
-			vacancy.Experience, vacancy.Profession, vacancy.Position, vacancy.Tasks, vacancy.Requirements,
+			vacancy.Experience, vacancy.Position, vacancy.Tasks, vacancy.Requirements,
 			vacancy.Conditions, vacancy.WageFrom, vacancy.WageTo, vacancy.About, vacancy.ID, vacancy.OwnerID,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
@@ -462,8 +448,7 @@ func TestDBUserStorage_PutVacancy_False(t *testing.T) {
 		OwnerID:      uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
 		CompanyName:  "MC",
 		Experience:   "7 years",
-		Profession:   "cleaner",
-		Position:     "mid",
+		Position:     "cleaner",
 		Tasks:        "cleaning rooms",
 		Requirements: "work for 24 hours per week",
 		WageFrom:     "100 500.00 руб",
@@ -475,7 +460,7 @@ func TestDBUserStorage_PutVacancy_False(t *testing.T) {
 	mock.
 		ExpectExec(`UPDATE vacancies SET`).
 		WithArgs(
-			vacancy.Experience, vacancy.Profession, vacancy.Position, vacancy.Tasks, vacancy.Requirements,
+			vacancy.Experience, vacancy.Position, vacancy.Tasks, vacancy.Requirements,
 			vacancy.Conditions, vacancy.WageFrom, vacancy.WageTo, vacancy.About, vacancy.ID, vacancy.OwnerID,
 		).
 		WillReturnError(fmt.Errorf("bad query"))

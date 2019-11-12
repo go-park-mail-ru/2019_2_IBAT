@@ -47,7 +47,6 @@ CREATE TABLE resumes(
     type_of_employment VARCHAR (50) DEFAULT '',
 	work_schedule VARCHAR (50) DEFAULT '',
     citizenship VARCHAR (70) DEFAULT '',
-    -- profession VARCHAR (70) DEFAULT '',
     -- must be done by tags
     position    VARCHAR (70) DEFAULT '',
     experience  TEXT DEFAULT '',
@@ -61,7 +60,6 @@ CREATE TABLE vacancies(
     own_id uuid REFERENCES persons (id) ON DELETE CASCADE NOT NULL,
 
     region     VARCHAR (70) DEFAULT '',
-    -- profession VARCHAR (70) NOT NULL,
     position    VARCHAR (70),
     experience  TEXT DEFAULT '',
     wage_from  MONEY DEFAULT '',
@@ -126,52 +124,51 @@ description, phone_number, extra_phone_number)
 VALUES((SELECT id FROM persons WHERE email = 'yandex@mail.ru'), 'Yandex', 'Yandex.ru',
 'IT, business', 'more than 1000', 'not so bad', '89266239479', '8926639479');
 
-INSERT INTO vacancies(id, own_id, profession, region, position, experience,
+INSERT INTO vacancies(id, own_id, region, position, experience,
 wage_from, wage_to, type_of_employment, tasks, requirements, work_schedule,
 conditions, about)VALUES(gen_random_uuid(),
-(SELECT own_id FROM companies WHERE company_name = 'Mail.ru'), 'frontend developer', 'middle', 'Moscow', '4 years', 125000, 130000, 'Полная занятость',
+(SELECT own_id FROM companies WHERE company_name = 'Mail.ru'), 'Москва', 'frontend developer',, '4 years', 125000, 130000, 'Полная занятость',
 'write frontend', 'JS', 'Полный день','nice office, good team', 'the best IT company');
 
-INSERT INTO vacancies(id, own_id, profession, region, position, experience,
+INSERT INTO vacancies(id, own_id, region, position, experience,
 wage_from, wage_to, type_of_employment, tasks, requirements, work_schedule,
 conditions, about)VALUES(gen_random_uuid(),
-(SELECT own_id FROM companies WHERE company_name = 'Mail.ru'),
-'backend developer', 'middle', 'Moscow', 'Более 6 лет', 80000, 120000, 'Полная занятость',
+(SELECT own_id FROM companies WHERE company_name = 'Mail.ru'), 'Москва', 'backend developer', 'Более 6 лет', 80000, 120000, 'Полная занятость',
 'write backend', 'Go', 'Полный день', 'nice office, good team', 'the best IT company');
 
-INSERT INTO vacancies(id, own_id, profession, region, position, experience,
+INSERT INTO vacancies(id, own_id, region, position, experience,
 wage_from, wage_to, type_of_employment, tasks, requirements, work_schedule,
 conditions, about)VALUES(gen_random_uuid(),
-(SELECT own_id FROM companies WHERE company_name = 'Yandex'), 'backend developer', 'middle', 'Moscow', 'От 3 до 6 лет', 125000, 250000, 'Полная занятость',
+(SELECT own_id FROM companies WHERE company_name = 'Yandex'), 'Москва', 'backend developer', 'От 3 до 6 лет', 125000, 250000, 'Полная занятость',
 'write backend', 'Go', 'Удаленная работа','nice office, good team', 'top 2 IT company');
 
 
-INSERT INTO vacancies(id, own_id, profession, region, position, experience,
+INSERT INTO vacancies(id, own_id, region, position, experience,
 wage_from, wage_to, type_of_employment, tasks, requirements, work_schedule,
 conditions, about)VALUES(gen_random_uuid(),
 (SELECT own_id FROM companies WHERE company_name = 'Yandex'),
-'data scientist', 'middle', 'Moscow', 'Более 6 лет', 150000, 300000, 'Полная занятость',
+, 'Москва', 'data scientist', 'Более 6 лет', 150000, 300000, 'Полная занятость',
 'write II', 'Python, math', 'Удаленная работа','nice office, good team', 'top 2 IT company');
 
 
 
 INSERT INTO resumes(id, own_id, email,  first_name, second_name, region, phone_number, birth_date, sex,
-citizenship, profession, position, education, wage, about, type_of_employment, work_schedule, experience)
+citizenship, position, education, wage, about, type_of_employment, work_schedule, experience)
 VALUES(gen_random_uuid(), (SELECT id FROM persons WHERE email = 'vladle@mail.ru'),
 'vladle@mail.ru', 'Vlad', 'Lee', 'Москва', '89266211479', '1991-10-10', 'мужской', 'русское',
-'фронтенд-разработчик', 'middle', 'МГТУ', '123000', 'Хороший парень', 'Полная занятость', 'Удаленная работа',
+'фронтенд-разработчик','МГТУ', '123000', 'Хороший парень', 'Полная занятость', 'Удаленная работа',
 'Более 6 лет');
 
 INSERT INTO resumes(id, own_id, email,  first_name, second_name, region, phone_number, birth_date, sex,
-citizenship, profession, position, education, wage, about, type_of_employment, work_schedule, experience)
+citizenship, position, education, wage, about, type_of_employment, work_schedule, experience)
 VALUES(gen_random_uuid(), (SELECT id FROM persons WHERE email = 'vladle@mail.ru'),
 'vladle@mail.ru', 'Vlad', 'Lee', 'Москва', '89266211479', '1991-10-10', 'мужской', 'русское',
-'бэкенд-разработчик', 'middle', 'МГТУ', '123000', 'Хороший парень', 'Полная занятость', 'Удаленная работа',
+'бэкенд-разработчик', 'МГТУ', '123000', 'Хороший парень', 'Полная занятость', 'Удаленная работа',
 'От 3 до 6 лет');
    
 INSERT INTO resumes(id, own_id, email,  first_name, second_name, region, phone_number, birth_date, sex,
-citizenship, profession, position, education, wage, about, type_of_employment, work_schedule, experience)
+citizenship, position, education, wage, about, type_of_employment, work_schedule, experience)
 VALUES(gen_random_uuid(), (SELECT id FROM persons WHERE email = 'vladle@mail.ru'),
 'vasyapupkin@mail.ru', 'Вася', 'Пупкин', 'Москва', '89236211479', '1998-10-10', 'мужской', 'русское',
-'дата-саентист', 'middle', 'МГУ', '170000', 'Хороший парень', 'Полная занятость', 'Полный день',
+'дата-саентист', 'МГУ', '170000', 'Хороший парень', 'Полная занятость', 'Полный день',
 'Более 6 лет');

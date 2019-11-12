@@ -168,11 +168,17 @@ func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
+	authInfo, ok := FromContext(r.Context())
+
+	if !ok {
+		authInfo = AuthStorageValue{}
+	}
+
 	params := h.ParseResumesQuery(r.URL.Query())
 
 	log.Printf("Params map length: %d\n", len(params))
 
-	resumes, _ := h.UserService.GetResumes(params) //error handling
+	resumes, _ := h.UserService.GetResumes(authInfo, params) //error handling
 
 	resumesJSON, _ := json.Marshal(resumes)
 
@@ -181,6 +187,10 @@ func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) ParseResumesQuery(query url.Values) map[string]interface{} {
 	params := make(map[string]interface{})
+
+	if query.Get("own") != "" {
+		params["own"] = query.Get("own")
+	}
 
 	if query.Get("region") != "" {
 		params["region"] = query.Get("region")

@@ -71,15 +71,24 @@ func (_mr *_MockRepositoryRecorder) CreateVacancy(arg0 interface{}) *gomock.Call
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "CreateVacancy", arg0)
 }
 
-func (_m *MockRepository) CreateRespond(respond Respond, userId uuid.UUID) (uuid.UUID, bool) {
+func (_m *MockRepository) CreateRespond(respond Respond, userId uuid.UUID) bool {
 	ret := _m.ctrl.Call(_m, "CreateRespond", respond, userId)
-	ret0, _ := ret[0].(uuid.UUID)
-	ret1, _ := ret[1].(bool)
-	return ret0, ret1
+	ret0, _ := ret[0].(bool)
+	return ret0
 }
 
 func (_mr *_MockRepositoryRecorder) CreateRespond(arg0, arg1 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "CreateRespond", arg0, arg1)
+}
+
+func (_m *MockRepository) CreateFavorite(favVac FavoriteVacancy) bool {
+	ret := _m.ctrl.Call(_m, "CreateFavorite", favVac)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+func (_mr *_MockRepositoryRecorder) CreateFavorite(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "CreateFavorite", arg0)
 }
 
 func (_m *MockRepository) DeleteUser(id uuid.UUID) error {
@@ -164,15 +173,15 @@ func (_mr *_MockRepositoryRecorder) PutVacancy(arg0, arg1, arg2 interface{}) *go
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "PutVacancy", arg0, arg1, arg2)
 }
 
-func (_m *MockRepository) GetEmployers() ([]Employer, error) {
-	ret := _m.ctrl.Call(_m, "GetEmployers")
+func (_m *MockRepository) GetEmployers(params map[string]interface{}) ([]Employer, error) {
+	ret := _m.ctrl.Call(_m, "GetEmployers", params)
 	ret0, _ := ret[0].([]Employer)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockRepositoryRecorder) GetEmployers() *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetEmployers")
+func (_mr *_MockRepositoryRecorder) GetEmployers(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetEmployers", arg0)
 }
 
 func (_m *MockRepository) GetSeekers() ([]Seeker, error) {
@@ -186,15 +195,15 @@ func (_mr *_MockRepositoryRecorder) GetSeekers() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetSeekers")
 }
 
-func (_m *MockRepository) GetResumes() ([]Resume, error) {
-	ret := _m.ctrl.Call(_m, "GetResumes")
+func (_m *MockRepository) GetResumes(params map[string]interface{}) ([]Resume, error) {
+	ret := _m.ctrl.Call(_m, "GetResumes", params)
 	ret0, _ := ret[0].([]Resume)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockRepositoryRecorder) GetResumes() *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetResumes")
+func (_mr *_MockRepositoryRecorder) GetResumes(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetResumes", arg0)
 }
 
 func (_m *MockRepository) GetVacancies(params map[string]interface{}) ([]Vacancy, error) {
@@ -217,6 +226,17 @@ func (_m *MockRepository) GetResponds(record AuthStorageValue, params map[string
 
 func (_mr *_MockRepositoryRecorder) GetResponds(arg0, arg1 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetResponds", arg0, arg1)
+}
+
+func (_m *MockRepository) GetFavoriteVacancies(record AuthStorageValue) ([]Vacancy, error) {
+	ret := _m.ctrl.Call(_m, "GetFavoriteVacancies", record)
+	ret0, _ := ret[0].([]Vacancy)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockRepositoryRecorder) GetFavoriteVacancies(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetFavoriteVacancies", arg0)
 }
 
 func (_m *MockRepository) GetSeeker(id uuid.UUID) (Seeker, error) {

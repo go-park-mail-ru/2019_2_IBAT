@@ -52,6 +52,7 @@ func (auth *AuthService) AuthMiddleware(h http.Handler) http.Handler {
 		log.Println("AuthMiddleware: started")
 		cookie, err := req.Cookie(CookieName)
 
+		ctx := req.Context()
 		if err != nil {
 			log.Println("AuthMiddleware: No cookie detected")
 		} else {
@@ -59,21 +60,15 @@ func (auth *AuthService) AuthMiddleware(h http.Handler) http.Handler {
 			record, ok := auth.Storage.Get(cookie.Value)
 
 			if ok {
-				// context.Set(req, AuthRec, record)
-				ctx := NewContext(req.Context(), record)
-
-				reqWithCxt := req.WithContext(ctx)
-
-				h.ServeHTTP(res, reqWithCxt)
-
-				return
+				ctx = NewContext(req.Context(), record)
 			} else {
 				log.Println("AuthMiddleware: failed to set auth_record")
 			}
-
 		}
 
-		h.ServeHTTP(res, req)
+		reqWithCxt := req.WithContext(ctx)
+
+		h.ServeHTTP(res, reqWithCxt)
 	}
 
 	return mw

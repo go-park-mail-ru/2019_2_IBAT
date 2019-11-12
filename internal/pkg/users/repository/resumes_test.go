@@ -24,7 +24,7 @@ func TestDBUserStorage_GetResumes_Correct(t *testing.T) {
 	rows := sqlmock.
 		NewRows([]string{"id", "own_id", "email", "region", "phone_number",
 			"first_name", "second_name", "birth_date", "sex", "citizenship",
-			"profession", "position", "experience", "education", "wage", "about",
+			"position", "experience", "education", "wage", "about",
 		})
 	expect := []Resume{
 		{
@@ -38,8 +38,7 @@ func TestDBUserStorage_GetResumes_Correct(t *testing.T) {
 			BirthDate:   "1999-01-08",
 			Sex:         "male",
 			Citizenship: "Russia",
-			Profession:  "programmer",
-			Position:    "middle",
+			Position:    "programmer",
 			Experience:  "7 years",
 			Education:   "MSU",
 			Wage:        "100 500.00 руб",
@@ -56,8 +55,7 @@ func TestDBUserStorage_GetResumes_Correct(t *testing.T) {
 			BirthDate:   "1986-01-08",
 			Sex:         "male",
 			Citizenship: "Russia",
-			Profession:  "programmer",
-			Position:    "middle",
+			Position:    "programmer",
 			Experience:  "7 years",
 			Education:   "MSU",
 			Wage:        "100 500.00 руб",
@@ -67,14 +65,14 @@ func TestDBUserStorage_GetResumes_Correct(t *testing.T) {
 
 	for _, item := range expect {
 		rows = rows.AddRow(item.ID.String(), item.OwnerID.String(), item.Email, item.Region, item.PhoneNumber, item.FirstName,
-			item.SecondName, item.BirthDate, item.Sex, item.Citizenship, item.Profession,
+			item.SecondName, item.BirthDate, item.Sex, item.Citizenship,
 			item.Position, item.Experience, item.Education, item.Wage, item.About,
 		)
 	}
 
 	mock.
 		ExpectQuery("SELECT id, own_id, first_name, second_name, email, " +
-			"region, phone_number, birth_date, sex, citizenship, experience, profession, " +
+			"region, phone_number, birth_date, sex, citizenship, experience, " +
 			"position, wage, education, about, work_schedule, type_of_employment FROM resumes").
 		WithArgs().
 		WillReturnRows(rows)
@@ -111,7 +109,7 @@ func TestDBUserStorage_GetResumes_Fail(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT id, own_id, first_name, second_name, email, " +
-			"region, phone_number, birth_date, sex, citizenship, experience, profession, " +
+			"region, phone_number, birth_date, sex, citizenship, experience, " +
 			"position, wage, education, about, work_schedule, type_of_employment FROM resumes").
 		WithArgs().
 		WillReturnError(errors.New("GetResume: error while querying"))
@@ -158,8 +156,7 @@ func TestDBUserStorage_GetResume_Correct(t *testing.T) {
 			BirthDate:        "1999-01-08",
 			Sex:              "male",
 			Citizenship:      "Russia",
-			Profession:       "programmer",
-			Position:         "middle",
+			Position:         "programmer",
 			Experience:       "7 years",
 			Education:        "MSU",
 			Wage:             "100 500.00 руб",
@@ -172,16 +169,16 @@ func TestDBUserStorage_GetResume_Correct(t *testing.T) {
 	rows := sqlmock.
 		NewRows([]string{"id", "own_id", "first_name", "second_name", "email",
 			"region", "phone_number", "birth_date", "sex", "citizenship",
-			"experience", "profession", "position", "wage", "education", "about", "work_schedule", "type_of_employment",
+			"experience", "position", "wage", "education", "about", "work_schedule", "type_of_employment",
 		}).AddRow(expect[0].ID.String(), expect[0].OwnerID.String(), expect[0].FirstName, expect[0].SecondName, expect[0].Email, expect[0].Region,
 		expect[0].PhoneNumber, expect[0].BirthDate, expect[0].Sex, expect[0].Citizenship, expect[0].Experience,
-		expect[0].Profession, expect[0].Position, expect[0].Wage, expect[0].Education, expect[0].About,
+		expect[0].Position, expect[0].Wage, expect[0].Education, expect[0].About,
 		expect[0].WorkSchedule, expect[0].TypeOfEmployment,
 	)
 	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a")
 	mock.
 		ExpectQuery("SELECT id, own_id, first_name, second_name, email, " +
-			"region, phone_number, birth_date, sex, citizenship, experience, profession, " +
+			"region, phone_number, birth_date, sex, citizenship, experience, " +
 			"position, wage, education, about, work_schedule, type_of_employment FROM resumes").
 		WithArgs(id).
 		WillReturnRows(rows)
@@ -219,7 +216,7 @@ func TestDBUserStorage_GetResume_Fail(t *testing.T) {
 	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642bbba")
 	mock.
 		ExpectQuery("SELECT id, own_id, first_name, second_name, email, " +
-			"region, phone_number, birth_date, sex, citizenship, experience, profession, " +
+			"region, phone_number, birth_date, sex, citizenship, experience, " +
 			"position, wage, education, about, work_schedule, type_of_employment FROM resumes").
 		WithArgs(id).
 		WillReturnError(errors.New("GetResume: error while querying"))
@@ -263,8 +260,7 @@ func TestDBUserStorage_CreateResume_Correct(t *testing.T) {
 		BirthDate:   "1999-01-08",
 		Sex:         "male",
 		Citizenship: "Russia",
-		Profession:  "programmer",
-		Position:    "middle",
+		Position:    "programmer",
 		Experience:  "7 years",
 		Education:   "MSU",
 		Wage:        "100 500.00 руб",
@@ -276,7 +272,7 @@ func TestDBUserStorage_CreateResume_Correct(t *testing.T) {
 		WithArgs(
 			resume.ID, resume.OwnerID, resume.FirstName, resume.SecondName, resume.Email, resume.Region,
 			resume.PhoneNumber, resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience,
-			resume.Profession, resume.Position, resume.Wage, resume.Education, resume.About,
+			resume.Position, resume.Wage, resume.Education, resume.About,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -310,8 +306,7 @@ func TestDBUserStorage_CreateResume_False(t *testing.T) {
 		PhoneNumber: "12345678910",
 		BirthDate:   "1999-112-100",
 		Citizenship: "Russia",
-		Profession:  "programmer",
-		Position:    "middle",
+		Position:    "programmer",
 		Experience:  "7 years",
 		Education:   "MSU",
 		Wage:        "100 500.00 руб",
@@ -323,7 +318,7 @@ func TestDBUserStorage_CreateResume_False(t *testing.T) {
 		WithArgs(
 			resume.ID, resume.OwnerID, resume.FirstName, resume.SecondName, resume.Email, resume.Region,
 			resume.PhoneNumber, resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience,
-			resume.Profession, resume.Position, resume.Wage, resume.Education, resume.About,
+			resume.Position, resume.Wage, resume.Education, resume.About,
 		).
 		WillReturnError(fmt.Errorf("bad query"))
 
@@ -372,7 +367,7 @@ func TestDBUserStorage_DeleteResume_Correct(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT id, own_id, first_name, second_name, email, " +
-			"region, phone_number, birth_date, sex, citizenship, experience, profession, " +
+			"region, phone_number, birth_date, sex, citizenship, experience, " +
 			"position, wage, education, about, work_schedule, type_of_employment FROM resumes").
 		WithArgs(id).
 		WillReturnError(fmt.Errorf("bad query"))
@@ -448,8 +443,7 @@ func TestDBUserStorage_PutResume_Correct(t *testing.T) {
 		BirthDate:   "1999-01-08",
 		Sex:         "male",
 		Citizenship: "Russia",
-		Profession:  "programmer",
-		Position:    "middle",
+		Position:    "programmer",
 		Experience:  "7 years",
 		Education:   "MSU",
 		Wage:        "100 500.00 руб",
@@ -460,7 +454,7 @@ func TestDBUserStorage_PutResume_Correct(t *testing.T) {
 		ExpectExec(`UPDATE resumes SET`).
 		WithArgs(
 			resume.FirstName, resume.SecondName, resume.Email, resume.Region, resume.PhoneNumber,
-			resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience, resume.Profession,
+			resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience,
 			resume.Position, resume.Wage, resume.Education, resume.About, resume.ID, resume.OwnerID,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
@@ -498,8 +492,7 @@ func TestDBUserStorage_PutResume_False(t *testing.T) {
 		PhoneNumber: "12345678910",
 		BirthDate:   "1999-112-100",
 		Citizenship: "Russia",
-		Profession:  "programmer",
-		Position:    "middle",
+		Position:    "programmer",
 		Experience:  "7 years",
 		Education:   "MSU",
 		Wage:        "100 500.00 руб",
@@ -510,7 +503,7 @@ func TestDBUserStorage_PutResume_False(t *testing.T) {
 		ExpectExec(`UPDATE resumes SET`).
 		WithArgs(
 			resume.FirstName, resume.SecondName, resume.Email, resume.Region, resume.PhoneNumber,
-			resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience, resume.Profession,
+			resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience,
 			resume.Position, resume.Wage, resume.Education, resume.About, resume.ID, resume.OwnerID,
 		).
 		WillReturnError(fmt.Errorf("bad query"))

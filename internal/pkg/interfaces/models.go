@@ -18,9 +18,9 @@ const EmailExistsMsg = "Email already exists"
 const InvPassOrEmailMsg = "Invalid password or email"
 
 //respond/offer status
-const AwaitSt = "Await"
-const RejectedSt = "RejectedSt"
-const Accepted = "Accepted"
+const AwaitSt = "awaits"
+const RejectedSt = "rejected"
+const Accepted = "accepted"
 
 // type key string
 
@@ -97,7 +97,6 @@ type Resume struct {
 	WorkSchedule     string    `json:"work_schedule"       db:"work_schedule"`
 	Citizenship      string    `json:"citizenship"         db:"citizenship"`
 	Experience       string    `json:"experience"          db:"experience"`
-	Profession       string    `json:"profession"          db:"profession"`
 	Position         string    `json:"position"            db:"position"`
 	Wage             string    `json:"wage"                db:"wage"`
 	Education        string    `json:"education"           db:"education"`
@@ -122,7 +121,6 @@ type Vacancy struct {
 	Region           string    `json:"region"              db:"region"`
 	CompanyName      string    `json:"company_name"        db:"company_name"`
 	Experience       string    `json:"experience"          db:"experience"`
-	Profession       string    `json:"profession"     db:"profession"`
 	Position         string    `json:"position"            db:"position"`
 	Tasks            string    `json:"tasks"               db:"tasks"`
 	Requirements     string    `json:"requirements"        db:"requirements"`

@@ -334,22 +334,25 @@ func TestUserService_GetEmployers(t *testing.T) {
 			wantErrorMessage: InternalErrorMsg,
 		},
 	}
+
+	var dummy_map map[string]interface{}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
 			if !tt.wantFail {
 				mockUserRepo.
 					EXPECT().
-					GetEmployers().
+					GetEmployers(dummy_map).
 					Return(tt.employers, nil)
 			} else {
 				mockUserRepo.
 					EXPECT().
-					GetEmployers().
+					GetEmployers(dummy_map).
 					Return([]Employer{}, errors.New(tt.wantErrorMessage))
 			}
 
-			gotEmpls, err := h.GetEmployers()
+			gotEmpls, err := h.GetEmployers(dummy_map)
 
 			if !tt.wantFail {
 				if err != nil {

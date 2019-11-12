@@ -12,10 +12,10 @@ import (
 )
 
 func (m *DBUserStorage) CreateVacancy(vacancyReg Vacancy) bool {
-	_, err := m.DbConn.Exec("INSERT INTO vacancies(id, own_id, experience, profession,"+
+	_, err := m.DbConn.Exec("INSERT INTO vacancies(id, own_id, experience,"+
 		"position, tasks, requirements, conditions, wage_from, wage_to, about)"+
-		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);",
-		vacancyReg.ID, vacancyReg.OwnerID, vacancyReg.Experience, vacancyReg.Profession, vacancyReg.Position,
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);",
+		vacancyReg.ID, vacancyReg.OwnerID, vacancyReg.Experience, vacancyReg.Position,
 		vacancyReg.Tasks, vacancyReg.Requirements, vacancyReg.Conditions, vacancyReg.WageFrom,
 		vacancyReg.WageTo, vacancyReg.About,
 	)
@@ -31,7 +31,7 @@ func (m *DBUserStorage) CreateVacancy(vacancyReg Vacancy) bool {
 func (m *DBUserStorage) GetVacancy(id uuid.UUID) (Vacancy, error) {
 
 	row := m.DbConn.QueryRowx("SELECT v.id, v.own_id, c.company_name, v.experience,"+
-		"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
+		"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
 		"v.region, v.type_of_employment, v.work_schedule "+
 		"FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE id = $1;", id)
 
@@ -59,9 +59,9 @@ func (m *DBUserStorage) DeleteVacancy(id uuid.UUID) error {
 func (m *DBUserStorage) PutVacancy(vacancy Vacancy, userId uuid.UUID, vacancyId uuid.UUID) bool {
 
 	_, err := m.DbConn.Exec(
-		"UPDATE vacancies SET experience = $1, profession = $2, position = $3, tasks = $4, "+
-			"requirements = $5, wage_from = $6, wage_to = $7, conditions = $8, about = $9 "+
-			"WHERE id = $10 AND own_id = $11;", vacancy.Experience, vacancy.Profession,
+		"UPDATE vacancies SET experience = $1, position = $2, tasks = $3, "+
+			"requirements = $4, wage_from = $5, wage_to = $6, conditions = $7, about = $8 "+
+			"WHERE id = $9 AND own_id = $10;", vacancy.Experience,
 		vacancy.Position, vacancy.Tasks, vacancy.Requirements, vacancy.Conditions, vacancy.WageFrom,
 		vacancy.WageTo, vacancy.About, vacancyId, userId,
 	)
@@ -84,7 +84,7 @@ func (m *DBUserStorage) GetVacancies(params map[string]interface{}) ([]Vacancy, 
 
 	if query != "" {
 		nmst, err = m.DbConn.PrepareNamed("SELECT v.id, v.own_id, c.company_name, v.experience, " +
-			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
+			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
 			"v.region, v.type_of_employment, v.work_schedule " +
 			"FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE " + query)
 
@@ -102,7 +102,7 @@ func (m *DBUserStorage) GetVacancies(params map[string]interface{}) ([]Vacancy, 
 		rows, err = nmst.Queryx(params)
 	} else {
 		rows, err = m.DbConn.Queryx("SELECT v.id, v.own_id, c.company_name, v.experience," +
-			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
+			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
 			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id;")
 	}
 

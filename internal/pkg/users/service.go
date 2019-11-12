@@ -35,7 +35,7 @@ type Service interface {
 
 	GetEmployers(params map[string]interface{}) ([]Employer, error)
 	GetSeekers() ([]Seeker, error)
-	GetResumes(params map[string]interface{}) ([]Resume, error)
+	GetResumes(authInfo AuthStorageValue, params map[string]interface{}) ([]Resume, error)
 	GetVacancies(params map[string]interface{}) ([]Vacancy, error)
 
 	SetImage(id uuid.UUID, class string, imageName string) bool
