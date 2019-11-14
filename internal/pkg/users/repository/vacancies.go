@@ -114,6 +114,24 @@ func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[strin
 
 	defer rows.Close()
 
+	// favVacRows, err := m.DbConn.Queryx("SELECT vacancy_id FROM favorite_vacancies WHERE "+ //err
+	// 	"person_id = $1", authInfo.ID)
+	// if err == nil {
+	// 	defer favVacRows.Close() //is ok?
+	// }
+
+	// favVacMap := map[uuid.UUID]bool{}
+	// for favVacRows.Next() {
+	// 	var id uuid.UUID
+	// 	err = favVacRows.StructScan(&id)
+	// 	if err == nil {
+	// 		// fmt.Printf("GetVacancies: %s\n", err)
+	// 		// return vacancies, errors.New(InternalErrorMsg)
+	// 		favVacMap[id] = true
+	// 	}
+	// 	// vacancies = append(vacancies, vacancy)
+	// }
+
 	for rows.Next() {
 		var vacancy Vacancy
 
@@ -122,6 +140,11 @@ func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[strin
 			fmt.Printf("GetVacancies: %s\n", err)
 			return vacancies, errors.New(InternalErrorMsg)
 		}
+
+		// _, ok := favVacMap[vacancy.ID]
+		// if ok {
+		// 	vacancy.Favorite = true
+		// }
 
 		vacancies = append(vacancies, vacancy)
 	}

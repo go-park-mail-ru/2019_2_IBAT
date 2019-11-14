@@ -10,6 +10,7 @@ import (
 
 func (h *UserService) CreateFavorite(vacancyId uuid.UUID, record AuthStorageValue) error { //should do this part by one r with if?
 	if record.Role != SeekerStr {
+		log.Println("Invalid action")
 		return errors.New("Invalid action")
 	}
 
@@ -19,7 +20,7 @@ func (h *UserService) CreateFavorite(vacancyId uuid.UUID, record AuthStorageValu
 	ok := h.Storage.CreateFavorite(favVac)
 
 	if !ok {
-		log.Printf("Error while creating favorite_vacancy")
+		log.Println("Error while creating favorite_vacancy")
 		return errors.New("Error while creating favorite_vacancy")
 	}
 

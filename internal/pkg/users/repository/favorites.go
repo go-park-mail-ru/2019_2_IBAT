@@ -15,7 +15,7 @@ func (m *DBUserStorage) CreateFavorite(favVac FavoriteVacancy) bool {
 	)
 
 	if err != nil {
-		fmt.Printf("CreateFavorite: %s\n", err)
+		fmt.Printf("CreateFavorite: %s \n", err)
 		return false
 	}
 
