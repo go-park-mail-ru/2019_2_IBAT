@@ -196,6 +196,10 @@ func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) ParseResumesQuery(query url.Values) map[string]interface{} {
 	params := make(map[string]interface{})
 
+	if query.Get("position") != "" {
+		params["position"] = query.Get("position")
+	}
+
 	if query.Get("own") != "" {
 		params["own"] = query.Get("own")
 	}

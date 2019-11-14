@@ -47,6 +47,7 @@ func (m *DBUserStorage) GetFavoriteVacancies(record AuthStorageValue) ([]Vacancy
 			fmt.Printf("GetFavoriteVacancies: %s\n", err)
 			return vacancies, errors.New(InternalErrorMsg)
 		}
+		vacancy.Favorite = true
 		vacancies = append(vacancies, vacancy)
 	}
 

@@ -138,6 +138,11 @@ func (m *DBUserStorage) GetResumes(authInfo AuthStorageValue, params map[string]
 func paramsToResumesQuery(params map[string]interface{}) string {
 	var query []string
 
+	if params["position"] != nil {
+		params["position"] = "%" + params["position"].(string) + "%"
+		query = append(query, "position LIKE :position")
+	}
+
 	if params["region"] != nil {
 		query = append(query, "region= :region")
 	}
