@@ -172,6 +172,10 @@ func (h *Handler) PutVacancy(w http.ResponseWriter, r *http.Request) { //+
 func (h *Handler) ParseVacanciesQuery(query url.Values) map[string]interface{} {
 	params := make(map[string]interface{})
 
+	if query.Get("position") != "" {
+		params["position"] = query.Get("position")
+	}
+
 	if query.Get("region") != "" {
 		params["region"] = query.Get("region")
 	}

@@ -100,6 +100,9 @@ func NewServer() (*Server, error) {
 	router.HandleFunc("/favorite_vacancies", h.GetFavoriteVacancies).Methods(http.MethodGet, http.MethodOptions)
 	router.HandleFunc("/favorite_vacancy", h.CreateFavorite).Methods(http.MethodPost, http.MethodOptions)
 
+	router.HandleFunc("/tags", h.GetTags).Methods(http.MethodGet, http.MethodOptions)
+	// router.HandleFunc("/test_unm", h.TestUnmar).Methods(http.MethodPost, http.MethodOptions)
+
 	server.Router = router
 
 	return server, nil

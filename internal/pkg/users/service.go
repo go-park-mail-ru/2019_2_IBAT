@@ -30,13 +30,14 @@ type Service interface {
 	CreateRespond(body io.ReadCloser, authInfo AuthStorageValue) error
 	GetResponds(authInfo AuthStorageValue, params map[string]string) ([]Respond, error)
 
-	CreateFavorite(body io.ReadCloser, authInfo AuthStorageValue) error
+	CreateFavorite(vacancyId uuid.UUID, authInfo AuthStorageValue) error
 	GetFavoriteVacancies(authInfo AuthStorageValue) ([]Vacancy, error)
 
 	GetEmployers(params map[string]interface{}) ([]Employer, error)
 	GetSeekers() ([]Seeker, error)
 	GetResumes(authInfo AuthStorageValue, params map[string]interface{}) ([]Resume, error)
 	GetVacancies(authInfo AuthStorageValue, params map[string]interface{}) ([]Vacancy, error)
+	GetTags() (map[string][]string, error)
 
 	SetImage(id uuid.UUID, class string, imageName string) bool
 

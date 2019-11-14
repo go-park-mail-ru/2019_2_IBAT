@@ -101,7 +101,13 @@ type Resume struct {
 	Wage             string    `json:"wage"                db:"wage"`
 	Education        string    `json:"education"           db:"education"`
 	About            string    `json:"about"               db:"about"`
+	// Spheres          []Pair    `json:"spheres"`
 }
+
+// type Pair struct {
+// 	First  string `json:"first"`
+// 	Second string `json:"second"`
+// }
 
 type Message struct {
 	Body string `json:"message"`
@@ -163,6 +169,16 @@ type UserAuthInput struct {
 type Error struct {
 	Message string            `json:"error"`
 	Params  map[string]string `json:"params"`
+}
+
+type TagAnswer struct {
+	ParentTag   string   `json:"parent_tag"   db:"parent_tag"`
+	ChildTagArr []string `json:"child_tag"    db:"child_tag"`
+}
+
+type Tag struct {
+	ParentTag string `json:"parent_tag"   db:"parent_tag"`
+	ChildTag  string `json:"child_tag"    db:"child_tag"`
 }
 
 type key string

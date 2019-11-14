@@ -102,7 +102,8 @@ func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[strin
 		rows, err = nmst.Queryx(params)
 	} else {
 		rows, err = m.DbConn.Queryx("SELECT v.id, v.own_id, c.company_name, v.experience," +
-			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
+			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
+			"v.region, v.type_of_employment, v.work_schedule " +
 			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id;")
 	}
 
@@ -131,8 +132,13 @@ func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[strin
 func paramsToQuery(params map[string]interface{}) string {
 	var query []string
 
+	if params["position"] != nil {
+		params["position"] = "%" + params["position"].(string) + "%"
+		query = append(query, "position LIKE :position")
+	}
+
 	if params["region"] != nil {
-		query = append(query, "region= :region")
+		query = append(query, "region = :region")
 	}
 
 	if params["wage_from"] != nil {

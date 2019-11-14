@@ -143,6 +143,14 @@ func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
 
 	resId, err := uuid.Parse(mux.Vars(r)["id"])
 
+	if err != nil {
+		log.Println("Handle PutResume: invalid id")
+		w.WriteHeader(http.StatusBadRequest)
+		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
+		w.Write([]byte(errJSON))
+		return
+	}
+
 	err = h.UserService.PutResume(resId, r.Body, authInfo)
 
 	if err != nil {

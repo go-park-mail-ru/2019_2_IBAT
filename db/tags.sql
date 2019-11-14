@@ -1,27 +1,16 @@
---DROP TABLE tags;
-DROP TABLE subtags;
 DROP TABLE tags;
 
 
 CREATE TABLE tags(
-    -- id uuid PRIMARY KEY,
-    name VARCHAR(70) PRIMARY KEY
-);
-
--- CREATE TABLE subtags(
---     parent_name VARCHAR(70) REFERENCES tags (name) ON DELETE CASCADE,
---     name VARCHAR(70) NOT NULL,
---     PRIMARY KEY(name, parent_name)
--- );
-
-CREATE TABLE subtags(
-    parent_name VARCHAR(70) NOT NULL,
-    name VARCHAR(70) NOT NULL,
-    PRIMARY KEY(name, parent_name)
+    id uuid DEFAULT gen_random_uuid(),
+    -- UNIQUE,
+    parent_tag VARCHAR(70) NOT NULL,
+    child_tag VARCHAR(70) NOT NULL,
+    PRIMARY KEY(child_tag, parent_tag)
 );
 
 -- INSERT INTO tags
---     (name)
+--     (child_tag)
 -- VALUES
 --     ('Автомобильный бизнес'),
 --     ('Административный персонал'),
@@ -53,8 +42,8 @@ CREATE TABLE subtags(
 --     ('Юристы');
 
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Автомобильный бизнес', 'автожестянщик'),
 ('Автомобильный бизнес', 'автозапчасти'),
@@ -68,8 +57,8 @@ VALUES
 ('Автомобильный бизнес', 'тонировщик'),
 ('Автомобильный бизнес', 'шины, диски');
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Административный персонал', 'ахо'),
 ('Административный персонал', 'архивист'),
@@ -92,8 +81,8 @@ VALUES
 
 
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Банки, инвестиции, лизинг', 'forex'),
 ('Банки, инвестиции, лизинг', 'Private Banking'),
@@ -152,8 +141,8 @@ VALUES
 ('Банки, инвестиции, лизинг', 'эмиссии');
 
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Безопасность', 'взыскание задолженности, коллекторская деятельность'),
 ('Безопасность', 'имущественная безопасность'),
@@ -166,8 +155,8 @@ VALUES
 ('Безопасность', 'экономическая и информационная безопасность' );
 
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Бухгалтерия, управленческий учет, финансы предприятия', 'acca'),
 ('Бухгалтерия, управленческий учет, финансы предприятия', 'cipa'),
@@ -199,8 +188,8 @@ VALUES
 ('Бухгалтерия, управленческий учет, финансы предприятия', 'экономист' );
 
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Высший менеджмент', 'администрирование'),
 ('Высший менеджмент', 'антикризисное управление'),
@@ -226,8 +215,8 @@ VALUES
 ('Высший менеджмент', 'финансы'),
 ('Высший менеджмент', 'юриспруденция');
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Государственная служба, некоммерческие организации', 'архивариус'),
 ('Государственная служба, некоммерческие организации', 'атташе'),
@@ -239,8 +228,8 @@ VALUES
 ('Государственная служба, некоммерческие организации', 'правительство');
 
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Добыча сырья', 'бурение'),
 ('Добыча сырья', 'газ'),
@@ -253,8 +242,8 @@ VALUES
 ('Добыча сырья', 'уголь' ),
 ('Добыча сырья', 'управление предприятием' );
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Домашний персонал', 'воспитатель, гувернантка, няня'),
 ('Домашний персонал', 'персональный водитель'),
@@ -265,8 +254,8 @@ VALUES
 ('Домашний персонал', 'сиделка'),
 ('Домашний персонал', 'домработница\домработник, горничная');
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Закупки', 'fmcg, товары народного потребления'),
 ('Закупки', 'автомобили, запчасти'),
@@ -291,8 +280,8 @@ VALUES
 
 
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Инсталляция и сервис', 'инсталляция и настройка оборудования'),
 ('Инсталляция и сервис', 'менеджер по сервису - промышленное оборудование'),
@@ -302,8 +291,8 @@ VALUES
 ('Инсталляция и сервис', 'сервисный инженер');
 
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Информационные технологии, интернет, телеком', 'crm системы'),
 ('Информационные технологии, интернет, телеком', 'cto, cio, директор по it'),
@@ -342,8 +331,8 @@ VALUES
 ('Информационные технологии, интернет, телеком', 'управление проектами'),
 ('Информационные технологии, интернет, телеком', 'электронная коммерция');
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Искусство, развлечения, масс-медиа', 'дизайн, графика, живопись'),
 ('Искусство, развлечения, масс-медиа', 'журналистика'),
@@ -360,8 +349,8 @@ VALUES
 ('Искусство, развлечения, масс-медиа', 'телевидение'),
 ('Искусство, развлечения, масс-медиа', 'фотография');
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Консультирование', 'internet, e-commerce'),
 ('Консультирование', 'knowledge management'),
@@ -379,8 +368,8 @@ VALUES
 ('Консультирование', 'управление проектами'),
 ('Консультирование', 'управленческое консультирование');
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Маркетинг, реклама, PR', 'below the line (btl)'),
 ('Маркетинг, реклама, PR', 'pr, маркетинговые коммуникации'),
@@ -414,8 +403,8 @@ VALUES
 ('Маркетинг, реклама, PR', 'управление маркетингом'),
 ('Маркетинг, реклама, PR', 'управление проектами');
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Медицина, фармацевтика', 'ветеринария'),
 ('Медицина, фармацевтика', 'врач-эксперт'),
@@ -439,8 +428,8 @@ VALUES
 ('Медицина, фармацевтика', 'сертификация'),
 ('Медицина, фармацевтика', 'фармацевт');
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Наука, образование', 'биотехнологии'),
 ('Наука, образование', 'гуманитарные науки'),
@@ -455,8 +444,8 @@ VALUES
 ('Наука, образование', 'экономика, менеджмент'),
 ('Наука, образование', 'языки');
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Продажи', 'fmcg, товары народного потребления'),
 ('Продажи', 'автомобили, запчасти'),
@@ -504,8 +493,8 @@ VALUES
 ('Продажи', 'электроника, фото, видео'),
 ('Продажи', 'электротехническое оборудование, светотехника');
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Производство', 'авиационная промышленность'),
 ('Производство', 'автомобильная промышленность'),
@@ -553,8 +542,8 @@ VALUES
 ('Производство', 'ювелирная промышленность');
 
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Рабочий персонал', 'гардеробщик'),
 ('Рабочий персонал', 'грузчик'),
@@ -593,8 +582,8 @@ VALUES
 ('Рабочий персонал', 'электромонтер, кабельщик'),
 ('Рабочий персонал', 'ювелир');
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Спортивные клубы, фитнес, салоны красоты', 'администрация'),
 ('Спортивные клубы, фитнес, салоны красоты', 'косметология'),
@@ -604,8 +593,8 @@ VALUES
 ('Спортивные клубы, фитнес, салоны красоты', 'продажи'),
 ('Спортивные клубы, фитнес, салоны красоты', 'тренерский состав');
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Страхование', 'автострахование'),
 ('Страхование', 'агент'),
@@ -626,8 +615,8 @@ VALUES
 ('Страхование', 'эксперт-оценщик');
 
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Строительство, недвижимость', 'водоснабжение и канализация'),
 ('Строительство, недвижимость', 'агент'),
@@ -651,8 +640,8 @@ VALUES
 ('Строительство, недвижимость', 'управление проектами'),
 ('Строительство, недвижимость', 'эксплуатация');
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Транспорт, логистика', 'авиаперевозки'),
 ('Транспорт, логистика', 'автоперевозки'),
@@ -674,8 +663,8 @@ VALUES
 ('Транспорт, логистика', 'трубопроводы'),
 ('Транспорт, логистика', 'экспедитор');
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Туризм, гостиницы, рестораны', 'авиабилеты'),
 ('Туризм, гостиницы, рестораны', 'анимация'),
@@ -700,8 +689,8 @@ VALUES
 ('Туризм, гостиницы, рестораны', 'швейцар'),
 ('Туризм, гостиницы, рестораны', 'шеф-повар');
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Управление персоналом, тренинги', 'компенсации и льготы'),
 ('Управление персоналом, тренинги', 'начальный уровень, мало опыта'),
@@ -712,8 +701,8 @@ VALUES
 ('Управление персоналом, тренинги', 'учет кадров');
 
 
-INSERT INTO subtags
-    (parent_name, name)
+INSERT INTO tags
+    (parent_tag, child_tag)
 VALUES
 ('Юристы', 'compliance'),
 ('Юристы', 'авторское право'),
