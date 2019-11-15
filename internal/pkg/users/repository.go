@@ -38,7 +38,7 @@ type Repository interface {
 	GetSeeker(id uuid.UUID) (Seeker, error)
 	GetEmployer(id uuid.UUID) (Employer, error)
 	GetResume(id uuid.UUID) (Resume, error)
-	GetVacancy(id uuid.UUID) (Vacancy, error)
+	GetVacancy(id uuid.UUID, userId uuid.UUID) (Vacancy, error)
 
 	SetImage(id uuid.UUID, class string, imageName string) bool
 }

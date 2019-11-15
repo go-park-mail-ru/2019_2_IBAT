@@ -52,8 +52,8 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 	return id, nil
 }
 
-func (h *UserService) GetVacancy(vacancyId uuid.UUID) (Vacancy, error) {
-	vacancy, err := h.Storage.GetVacancy(vacancyId)
+func (h *UserService) GetVacancy(vacancyId uuid.UUID, authInfo AuthStorageValue) (Vacancy, error) {
+	vacancy, err := h.Storage.GetVacancy(vacancyId, authInfo.ID)
 
 	if err != nil { //error wrap
 		return vacancy, errors.New(InvalidIdMsg)
@@ -67,7 +67,7 @@ func (h *UserService) DeleteVacancy(vacancyId uuid.UUID, authInfo AuthStorageVal
 		return errors.New(ForbiddenMsg)
 	}
 
-	vacancy, err := h.Storage.GetVacancy(vacancyId)
+	vacancy, err := h.Storage.GetVacancy(vacancyId, authInfo.ID)
 
 	if err != nil {
 		return errors.New(InvalidIdMsg)

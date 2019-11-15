@@ -28,7 +28,7 @@ func (m *DBUserStorage) CreateVacancy(vacancyReg Vacancy) bool {
 	return true
 }
 
-func (m *DBUserStorage) GetVacancy(id uuid.UUID) (Vacancy, error) {
+func (m *DBUserStorage) GetVacancy(id uuid.UUID, userId uuid.UUID) (Vacancy, error) {
 
 	row := m.DbConn.QueryRowx("SELECT v.id, v.own_id, c.company_name, v.experience,"+
 		"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
@@ -40,6 +40,15 @@ func (m *DBUserStorage) GetVacancy(id uuid.UUID) (Vacancy, error) {
 	if err != nil {
 		fmt.Printf("CreateVacancy: %s\n", err)
 		return vacancy, errors.New(InvalidIdMsg)
+	}
+
+	favVacRows := m.DbConn.QueryRowx("SELECT vacancy_id FROM favorite_vacancies WHERE "+
+		"person_id = $1 AND vacancy_id = $2;", userId, id)
+
+	var resId uuid.UUID
+	err = favVacRows.Scan(&resId)
+	if err == nil {
+		vacancy.Favorite = true
 	}
 
 	return vacancy, nil

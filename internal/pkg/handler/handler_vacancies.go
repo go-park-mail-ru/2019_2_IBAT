@@ -73,6 +73,12 @@ func (h *Handler) CreateVacancy(w http.ResponseWriter, r *http.Request) { //+
 func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) { //+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
+	authInfo, ok := FromContext(r.Context())
+
+	if !ok {
+		authInfo = AuthStorageValue{} //check if nil possible
+	}
+
 	vacId, err := uuid.Parse(mux.Vars(r)["id"])
 
 	if err != nil {
@@ -82,7 +88,7 @@ func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) { //+
 		return
 	}
 
-	vacancy, err := h.UserService.GetVacancy(vacId)
+	vacancy, err := h.UserService.GetVacancy(vacId, authInfo)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

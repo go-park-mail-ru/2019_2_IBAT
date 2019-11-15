@@ -19,7 +19,7 @@ type Service interface {
 
 	CreateVacancy(body io.ReadCloser, authInfo AuthStorageValue) (uuid.UUID, error)
 	DeleteVacancy(vacancyId uuid.UUID, authInfo AuthStorageValue) error
-	GetVacancy(vacancyId uuid.UUID) (Vacancy, error)
+	GetVacancy(vacancyId uuid.UUID, authInfo AuthStorageValue) (Vacancy, error)
 	PutVacancy(vacancyId uuid.UUID, body io.ReadCloser, authInfo AuthStorageValue) error
 
 	CreateResume(body io.ReadCloser, authInfo AuthStorageValue) (uuid.UUID, error)
