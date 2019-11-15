@@ -1,19 +1,25 @@
+DROP TABLE tag_relations;
 DROP TABLE tags;
-
 
 CREATE TABLE tags(
     id uuid DEFAULT gen_random_uuid() UNIQUE,
     -- UNIQUE,
     parent_tag VARCHAR(70) NOT NULL,
     child_tag VARCHAR(70) NOT NULL,
-    PRIMARY KEY(child_tag, parent_tag)
+    PRIMARY KEY(id, child_tag, parent_tag)
 );
 
--- CREATE TABLE tag_relation(
---     id uuid REFERENCES tags(id) ON DELETE CASCADE NOT NULL,
---     vacancy_id uuid REFERENCES vacancies (id) ON DELETE CASCADE NOT NULL ,
---     PRIMARY KEY(person_id, vacancy_id)
--- );
+CREATE TABLE vac_tag_relations(
+    tag_id uuid REFERENCES tags(id) ON DELETE CASCADE NOT NULL,
+    vac_id uuid REFERENCES vacancies (id) ON DELETE CASCADE NOT NULL ,
+    PRIMARY KEY(tag_id, vac_id)
+);
+
+CREATE TABLE res_tag_relations(
+    tag_id uuid REFERENCES tags(id) ON DELETE CASCADE NOT NULL,
+    res_id uuid REFERENCES resumes (id) ON DELETE CASCADE NOT NULL ,
+    PRIMARY KEY(tag_id, res_id)
+);
 
 
 INSERT INTO tags

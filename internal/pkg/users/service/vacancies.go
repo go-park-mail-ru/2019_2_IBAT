@@ -29,7 +29,7 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 	var vacancyReg Vacancy
 	// id := uuid.New()
 	// vacancyReg.ID = id
-	vacancyReg.OwnerID = authInfo.ID
+	// vacancyReg.OwnerID = authInfo.ID
 
 	err = json.Unmarshal(bytes, &vacancyReg)
 	if err != nil {
@@ -116,5 +116,9 @@ func (h *UserService) PutVacancy(vacancyId uuid.UUID, body io.ReadCloser, authIn
 }
 
 func (h *UserService) GetVacancies(authInfo AuthStorageValue, params map[string]interface{}) ([]Vacancy, error) {
+	// var spheres []Pair
+	// for i, item := range params {
+	// 	item.(string)
+	// }
 	return h.Storage.GetVacancies(authInfo, params)
 }

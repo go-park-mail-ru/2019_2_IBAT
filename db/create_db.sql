@@ -101,6 +101,8 @@ CREATE TABLE favorite_vacancies(
 );
 
 
+
+
 INSERT INTO persons(id, email, first_name, second_name, password_hash, role)
 VALUES(gen_random_uuid(), 'vladle@mail.ru', 'Vlad', 'Lee', 'iearoiqwejfka', 'seeker');
 

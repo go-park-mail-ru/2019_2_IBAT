@@ -3,6 +3,7 @@ package handler
 import (
 	. "2019_2_IBAT/internal/pkg/interfaces"
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"net/http"
@@ -177,6 +178,10 @@ func (h *Handler) PutVacancy(w http.ResponseWriter, r *http.Request) { //+
 
 func (h *Handler) ParseVacanciesQuery(query url.Values) map[string]interface{} {
 	params := make(map[string]interface{})
+
+	for i, item := range query {
+		fmt.Printf("%s  %s\n", i, item)
+	}
 
 	if query.Get("position") != "" {
 		params["position"] = query.Get("position")

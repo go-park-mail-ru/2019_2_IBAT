@@ -101,13 +101,13 @@ type Resume struct {
 	Wage             string    `json:"wage"                db:"wage"`
 	Education        string    `json:"education"           db:"education"`
 	About            string    `json:"about"               db:"about"`
-	// Spheres          []Pair    `json:"spheres"`
+	Spheres          []Pair    `json:"spheres"`
 }
 
-// type Pair struct {
-// 	First  string `json:"first"`
-// 	Second string `json:"second"`
-// }
+type Pair struct {
+	First  string `json:"first"`
+	Second string `json:"second"`
+}
 
 type Message struct {
 	Body string `json:"message"`
@@ -137,6 +137,7 @@ type Vacancy struct {
 	Conditions       string    `json:"conditions"          db:"conditions"`
 	Favorite         bool      `json:"favorite"            db:"favorite"`
 	About            string    `json:"about"               db:"about"`
+	// Spheres          []Pair    `json:"spheres"`
 }
 
 type Respond struct {

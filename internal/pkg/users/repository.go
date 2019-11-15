@@ -18,6 +18,7 @@ type Repository interface {
 	DeleteUser(id uuid.UUID) error
 	DeleteResume(id uuid.UUID) error
 	DeleteVacancy(id uuid.UUID) error
+	DeleteFavoriteVacancy(id uuid.UUID, authInfo AuthStorageValue) error
 
 	CheckUser(email string, password string) (uuid.UUID, string, bool)
 

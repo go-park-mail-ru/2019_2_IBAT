@@ -36,3 +36,14 @@ func (h *UserService) GetFavoriteVacancies(authInfo AuthStorageValue) ([]Vacancy
 
 	return vacancies, nil
 }
+
+func (h *UserService) DeleteFavoriteVacancy(vacancyId uuid.UUID, authInfo AuthStorageValue) error {
+
+	err := h.Storage.DeleteFavoriteVacancy(vacancyId, authInfo)
+
+	if err != nil {
+		return errors.New(InternalErrorMsg)
+	}
+
+	return nil
+}

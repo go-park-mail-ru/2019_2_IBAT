@@ -31,6 +31,8 @@ type Service interface {
 	GetResponds(authInfo AuthStorageValue, params map[string]string) ([]Respond, error)
 
 	CreateFavorite(vacancyId uuid.UUID, authInfo AuthStorageValue) error
+	DeleteFavoriteVacancy(vacancyId uuid.UUID, authInfo AuthStorageValue) error
+
 	GetFavoriteVacancies(authInfo AuthStorageValue) ([]Vacancy, error)
 
 	GetEmployers(params map[string]interface{}) ([]Employer, error)

@@ -26,6 +26,16 @@ func (m *DBUserStorage) CreateResume(resumeReg Resume) bool {
 		return false
 	}
 
+	for _, item := range resumeReg.Spheres {
+		_, err := m.DbConn.Exec("INSERT INTO res_tag_relations(tag_id, res_id)VALUES"+
+			"((SELECT id from tags WHERE parent_tag = $1 AND child_tag = $2), $3);",
+			item.First, item.Second, resumeReg.ID,
+		)
+		if err != nil {
+			log.Printf("CreateVacancy: %s\n", err)
+		}
+	}
+
 	return true
 }
 
@@ -144,7 +154,7 @@ func paramsToResumesQuery(params map[string]interface{}) string {
 	}
 
 	if params["region"] != nil {
-		query = append(query, "region= :region")
+		query = append(query, "region = :region")
 	}
 
 	if params["wage_from"] != nil {

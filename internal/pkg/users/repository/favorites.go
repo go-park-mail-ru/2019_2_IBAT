@@ -4,6 +4,7 @@ import (
 	. "2019_2_IBAT/internal/pkg/interfaces"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
 
@@ -52,4 +53,17 @@ func (m *DBUserStorage) GetFavoriteVacancies(record AuthStorageValue) ([]Vacancy
 	}
 
 	return vacancies, nil
+}
+
+func (m *DBUserStorage) DeleteFavoriteVacancy(vacancyId uuid.UUID, authInfo AuthStorageValue) error {
+	_, err := m.DbConn.Exec("DELETE FROM favorite_vacancies WHERE vacancy_id = $1 AND person_id = $2;",
+		vacancyId, authInfo.ID,
+	) //check fi invalid id or internal error
+
+	if err != nil {
+		fmt.Printf("DeleteVacancy: %s\n", err)
+		return errors.New(InvalidIdMsg) //dif errors
+	}
+
+	return nil
 }
