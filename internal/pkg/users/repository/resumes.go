@@ -166,7 +166,9 @@ func paramsToResumesQuery(params map[string]interface{}) string {
 	}
 
 	if params["experience"] != nil {
-		query = append(query, "experience = :experience")
+		if params["experience"].(string) != DoesNotMatterString {
+			query = append(query, "experience = :experience")
+		}
 	}
 
 	if params["type_of_employment"] != nil {

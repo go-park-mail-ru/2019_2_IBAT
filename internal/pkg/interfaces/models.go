@@ -137,7 +137,7 @@ type Vacancy struct {
 	Conditions       string    `json:"conditions"          db:"conditions"`
 	Favorite         bool      `json:"favorite"            db:"favorite"`
 	About            string    `json:"about"               db:"about"`
-	// Spheres          []Pair    `json:"spheres"`
+	Spheres          []Pair    `json:"spheres"`
 }
 
 type Respond struct {

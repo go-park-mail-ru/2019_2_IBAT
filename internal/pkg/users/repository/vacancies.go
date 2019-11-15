@@ -11,6 +11,8 @@ import (
 	"github.com/pkg/errors"
 )
 
+const DoesNotMatterString = "Не имеет значения"
+
 func (m *DBUserStorage) CreateVacancy(vacancyReg Vacancy) bool {
 	_, err := m.DbConn.Exec("INSERT INTO vacancies(id, own_id, experience,"+
 		"position, tasks, requirements, conditions, wage_from, wage_to, about)"+
@@ -172,7 +174,9 @@ func paramsToQuery(params map[string]interface{}) string {
 	}
 
 	if params["experience"] != nil {
-		query = append(query, "experience = :experience")
+		if params["experience"].(string) != DoesNotMatterString {
+			query = append(query, "experience = :experience")
+		}
 	}
 
 	if params["type_of_employment"] != nil {
