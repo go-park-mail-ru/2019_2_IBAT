@@ -144,22 +144,22 @@ func RunServer() {
 
 		httpsSrv.Addr = ":443"
 		httpsSrv.TLSConfig = &tls.Config{GetCertificate: m.GetCertificate}
+		// log.Fatal(httpsSrv.ListenAndServe())
+		// err := httpsSrv.ListenAndServeTLS("", "")
+		// if err != nil {
+		// 	log.Fatalf("httpsSrv.ListendAndServeTLS() failed with %s", err)
+		// }
+	} else {
 
-		log.Fatal(httpsSrv.ListenAndServe())
+		httpsSrv.Addr = ":8080"
 
-		err := httpsSrv.ListenAndServeTLS("", "")
-		if err != nil {
-			log.Fatalf("httpsSrv.ListendAndServeTLS() failed with %s", err)
-		}
+		// err := httpsSrv.ListenAndServe()
+		// log.Fatal(httpsSrv.ListenAndServe())
+		// if err != nil {
+		// 	log.Fatalf("httpSrv.ListenAndServe() failed with %s", err)
+		// }
 	}
-
-	httpsSrv.Addr = ":80"
-
-	err := httpsSrv.ListenAndServe()
 	log.Fatal(httpsSrv.ListenAndServe())
-	if err != nil {
-		log.Fatalf("httpSrv.ListenAndServe() failed with %s", err)
-	}
 }
 
 func OpenSqlxViaPgxConnPool() *sqlx.DB {
