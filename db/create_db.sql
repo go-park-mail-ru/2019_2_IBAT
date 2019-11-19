@@ -149,7 +149,7 @@ INSERT INTO vacancies(id, own_id, region, position, experience,
 wage_from, wage_to, type_of_employment, tasks, requirements, work_schedule,
 conditions, about)VALUES(gen_random_uuid(),
 (SELECT own_id FROM companies WHERE company_name = 'Yandex'),
-, 'Москва', 'data scientist', 'Более 6 лет', 150000, 300000, 'Полная занятость',
+'Москва', 'data scientist', 'Более 6 лет', 150000, 300000, 'Полная занятость',
 'write II', 'Python, math', 'Удаленная работа','nice office, good team', 'top 2 IT company');
 
 
@@ -207,7 +207,7 @@ conditions, about)VALUES(gen_random_uuid(),
 INSERT INTO vacancies(id, own_id, region, position, experience,
 wage_from, wage_to, type_of_employment, tasks, requirements, work_schedule,
 conditions, about)VALUES(gen_random_uuid(),
-(SELECT own_id FROM companies WHERE company_name = 'Yandex'), 
+(SELECT own_id FROM companies WHERE company_name = 'Mail.ru'), 
 'Москва', 
 'Программист Python', 
 'Более 6 лет', 100000, 200000, 

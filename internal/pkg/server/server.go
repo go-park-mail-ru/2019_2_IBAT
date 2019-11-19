@@ -1,7 +1,10 @@
 package server
 
 import (
+	"context"
+	"crypto/tls"
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -20,16 +23,18 @@ import (
 
 	"github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
+
+	"golang.org/x/crypto/acme/autocert"
 )
 
-type Server struct {
-	Router *mux.Router
-}
+// type Server struct {
+// 	Router *mux.Router
+// }
 
 const staticDir = "/media/vltim/img"
 
-func NewServer() (*Server, error) {
-	server := new(Server)
+func NewRouter() (*mux.Router, error) {
+	// server := new(Server)
 
 	router := mux.NewRouter()
 
@@ -103,15 +108,58 @@ func NewServer() (*Server, error) {
 	router.HandleFunc("/favorite_vacancy/{id}", h.DeleteFavoriteVacancy).Methods(http.MethodDelete, http.MethodOptions)
 
 	router.HandleFunc("/tags", h.GetTags).Methods(http.MethodGet, http.MethodOptions)
-	// router.HandleFunc("/test_unm", h.TestUnmar).Methods(http.MethodPost, http.MethodOptions)
 
-	server.Router = router
-
-	return server, nil
+	return router, nil
 }
 
-func (server *Server) Run() {
-	log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", server.Router))
+func RunServer() {
+
+	router, _ := NewRouter()
+	httpsSrv := &http.Server{
+		Handler: router,
+		// Good practice: enforce timeouts for servers you create!
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+	inProduction := true
+
+	if inProduction {
+		// Note: use a sensible value for data directory
+		// this is where cached certificates are stored
+		dataDir := "."
+		hostPolicy := func(ctx context.Context, host string) error {
+			// Note: change to your real domain
+			allowedHost := "*"
+			if host == allowedHost {
+				return nil
+			}
+			return fmt.Errorf("acme/autocert: only %s host is allowed", allowedHost)
+		}
+
+		m := &autocert.Manager{
+			Prompt:     autocert.AcceptTOS,
+			HostPolicy: hostPolicy,
+			Cache:      autocert.DirCache(dataDir),
+		}
+
+		httpsSrv.Addr = ":443"
+		httpsSrv.TLSConfig = &tls.Config{GetCertificate: m.GetCertificate}
+
+		log.Fatal(httpsSrv.ListenAndServe())
+
+		err := httpsSrv.ListenAndServeTLS("", "")
+		if err != nil {
+			log.Fatalf("httpsSrv.ListendAndServeTLS() failed with %s", err)
+		}
+	}
+
+	httpsSrv.Addr = ":80"
+
+	err := httpsSrv.ListenAndServe()
+	log.Fatal(httpsSrv.ListenAndServe())
+	if err != nil {
+		log.Fatalf("httpSrv.ListenAndServe() failed with %s", err)
+	}
 }
 
 func OpenSqlxViaPgxConnPool() *sqlx.DB {
@@ -136,3 +184,5 @@ func OpenSqlxViaPgxConnPool() *sqlx.DB {
 	log.Println("OpenSqlxViaPgxConnPool: the connection was created")
 	return sqlx.NewDb(nativeDB, "pgx")
 }
+
+// git commit -m "https cert resolution added"

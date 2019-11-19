@@ -35,7 +35,7 @@
 - "/favorite_vacancies"
   - GET 
 
-- "/favorite_vacancy"
+- "/favorite_vacancy/{id}"
   - POST - создание избранной вакансии
   - DELETE - удаление избранной вакансии (не сделано на бэке)
 
@@ -370,14 +370,11 @@ GET
         HTTP/1.1 400
 
 
-###  "/favorite_vacancy"
+###  "/favorite_vacancy/{id}"
 POST - создание избранной вакансии
     
 Структура JSON тела запроса
 
-       {
-            "vacancy_id": uuid
-        }
 
 Ответ на запрос:
 

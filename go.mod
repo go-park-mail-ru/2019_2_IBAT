@@ -14,10 +14,11 @@ require (
 	github.com/jackc/pgx v3.6.0+incompatible
 	github.com/jackc/pgx/v4 v4.1.0
 	github.com/jmoiron/sqlx v1.2.0
+	github.com/jwangsadinata/go-multimap v0.0.0-20190620162914-c29f3d7f33b6
 	github.com/pkg/errors v0.8.1
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/blog v0.0.0-20191108185507-584205eb2c4d // indirect
-	golang.org/x/crypto v0.0.0-20190911031432-227b76d455e7
+	golang.org/x/crypto v0.0.0-20191117063200-497ca9f6d64f
 	golang.org/x/tools v0.0.0-20191105231337-689d0f08e67a // indirect
 	golang.org/x/tools/gopls v0.1.7 // indirect
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0
