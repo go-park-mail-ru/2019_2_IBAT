@@ -58,7 +58,7 @@ func NewRouter() (*mux.Router, error) {
 	router.Use(loger.AccessLogMiddleware)
 	router.Use(middleware.CorsMiddleware)
 	router.Use(aS.AuthMiddleware)
-	router.Use(middleware.CSRFMiddleware)
+	// router.Use(middleware.CSRFMiddleware)
 
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
 

@@ -163,6 +163,7 @@ func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[strin
 	tagIds := m.querySpheresIDs(tags)
 	if len(tagIds) > 0 && paramsStr != "" {
 		paramsStr = " AND " + paramsStr
+		// params["ids"] = tagIds
 	}
 
 	var rows *sqlx.Rows
@@ -183,7 +184,7 @@ func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[strin
 			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
 			"v.region, v.type_of_employment, v.work_schedule "+
 			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id "+
-			" INNER JOIN vac_tag_relations AS vt ON v.id = vt.vac_id WHERE "+paramsStr, params)
+			" WHERE "+paramsStr, params)
 	}
 
 	if err != nil {
@@ -294,7 +295,7 @@ func paramsToQuery(params map[string]interface{}) string {
 
 	if params["position"] != nil {
 		params["position"] = "%" + params["position"].(string) + "%"
-		query = append(query, "position ILIKE :position")
+		query = append(query, "position LIKE :position")
 	}
 
 	if params["region"] != nil {

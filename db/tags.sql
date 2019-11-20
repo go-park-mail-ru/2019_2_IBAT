@@ -1,4 +1,7 @@
 DROP TABLE tag_relations;
+DROP TABLE vac_tag_relations;
+DROP TABLE res_tag_relations;
+
 DROP TABLE tags;
 
 CREATE TABLE tags(
