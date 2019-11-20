@@ -113,7 +113,6 @@ func NewRouter() (*mux.Router, error) {
 }
 
 func RunServer() {
-
 	router, _ := NewRouter()
 	httpsSrv := &http.Server{
 		Handler: router,
@@ -128,8 +127,7 @@ func RunServer() {
 		// this is where cached certificates are stored
 		dataDir := "."
 		hostPolicy := func(ctx context.Context, host string) error {
-			// Note: change to your real domain
-			allowedHost := "*"
+			allowedHost := "tko.vladimir.fvds.ru"
 			if host == allowedHost {
 				return nil
 			}
@@ -144,12 +142,8 @@ func RunServer() {
 
 		httpsSrv.Addr = ":443"
 		httpsSrv.TLSConfig = &tls.Config{GetCertificate: m.GetCertificate}
-		log.Fatal(httpsSrv.ListenAndServeTLS("", ""))
-		// err := httpsSrv.ListenAndServeTLS("", "")
-		// if err != nil {
-		// 	log.Fatalf("httpsSrv.ListendAndServeTLS() failed with %s", err)
-		// }
 
+		log.Fatal(httpsSrv.ListenAndServeTLS("", ""))
 	} else {
 
 		httpsSrv.Addr = ":8080"
