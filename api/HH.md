@@ -224,11 +224,15 @@ POST - создание резюме
         "sex": "male",
         "citizenship": "Russia",
         "experience": "7 years",
-        "profession": "programmer",
-        "position": "middle",
+        "position": "programmer",
         "wage": "100500",
         "education": "MSU",
-        "about": "Hello employer"
+        "about": "Hello employer",
+        "spheres": [
+            {"first": "Бухгалтерия, управленческий учет, финансы предприятия", "second": "бухгалтер"},
+            {"first": "Бухгалтерия, управленческий учет, финансы предприятия", "second": "основные средства"}
+	    ]
+
     }
 
 
@@ -259,11 +263,14 @@ PUT - изменение резюме
         "sex": "male",
         "citizenship": "Russia",
         "experience": "7 years",
-        "profession": "programmer",
         "position": "middle",
         "wage": "100500",
         "education": "MSU",
-        "about": "Hello employer"
+        "about": "Hello employer",
+        "spheres": [
+            {"first": "Бухгалтерия, управленческий учет, финансы предприятия", "second": "бухгалтер"},
+            {"first": "Бухгалтерия, управленческий учет, финансы предприятия", "second": "основные средства"}
+	    ]
     }
 
 Ответ на запрос:
@@ -355,7 +362,6 @@ GET
                 "id": uuid
                 "company_name": "BMSsTU",
                 "experience": "3 years and more",
-                "profession": "baker",
                 "position":  "mid",
                 "tasks": "writing test",
                 "requirements": "should be able writing good tests",
@@ -505,13 +511,16 @@ POST - создание вакансии
     {
         "company_name": "BMSsTU",
         "experience": "3 years and more",
-        "profession": "baker",
         "position":  "mid",
         "tasks": "writing test",
         "requirements": "should be able writing good tests",
         "wage": "100500",
         "conditions": "nice team",
         "about": "you will work in the best company"
+        "spheres": [
+            {"first": "Бухгалтерия, управленческий учет, финансы предприятия", "second": "бухгалтер"},
+            {"first": "Бухгалтерия, управленческий учет, финансы предприятия", "second": "основные средства"}
+	    ]
     }
 
 Ответ на запрос:
@@ -542,6 +551,10 @@ PUT - изменение вакансии
         "wage": "100500",
         "conditions": "nice team",
         "about": "you will work in the best company"
+        "spheres": [
+            {"first": "Бухгалтерия, управленческий учет, финансы предприятия", "second": "бухгалтер"},
+            {"first": "Бухгалтерия, управленческий учет, финансы предприятия", "second": "основные средства"}
+	    ]
     }
 
 
