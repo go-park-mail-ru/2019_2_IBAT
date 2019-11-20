@@ -150,7 +150,7 @@ func paramsToResumesQuery(params map[string]interface{}) string {
 
 	if params["position"] != nil {
 		params["position"] = "%" + params["position"].(string) + "%"
-		query = append(query, "position LIKE :position")
+		query = append(query, "position ILIKE :position")
 	}
 
 	if params["region"] != nil {

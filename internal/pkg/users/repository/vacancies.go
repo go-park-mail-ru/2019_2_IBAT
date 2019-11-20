@@ -64,6 +64,23 @@ func (m *DBUserStorage) GetVacancy(id uuid.UUID, userId uuid.UUID) (Vacancy, err
 		vacancy.Favorite = true
 	}
 
+	isRepondedRows, err := m.DbConn.Queryx("SELECT rps.vacancy_id FROM resumes AS rms "+
+		"JOIN responds AS rps ON (rms.id = rps.resume_id) WHERE "+
+		"rms.own_id = $1 AND rps.vacancy_id = $2;", userId, id)
+	if err != nil {
+		log.Printf("GetVacancy: %s\n", err)
+	}
+
+	defer isRepondedRows.Close()
+
+	var vacId uuid.UUID
+	isRepondedRows.Next()
+	err = isRepondedRows.Scan(&vacId)
+	log.Printf("GetVacancy: %s\n", err)
+	if err == nil {
+		vacancy.IsResponded = true
+	}
+
 	return vacancy, nil
 }
 
@@ -256,7 +273,7 @@ func paramsToQuery(params map[string]interface{}) string {
 
 	if params["position"] != nil {
 		params["position"] = "%" + params["position"].(string) + "%"
-		query = append(query, "position LIKE :position")
+		query = append(query, "position ILIKE :position")
 	}
 
 	if params["region"] != nil {

@@ -136,6 +136,7 @@ type Vacancy struct {
 	WageTo           string    `json:"wage_to"             db:"wage_to"`
 	Conditions       string    `json:"conditions"          db:"conditions"`
 	Favorite         bool      `json:"favorite"            db:"favorite"`
+	IsResponded      bool      `json:"is_responded"        db:"is_responded"`
 	About            string    `json:"about"               db:"about"`
 	Spheres          []Pair    `json:"spheres"`
 }
