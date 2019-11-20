@@ -115,10 +115,19 @@ func (h *UserService) PutVacancy(vacancyId uuid.UUID, body io.ReadCloser, authIn
 	return nil
 }
 
-func (h *UserService) GetVacancies(authInfo AuthStorageValue, params map[string]interface{}) ([]Vacancy, error) {
-	// var spheres []Pair
-	// for i, item := range params {
-	// 	item.(string)
-	// }
-	return h.Storage.GetVacancies(authInfo, params)
+func (h *UserService) GetVacancies(authInfo AuthStorageValue, params map[string]interface{},
+	tagParams map[string]interface{}) ([]Vacancy, error) {
+	var tags []Pair
+
+	for keyTag, item := range tagParams {
+		arr := item.([]string)
+		for _, tag := range arr {
+			tags = append(tags, Pair{
+				First:  keyTag,
+				Second: tag,
+			})
+		}
+	}
+
+	return h.Storage.GetVacancies(authInfo, params, tags)
 }

@@ -146,6 +146,7 @@ func NewRouter() (*mux.Router, error) {
 // 		log.Fatal(httpsSrv.ListenAndServe())
 // 	}
 // }
+
 func RunServer() {
 	router, err := NewRouter()
 	if err != nil {

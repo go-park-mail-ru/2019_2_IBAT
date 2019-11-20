@@ -2,6 +2,7 @@ package repository
 
 import (
 	. "2019_2_IBAT/internal/pkg/interfaces"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -54,11 +55,11 @@ func (m *DBUserStorage) GetVacancy(id uuid.UUID, userId uuid.UUID) (Vacancy, err
 		return vacancy, errors.New(InvalidIdMsg)
 	}
 
-	favVacRows := m.DbConn.QueryRowx("SELECT vacancy_id FROM favorite_vacancies WHERE "+
+	favVacRow := m.DbConn.QueryRowx("SELECT vacancy_id FROM favorite_vacancies WHERE "+
 		"person_id = $1 AND vacancy_id = $2;", userId, id)
 
 	var resId uuid.UUID
-	err = favVacRows.Scan(&resId)
+	err = favVacRow.Scan(&resId)
 	if err == nil {
 		vacancy.Favorite = true
 	}
@@ -95,32 +96,67 @@ func (m *DBUserStorage) PutVacancy(vacancy Vacancy, userId uuid.UUID, vacancyId 
 	return true
 }
 
-func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[string]interface{}) ([]Vacancy, error) {
+func (m *DBUserStorage) queryFavVacIDs(id uuid.UUID) map[uuid.UUID]bool {
+	favVacRows, err := m.DbConn.Queryx("SELECT vacancy_id FROM favorite_vacancies WHERE "+ //err
+		"person_id = $1", id)
+	if err == nil {
+		defer favVacRows.Close()
+	}
+
+	favVacMap := map[uuid.UUID]bool{}
+	for favVacRows.Next() {
+		var id uuid.UUID
+		err = favVacRows.Scan(&id)
+		if err == nil {
+			log.Printf("GetVacancies: %s\n", err)
+			favVacMap[id] = true
+		}
+	}
+	return favVacMap
+}
+
+func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[string]interface{}, tags []Pair) ([]Vacancy, error) {
 	vacancies := []Vacancy{}
 	log.Printf("Params: %s\n\n", params)
-	query := paramsToQuery(params)
 
-	var nmst *sqlx.NamedStmt
-	var err error
+	// var nmstTags *sqlx.NamedStmt
 
-	if query != "" {
-		nmst, err = m.DbConn.PrepareNamed("SELECT v.id, v.own_id, c.company_name, v.experience, " +
-			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
-			"v.region, v.type_of_employment, v.work_schedule " +
-			"FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE " + query)
-
-		if err != nil {
-			log.Printf("GetVacancies: %s\n", err)
-			return vacancies, errors.New(InternalErrorMsg)
-		}
-	} else {
-		log.Println("GetVacancies: query is empty")
+	paramsStr := paramsToQuery(params)
+	tagIds := m.querySpheresIDs(tags)
+	if len(tagIds) > 0 && paramsStr != "" {
+		paramsStr = " AND " + paramsStr
 	}
 
 	var rows *sqlx.Rows
+	params["ids"] = tagIds
 
-	if query != "" {
-		rows, err = nmst.Queryx(params)
+	var query string
+	var args []interface{}
+	var err error
+	fmt.Printf("Params string: %s\n", paramsStr)
+	if len(tagIds) > 0 {
+		query, args, err = sqlx.Named("SELECT v.id, v.own_id, c.company_name, v.experience,"+
+			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
+			"v.region, v.type_of_employment, v.work_schedule "+
+			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id "+
+			" INNER JOIN vac_tag_relations AS vt ON v.id = vt.vac_id WHERE vt.tag_id IN (:ids)"+paramsStr, params)
+	} else if paramsStr != "" {
+		query, args, err = sqlx.Named("SELECT v.id, v.own_id, c.company_name, v.experience,"+
+			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
+			"v.region, v.type_of_employment, v.work_schedule "+
+			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id "+
+			" INNER JOIN vac_tag_relations AS vt ON v.id = vt.vac_id WHERE "+paramsStr, params)
+	}
+
+	if err != nil {
+		log.Printf("GetVacancies: %s\n", err)
+		return vacancies, errors.New(InternalErrorMsg)
+	}
+
+	if query != "" || len(tagIds) > 0 {
+		query, args, err = sqlx.In(query, args...)
+		query = m.DbConn.Rebind(query)
+		rows, err = m.DbConn.Queryx(query, args...)
 	} else {
 		rows, err = m.DbConn.Queryx("SELECT v.id, v.own_id, c.company_name, v.experience," +
 			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
@@ -155,6 +191,64 @@ func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[strin
 	}
 
 	return vacancies, nil
+}
+
+func buildSpheresQuery(spheres []Pair) (string, map[string]interface{}) {
+
+	sphMap := make(map[string]interface{})
+	var sphQueryArr []string
+
+	for i, item := range spheres {
+		parent_tag := "parent_tag" + strconv.Itoa(i)
+		child_tag := "child_tag" + strconv.Itoa(i)
+		sphMap[parent_tag] = item.First
+		sphMap[child_tag] = item.Second
+		sphQueryArr = append(sphQueryArr, "(parent_tag = :"+parent_tag+" AND child_tag = :"+child_tag+" )")
+
+	}
+
+	sphQuery := strings.Join(sphQueryArr, " OR ")
+
+	return sphQuery, sphMap
+}
+
+func (m *DBUserStorage) querySpheresIDs(spheres []Pair) []uuid.UUID {
+	var tagIds []uuid.UUID
+
+	if !(len(spheres) > 0) {
+		return tagIds
+	}
+
+	var nmstTags *sqlx.NamedStmt
+	var err error
+
+	sphQuery, sphMap := buildSpheresQuery(spheres)
+
+	nmstTags, err = m.DbConn.PrepareNamed("SELECT id FROM tags WHERE " + sphQuery)
+	if err != nil {
+		return tagIds
+	} //real error message
+
+	tagRows, err := nmstTags.Queryx(sphMap)
+	if err != nil {
+		return tagIds
+	} //real error message
+
+	if err == nil && sphQuery != "" {
+		defer tagRows.Close()
+		for tagRows.Next() {
+			var tagId uuid.UUID
+
+			err = tagRows.Scan(&tagId)
+			if err != nil {
+				log.Printf("GetVacancies: %s\n", err)
+			}
+
+			tagIds = append(tagIds, tagId)
+		}
+	}
+
+	return tagIds
 }
 
 func paramsToQuery(params map[string]interface{}) string {
@@ -192,177 +286,3 @@ func paramsToQuery(params map[string]interface{}) string {
 	log.Printf("Query: %s", str)
 	return str
 }
-
-func (m *DBUserStorage) queryFavVacIDs(id uuid.UUID) map[uuid.UUID]bool {
-	favVacRows, err := m.DbConn.Queryx("SELECT vacancy_id FROM favorite_vacancies WHERE "+ //err
-		"person_id = $1", id)
-	if err == nil {
-		defer favVacRows.Close()
-	}
-
-	favVacMap := map[uuid.UUID]bool{}
-	for favVacRows.Next() {
-		var id uuid.UUID
-		err = favVacRows.Scan(&id)
-		if err == nil {
-			log.Printf("GetVacancies: %s\n", err)
-			favVacMap[id] = true
-		}
-	}
-	return favVacMap
-}
-
-// func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[string]interface{}) ([]Vacancy, error) {
-// 	vacancies := []Vacancy{}
-// 	log.Printf("Params: %s\n\n", params)
-// 	// query := paramsToQuery(params)
-
-// 	// var nmstTags *sqlx.NamedStmt
-// 	spheres := []Pair{
-// 		{
-// 			First:  "Автомобильный бизнес",
-// 			Second: "автожестянщик",
-// 		},
-// 		{
-// 			First:  "Автомобильный бизнес",
-// 			Second: "автозапчасти",
-// 		},
-// 	} //remove
-
-// 	tagIds := m.querySpheresIDs(spheres)
-
-// 	// var nmst *sqlx.NamedStmt
-// 	var err error
-
-// 	// if query != "" {
-// 	// 	nmst, err = m.DbConn.PrepareNamed("SELECT v.id, v.own_id, c.company_name, v.experience, " +
-// 	// 		"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
-// 	// 		"v.region, v.type_of_employment, v.work_schedule " +
-// 	// 		"FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE " + query)
-
-// 	// 	if err != nil {
-// 	// 		log.Printf("GetVacancies: %s\n", err)
-// 	// 		return vacancies, errors.New(InternalErrorMsg)
-// 	// 	}
-// 	// } else {
-// 	// 	log.Println("GetVacancies: query is empty")
-// 	// }
-
-// 	// var rows *sqlx.Rows
-
-// 	// if query != "" {
-// 	// 	rows, err = nmst.Queryx(params)
-// 	// } else {
-// 	// 	rows, err = m.DbConn.Queryx("SELECT v.id, v.own_id, c.company_name, v.experience," +
-// 	// 		"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
-// 	// 		"v.region, v.type_of_employment, v.work_schedule " +
-// 	// 		" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id;")
-// 	// }
-
-// 	var rows *sqlx.Rows
-// 	mapArgs := map[string]interface{}{
-// 		"ids": tagIds,
-// 	}
-
-// 	// rows, err = m.DbConn.Queryx("SELECT v.id, v.own_id, c.company_name, v.experience,"+
-// 	// 	"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
-// 	// 	"v.region, v.type_of_employment, v.work_schedule "+
-// 	// 	" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id "+
-// 	// 	" INNER JOIN vac_tag_relations AS vt ON v.id = vt.vac_id WHERE vt.tag_id IN ($1);", tagIds,
-// 	// )
-
-// 	// nmst, err := m.DbConn.PrepareNamed("SELECT v.id, v.own_id, c.company_name, v.experience," +
-// 	// 	"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
-// 	// 	"v.region, v.type_of_employment, v.work_schedule " +
-// 	// 	" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id " +
-// 	// 	" INNER JOIN vac_tag_relations AS vt ON v.id = vt.vac_id WHERE vt.tag_id IN (:ids);")
-
-// 	query, args, err := sqlx.Named("SELECT v.id, v.own_id, c.company_name, v.experience,"+
-// 		"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
-// 		"v.region, v.type_of_employment, v.work_schedule "+
-// 		" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id "+
-// 		" INNER JOIN vac_tag_relations AS vt ON v.id = vt.vac_id WHERE vt.tag_id IN (:ids);", mapArgs)
-
-// 	query, args, err = sqlx.In(query, args...)
-// 	query = m.DbConn.Rebind(query)
-// 	rows, err = m.DbConn.Queryx(query, args...)
-// 	if err != nil {
-// 		log.Printf("GetVacancies: %s\n", err)
-// 		return vacancies, errors.New(InternalErrorMsg)
-// 	}
-
-// 	defer rows.Close()
-
-// 	favVacMap := m.queryFavVacIDs(authInfo.ID)
-
-// 	for rows.Next() {
-// 		var vacancy Vacancy
-
-// 		err = rows.StructScan(&vacancy)
-// 		if err != nil {
-// 			log.Printf("GetVacancies: %s\n", err)
-// 			return vacancies, errors.New(InternalErrorMsg)
-// 		}
-
-// 		_, ok := favVacMap[vacancy.ID]
-// 		if ok {
-// 			vacancy.Favorite = true
-// 		}
-
-// 		vacancies = append(vacancies, vacancy)
-// 	}
-
-// 	return vacancies, nil
-// }
-
-func buildSpheresQuery(spheres []Pair) (string, map[string]interface{}) {
-
-	sphMap := make(map[string]interface{})
-	var sphQueryArr []string
-
-	for i, item := range spheres {
-		parent_tag := "parent_tag" + strconv.Itoa(i)
-		child_tag := "child_tag" + strconv.Itoa(i)
-		sphMap[parent_tag] = item.First
-		sphMap[child_tag] = item.Second
-		sphQueryArr = append(sphQueryArr, "(parent_tag = :"+parent_tag+" AND child_tag = :"+child_tag+" )")
-
-	}
-
-	sphQuery := strings.Join(sphQueryArr, " OR ")
-
-	return sphQuery, sphMap
-}
-
-// func (m *DBUserStorage) querySpheresIDs(spheres []Pair) []uuid.UUID {
-// 	var nmstTags *sqlx.NamedStmt
-// 	var err error
-
-// 	sphQuery, sphMap := buildSpheresQuery(spheres)
-// 	fmt.Println(sphQuery)
-// 	if len(spheres) != 0 {
-// 		nmstTags, err = m.DbConn.PrepareNamed("SELECT id FROM tags WHERE " + sphQuery)
-// 	}
-
-// 	var tagRows *sqlx.Rows
-// 	if sphQuery != "" {
-// 		tagRows, err = nmstTags.Queryx(sphMap)
-// 	}
-
-// 	var tagIds []uuid.UUID
-// 	if err == nil {
-// 		defer tagRows.Close()
-// 		for tagRows.Next() {
-// 			var tagId uuid.UUID
-
-// 			err = tagRows.Scan(&tagId)
-// 			if err != nil {
-// 				log.Printf("GetVacancies: %s\n", err)
-// 			}
-
-// 			tagIds = append(tagIds, tagId)
-// 		}
-// 	}
-
-// 	return tagIds
-// }

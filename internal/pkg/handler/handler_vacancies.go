@@ -13,6 +13,17 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var (
+	vacancyParams = [...]string{
+		"position",
+		"region",
+		"wage",
+		"experience",
+		"type_of_employment",
+		"work_schedule",
+	}
+)
+
 func (h *Handler) GetVacancies(w http.ResponseWriter, r *http.Request) { //+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
@@ -23,10 +34,11 @@ func (h *Handler) GetVacancies(w http.ResponseWriter, r *http.Request) { //+
 	}
 
 	params := h.ParseVacanciesQuery(r.URL.Query())
+	tags := h.ParseTags(r.URL.Query())
 
 	log.Printf("Params map length: %d\n", len(params))
 
-	vacancies, _ := h.UserService.GetVacancies(authInfo, params) //err handle
+	vacancies, _ := h.UserService.GetVacancies(authInfo, params, tags) //err handle
 
 	vacanciesJSON, _ := json.Marshal(vacancies)
 
@@ -203,5 +215,31 @@ func (h *Handler) ParseVacanciesQuery(query url.Values) map[string]interface{} {
 		params["work_schedule"] = query.Get("work_schedule")
 	}
 
+	return params
+}
+
+func (h *Handler) ParseTags(query url.Values) map[string]interface{} {
+	params := make(map[string]interface{})
+
+	for i, item := range query {
+		fmt.Printf("%s  %s\n", i, item)
+		flag := false
+
+		for _, param := range vacancyParams {
+			if i == param {
+				flag = true
+				break
+			}
+		}
+
+		if !flag {
+			params[i] = item
+			fmt.Printf("%s  %s\n", i, params[i])
+		}
+
+	}
+
+	log.Println("Tag array")
+	log.Println(params)
 	return params
 }
