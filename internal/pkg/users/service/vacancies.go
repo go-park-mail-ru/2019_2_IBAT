@@ -56,7 +56,7 @@ func (h *UserService) GetVacancy(vacancyId uuid.UUID, authInfo AuthStorageValue)
 	vacancy, err := h.Storage.GetVacancy(vacancyId, authInfo.ID)
 
 	if err != nil { //error wrap
-		return vacancy, errors.New(InvalidIdMsg)
+		return vacancy, err //errors.New(InvalidIdMsg)
 	}
 
 	return vacancy, nil

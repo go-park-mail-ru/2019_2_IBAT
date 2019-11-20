@@ -69,18 +69,17 @@ func (m *DBUserStorage) GetVacancy(id uuid.UUID, userId uuid.UUID) (Vacancy, err
 		"rms.own_id = $1 AND rps.vacancy_id = $2;", userId, id)
 	if err != nil {
 		log.Printf("GetVacancy: %s\n", err)
+	} else {
+		defer isRepondedRows.Close()
+
+		var vacId uuid.UUID
+		isRepondedRows.Next()
+		err = isRepondedRows.Scan(&vacId)
+		log.Printf("GetVacancy: %s\n", err)
+		if err == nil {
+			vacancy.IsResponded = true
+		}
 	}
-
-	defer isRepondedRows.Close()
-
-	var vacId uuid.UUID
-	isRepondedRows.Next()
-	err = isRepondedRows.Scan(&vacId)
-	log.Printf("GetVacancy: %s\n", err)
-	if err == nil {
-		vacancy.IsResponded = true
-	}
-
 	return vacancy, nil
 }
 
@@ -131,6 +130,28 @@ func (m *DBUserStorage) queryFavVacIDs(id uuid.UUID) map[uuid.UUID]bool {
 	}
 	return favVacMap
 }
+
+// func (m *DBUserStorage) queryResVacIDs(id uuid.UUID) map[uuid.UUID]bool {
+// 	respVacRows, err := m.DbConn.Queryx("SELECT vacancy_id FROM responds" +
+// 		""
+
+// 	WHERE "+ //err
+// 		"person_id = $1", id)
+// 	if err == nil {
+// 		defer respVacRows.Close()
+// 	}
+
+// 	respVacMap := map[uuid.UUID]bool{}
+// 	for respVacRows.Next() {
+// 		var id uuid.UUID
+// 		err = respVacRows.Scan(&id)
+// 		if err == nil {
+// 			log.Printf("GetVacancies: %s\n", err)
+// 			respVacMap[id] = true
+// 		}
+// 	}
+// 	return respVacMap
+// }
 
 func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[string]interface{}, tags []Pair) ([]Vacancy, error) {
 	vacancies := []Vacancy{}

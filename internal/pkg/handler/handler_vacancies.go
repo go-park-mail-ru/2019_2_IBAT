@@ -94,9 +94,27 @@ func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) { //+
 
 	vacId, err := uuid.Parse(mux.Vars(r)["id"])
 
+	// if err != nil {
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// 	errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
+	// 	w.Write([]byte(errJSON))
+	// 	return
+	// }
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
+		var code int
+		switch err.Error() {
+		case ForbiddenMsg:
+			code = http.StatusForbidden
+		case UnauthorizedMsg:
+			code = http.StatusUnauthorized
+		case InternalErrorMsg:
+			code = http.StatusInternalServerError
+		default:
+			code = http.StatusBadRequest
+		}
+		w.WriteHeader(code)
+
+		errJSON, _ := json.Marshal(Error{Message: err.Error()})
 		w.Write([]byte(errJSON))
 		return
 	}
