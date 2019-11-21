@@ -27,7 +27,7 @@ func (m *DBUserStorage) CreateResume(resumeReg Resume) bool {
 	}
 
 	for _, item := range resumeReg.Spheres {
-		_, err := m.DbConn.Exec("INSERT INTO res_tag_relations(tag_id, res_id)VALUES"+
+		_, err := m.DbConn.Exec("INSERT INTO res_tag_relations(tag_id, resume_id)VALUES"+
 			"((SELECT id from tags WHERE parent_tag = $1 AND child_tag = $2), $3);",
 			item.First, item.Second, resumeReg.ID,
 		)

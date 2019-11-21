@@ -38,7 +38,14 @@ func (h *Handler) GetVacancies(w http.ResponseWriter, r *http.Request) { //+
 
 	log.Printf("Params map length: %d\n", len(params))
 
-	vacancies, _ := h.UserService.GetVacancies(authInfo, params, tags) //err handle
+	vacancies, err := h.UserService.GetVacancies(authInfo, params, tags) //err handle
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
+		w.Write([]byte(errJSON))
+		return
+	}
 
 	vacanciesJSON, _ := json.Marshal(vacancies)
 
@@ -94,12 +101,6 @@ func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) { //+
 
 	vacId, err := uuid.Parse(mux.Vars(r)["id"])
 
-	// if err != nil {
-	// 	w.WriteHeader(http.StatusBadRequest)
-	// 	errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-	// 	w.Write([]byte(errJSON))
-	// 	return
-	// }
 	if err != nil {
 		var code int
 		switch err.Error() {
@@ -209,8 +210,9 @@ func (h *Handler) PutVacancy(w http.ResponseWriter, r *http.Request) { //+
 func (h *Handler) ParseVacanciesQuery(query url.Values) map[string]interface{} {
 	params := make(map[string]interface{})
 
-	for i, item := range query {
-		fmt.Printf("%s  %s\n", i, item)
+	if query.Get("recommended") != "" {
+		params["recommended"] = query.Get("recommended")
+		return params //no sense to continue
 	}
 
 	if query.Get("position") != "" {

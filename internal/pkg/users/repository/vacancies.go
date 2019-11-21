@@ -2,7 +2,6 @@ package repository
 
 import (
 	. "2019_2_IBAT/internal/pkg/interfaces"
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -29,7 +28,7 @@ func (m *DBUserStorage) CreateVacancy(vacancyReg Vacancy) bool {
 	}
 
 	for _, item := range vacancyReg.Spheres {
-		_, err := m.DbConn.Exec("INSERT INTO vac_tag_relations(tag_id, vac_id)VALUES"+
+		_, err := m.DbConn.Exec("INSERT INTO vac_tag_relations(tag_id, vacancy_id)VALUES"+
 			"((SELECT id from tags WHERE parent_tag = $1 AND child_tag = $2), $3);",
 			item.First, item.Second, vacancyReg.ID,
 		)
@@ -153,32 +152,28 @@ func (m *DBUserStorage) queryFavVacIDs(id uuid.UUID) map[uuid.UUID]bool {
 // 	return respVacMap
 // }
 
-func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[string]interface{}, tags []Pair) ([]Vacancy, error) {
+func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[string]interface{}) ([]Vacancy, error) {
 	vacancies := []Vacancy{}
 	log.Printf("Params: %s\n\n", params)
 
-	// var nmstTags *sqlx.NamedStmt
-
 	paramsStr := paramsToQuery(params)
-	tagIds := m.querySpheresIDs(tags)
-	if len(tagIds) > 0 && paramsStr != "" {
+	tagIDsLength := len(params["tag_ids"].([]uuid.UUID))
+
+	if tagIDsLength > 0 && paramsStr != "" {
 		paramsStr = " AND " + paramsStr
-		// params["ids"] = tagIds
 	}
 
 	var rows *sqlx.Rows
-	params["ids"] = tagIds
 
 	var query string
 	var args []interface{}
 	var err error
-	fmt.Printf("Params string: %s\n", paramsStr)
-	if len(tagIds) > 0 {
+	if tagIDsLength > 0 {
 		query, args, err = sqlx.Named("SELECT v.id, v.own_id, c.company_name, v.experience,"+
 			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
 			"v.region, v.type_of_employment, v.work_schedule "+
 			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id "+
-			" INNER JOIN vac_tag_relations AS vt ON v.id = vt.vac_id WHERE vt.tag_id IN (:ids)"+paramsStr, params)
+			" INNER JOIN vac_tag_relations AS vt ON v.id = vt.vacancy_id WHERE vt.tag_id IN (:tag_ids)"+paramsStr, params)
 	} else if paramsStr != "" {
 		query, args, err = sqlx.Named("SELECT v.id, v.own_id, c.company_name, v.experience,"+
 			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
@@ -192,7 +187,7 @@ func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[strin
 		return vacancies, errors.New(InternalErrorMsg)
 	}
 
-	if query != "" || len(tagIds) > 0 {
+	if query != "" || tagIDsLength > 0 {
 		query, args, err = sqlx.In(query, args...)
 		query = m.DbConn.Rebind(query)
 		rows, err = m.DbConn.Queryx(query, args...)
@@ -251,7 +246,7 @@ func buildSpheresQuery(spheres []Pair) (string, map[string]interface{}) {
 	return sphQuery, sphMap
 }
 
-func (m *DBUserStorage) querySpheresIDs(spheres []Pair) []uuid.UUID {
+func (m *DBUserStorage) GetTagIDs(spheres []Pair) []uuid.UUID {
 	var tagIds []uuid.UUID
 
 	if !(len(spheres) > 0) {
@@ -295,7 +290,7 @@ func paramsToQuery(params map[string]interface{}) string {
 
 	if params["position"] != nil {
 		params["position"] = "%" + params["position"].(string) + "%"
-		query = append(query, "position LIKE :position")
+		query = append(query, "position ILIKE :position")
 	}
 
 	if params["region"] != nil {

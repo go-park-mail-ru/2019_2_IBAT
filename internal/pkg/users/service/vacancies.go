@@ -53,10 +53,16 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 }
 
 func (h *UserService) GetVacancy(vacancyId uuid.UUID, authInfo AuthStorageValue) (Vacancy, error) {
+	// wg := &sync.WaitGroup{}
+	// wg.Add(1)
+
+	tagIDs, err := h.Storage.GetVacancyTagIDs(vacancyId)
+	h.RecomService.SetTagIDs(authInfo, tagIDs)
+
 	vacancy, err := h.Storage.GetVacancy(vacancyId, authInfo.ID)
 
 	if err != nil { //error wrap
-		return vacancy, err //errors.New(InvalidIdMsg)
+		return vacancy, errors.New(InvalidIdMsg)
 	}
 
 	return vacancy, nil
@@ -117,17 +123,42 @@ func (h *UserService) PutVacancy(vacancyId uuid.UUID, body io.ReadCloser, authIn
 
 func (h *UserService) GetVacancies(authInfo AuthStorageValue, params map[string]interface{},
 	tagParams map[string]interface{}) ([]Vacancy, error) {
-	var tags []Pair
+	var tagIDs []uuid.UUID
+	var err error
 
-	for keyTag, item := range tagParams {
-		arr := item.([]string)
-		for _, tag := range arr {
-			tags = append(tags, Pair{
-				First:  keyTag,
-				Second: tag,
-			})
+	if params["recommended"] != nil {
+		tagIDs, err = h.RecomService.GetTagIDs(authInfo)
+		if err != nil {
+			log.Printf("Failed to get recommendations")
+		}
+	} else {
+		var tags []Pair
+		for keyTag, item := range tagParams {
+			arr := item.([]string)
+			for _, tag := range arr {
+				tags = append(tags, Pair{
+					First:  keyTag,
+					Second: tag,
+				})
+			}
+		}
+		tagIDs = h.Storage.GetTagIDs(tags)
+	}
+
+	params["tag_ids"] = tagIDs
+
+	vacancies, err := h.Storage.GetVacancies(authInfo, params)
+
+	if err != nil {
+		return vacancies, err
+	}
+
+	if params["recommended"] == nil {
+		err = h.RecomService.SetTagIDs(authInfo, tagIDs)
+		if err != nil {
+			log.Printf("Failed to set recommendations")
 		}
 	}
 
-	return h.Storage.GetVacancies(authInfo, params, tags)
+	return vacancies, err
 }

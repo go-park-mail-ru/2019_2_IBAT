@@ -14,14 +14,14 @@ CREATE TABLE tags(
 
 CREATE TABLE vac_tag_relations(
     tag_id uuid REFERENCES tags(id) ON DELETE CASCADE NOT NULL,
-    vac_id uuid REFERENCES vacancies (id) ON DELETE CASCADE NOT NULL ,
-    PRIMARY KEY(tag_id, vac_id)
+    vacancy_id uuid REFERENCES vacancies (id) ON DELETE CASCADE NOT NULL ,
+    PRIMARY KEY(tag_id, vacancy_id)
 );
 
 CREATE TABLE res_tag_relations(
     tag_id uuid REFERENCES tags(id) ON DELETE CASCADE NOT NULL,
-    res_id uuid REFERENCES resumes (id) ON DELETE CASCADE NOT NULL ,
-    PRIMARY KEY(tag_id, res_id)
+    resume_id uuid REFERENCES resumes (id) ON DELETE CASCADE NOT NULL ,
+    PRIMARY KEY(tag_id, resume_id)
 );
 
 

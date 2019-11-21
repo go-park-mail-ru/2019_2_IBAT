@@ -4,12 +4,14 @@ import (
 	"2019_2_IBAT/internal/pkg/users"
 
 	. "2019_2_IBAT/internal/pkg/interfaces"
+	recServ "2019_2_IBAT/internal/pkg/recommends/service"
 
 	"github.com/google/uuid"
 )
 
 type UserService struct {
-	Storage users.Repository
+	Storage      users.Repository
+	RecomService recServ.Service
 }
 
 func (h *UserService) DeleteUser(authInfo AuthStorageValue) error {

@@ -13,6 +13,9 @@ import (
 	usRep "2019_2_IBAT/internal/pkg/users/repository"
 	usServ "2019_2_IBAT/internal/pkg/users/service"
 
+	recRep "2019_2_IBAT/internal/pkg/recommends/repository"
+	recServ "2019_2_IBAT/internal/pkg/recommends/service"
+
 	"2019_2_IBAT/internal/pkg/middleware"
 
 	"github.com/gorilla/mux"
@@ -22,15 +25,9 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// type Server struct {
-// 	Router *mux.Router
-// }
-
 const staticDir = "/media/vltim/img"
 
 func NewRouter() (*mux.Router, error) {
-	// server := new(Server)
-
 	router := mux.NewRouter()
 
 	redisAddr := flag.String("redisServer", ":6379", "")
@@ -39,10 +36,17 @@ func NewRouter() (*mux.Router, error) {
 		Storage: auth_rep.NewSessionManager(auth_rep.RedNewPool(*redisAddr)),
 	}
 
+	rS := recServ.Service{
+		Storage: &recRep.DBRecommendsStorage{
+			DbConn: OpenSqlxViaPgxConnPool(),
+		},
+	}
+
 	uS := usServ.UserService{
 		Storage: &usRep.DBUserStorage{
 			DbConn: OpenSqlxViaPgxConnPool(),
 		},
+		RecomService: rS,
 	}
 
 	h := handler.Handler{
