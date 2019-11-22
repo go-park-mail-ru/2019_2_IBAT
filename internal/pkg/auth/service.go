@@ -1,24 +1,16 @@
 package auth
 
 import (
-	. "2019_2_IBAT/internal/pkg/interfaces"
+	"2019_2_IBAT/internal/pkg/auth/session"
 
+	"context"
 	// auth_serv "2019_2_IBAT/internal/pkg/users/service"
-
-	"net/http"
-
-	"github.com/google/uuid"
 )
 
 const CookieName = "session-id"
 
-// Usecase represent the article's usecases
 type Service interface {
-	CreateSession(id uuid.UUID, class string) (AuthStorageValue, string, error)
-	DeleteSession(cookie string) bool
-
-	GetSession(cookie string) (AuthStorageValue, bool)
-	// SetRecord(id uuid.UUID, class string) (AuthStorageValue, string, error)
-
-	AuthMiddleware(h http.Handler) http.Handler
+	CreateSession(ctx context.Context, sessInfo *session.Session) (*session.CreateSessionInfo, error)
+	DeleteSession(ctx context.Context, cookie *session.Cookie) (*session.Bool, error)
+	GetSession(ctx context.Context, cookie *session.Cookie) (*session.GetSessionInfo, error)
 }

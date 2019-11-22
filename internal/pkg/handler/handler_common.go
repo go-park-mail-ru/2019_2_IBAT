@@ -2,6 +2,7 @@ package handler
 
 import (
 	"2019_2_IBAT/internal/pkg/auth"
+	"2019_2_IBAT/internal/pkg/auth/session"
 	. "2019_2_IBAT/internal/pkg/interfaces"
 	"2019_2_IBAT/internal/pkg/users"
 
@@ -23,7 +24,7 @@ const maxUploadSize = 2 * 1024 * 1024 // 2 mb
 
 type Handler struct {
 	InternalDir string
-	AuthService auth.Service
+	AuthService session.ServiceClient
 	UserService users.Service
 }
 
@@ -108,8 +109,10 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	cookie, _ := r.Cookie(auth.CookieName) //костыль
 
-	ok = h.AuthService.DeleteSession(cookie.Value)
-	if !ok {
+	sessionBool, err := h.AuthService.DeleteSession(r.Context(), &session.Cookie{
+		Cookie: cookie.Value,
+	})
+	if !sessionBool.Ok {
 		w.WriteHeader(http.StatusInternalServerError)
 		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
 		w.Write([]byte(errJSON))

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"2019_2_IBAT/internal/pkg/auth"
+	"2019_2_IBAT/internal/pkg/auth/session"
 	csrf "2019_2_IBAT/internal/pkg/csrf"
 	. "2019_2_IBAT/internal/pkg/interfaces"
 
@@ -45,7 +46,10 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 		return
 	}
 
-	authInfo, cookieValue, err := h.AuthService.CreateSession(id, role)
+	sessInfo, err := h.AuthService.CreateSession(r.Context(), &session.Session{
+		Id:    id.String(),
+		Class: role,
+	})
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -55,7 +59,7 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 		return
 	}
 
-	token, err := csrf.Tokens.Create(id.String(), cookieValue, time.Now().Add(24*time.Hour).Unix())
+	token, err := csrf.Tokens.Create(id.String(), sessInfo.Cookie, time.Now().Add(24*time.Hour).Unix())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("Handle CreateSession:  Create token failed")
@@ -64,7 +68,7 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 		return
 	}
 
-	expiresAt, err := time.Parse(TimeFormat, authInfo.Expires)
+	expiresAt, err := time.Parse(TimeFormat, sessInfo.Expires)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("Handle CreateSession:  Time parsing failed")
@@ -75,12 +79,12 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 
 	cookie := http.Cookie{
 		Name:    auth.CookieName,
-		Value:   cookieValue,
+		Value:   sessInfo.Cookie,
 		Expires: expiresAt,
 	}
 
 	w.Header().Set("Access-Control-Expose-Headers", "X-Csrf-Token")
-	w.Header().Set("X-Csrf-Token", token)	
+	w.Header().Set("X-Csrf-Token", token)
 	http.SetCookie(w, &cookie)
 	RoleJSON, _ := json.Marshal(Role{Role: role})
 
@@ -117,8 +121,10 @@ func (h *Handler) DeleteSession(w http.ResponseWriter, r *http.Request) { //+
 		return
 	}
 
-	ok := h.AuthService.DeleteSession(cookie.Value)
-	if !ok {
+	sessionBool, err := h.AuthService.DeleteSession(r.Context(), &session.Cookie{
+		Cookie: cookie.Value,
+	})
+	if !sessionBool.Ok {
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{Message: BadRequestMsg})
 		w.Write([]byte(errJSON))

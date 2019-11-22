@@ -7,6 +7,7 @@ require (
 	github.com/go-delve/delve v1.3.2 // indirect
 	github.com/gofrs/uuid v3.2.0+incompatible
 	github.com/golang/mock v1.3.1
+	github.com/golang/protobuf v1.3.2
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/context v1.1.1
@@ -19,7 +20,11 @@ require (
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/blog v0.0.0-20191108185507-584205eb2c4d // indirect
 	golang.org/x/crypto v0.0.0-20191117063200-497ca9f6d64f
+	golang.org/x/net v0.0.0-20191119073136-fc4aabc6c914 // indirect
+	golang.org/x/sys v0.0.0-20191120155948-bd437916bb0e // indirect
 	golang.org/x/tools v0.0.0-20191105231337-689d0f08e67a // indirect
 	golang.org/x/tools/gopls v0.1.7 // indirect
+	google.golang.org/genproto v0.0.0-20191115221424-83cc0476cb11 // indirect
+	google.golang.org/grpc v1.25.1
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0
 )

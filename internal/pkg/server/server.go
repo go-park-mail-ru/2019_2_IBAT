@@ -1,18 +1,15 @@
 package server
 
 import (
-	"flag"
 	"log"
 	"net/http"
 	"time"
-
-	auth_rep "2019_2_IBAT/internal/pkg/auth/repository"
-	auth_serv "2019_2_IBAT/internal/pkg/auth/service"
 
 	"2019_2_IBAT/internal/pkg/handler"
 	usRep "2019_2_IBAT/internal/pkg/users/repository"
 	usServ "2019_2_IBAT/internal/pkg/users/service"
 
+	"2019_2_IBAT/internal/pkg/auth/session"
 	recRep "2019_2_IBAT/internal/pkg/recommends/repository"
 	recServ "2019_2_IBAT/internal/pkg/recommends/service"
 
@@ -20,6 +17,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx"
+	"google.golang.org/grpc"
 
 	"github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
@@ -30,11 +28,25 @@ const staticDir = "/media/vltim/img"
 func NewRouter() (*mux.Router, error) {
 	router := mux.NewRouter()
 
-	redisAddr := flag.String("redisServer", ":6379", "")
+	// redisAddr := flag.String("redisServer", ":6379", "")
 
-	aS := auth_serv.AuthService{
-		Storage: auth_rep.NewSessionManager(auth_rep.RedNewPool(*redisAddr)),
+	// aS := auth_serv.AuthService{
+	// 	Storage: auth_rep.NewSessionManager(auth_rep.RedNewPool(*redisAddr)),
+	// }
+	// func main() {
+
+	grcpConn, err := grpc.Dial(
+		"127.0.0.1:8081",
+		grpc.WithInsecure(),
+	)
+	if err != nil {
+		log.Fatalf("cant connect to grpc")
+		return router, err
 	}
+
+	// defer grcpConn.Close()
+
+	sessManager := session.NewServiceClient(grcpConn)
 
 	rS := recServ.Service{
 		Storage: &recRep.DBRecommendsStorage{
@@ -51,17 +63,18 @@ func NewRouter() (*mux.Router, error) {
 
 	h := handler.Handler{
 		InternalDir: staticDir,
-		AuthService: &aS,
+		AuthService: sessManager,
 		UserService: &uS,
 	}
 
 	loger := middleware.NewLogger()
 	// AccessLogOut := new(middleware.AccessLogger)
 	// AccessLogOut.StdLogger = log.New(os.Stdout, "STD ", log.LUTC|log.Lshortfile)
+	authMiddleware := middleware.AuthMiddlewareGenerator(sessManager)
 
 	router.Use(loger.AccessLogMiddleware)
 	router.Use(middleware.CorsMiddleware)
-	router.Use(aS.AuthMiddleware)
+	router.Use(authMiddleware)
 	// router.Use(middleware.CSRFMiddleware)
 
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"2019_2_IBAT/internal/pkg/auth"
+	"2019_2_IBAT/internal/pkg/auth/session"
 	csrf "2019_2_IBAT/internal/pkg/csrf"
 	. "2019_2_IBAT/internal/pkg/interfaces"
 	"encoding/json"
@@ -26,7 +27,10 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
 		return
 	}
 
-	authInfo, cookieValue, err := h.AuthService.CreateSession(uuid, SeekerStr)
+	sessInfo, err := h.AuthService.CreateSession(r.Context(), &session.Session{
+		Id:    uuid.String(),
+		Class: SeekerStr,
+	})
 
 	if err != nil {
 		// log.Printf("Error while unmarshaling: %s", err)
@@ -37,7 +41,7 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
 		return
 	}
 
-	token, err := csrf.Tokens.Create(authInfo.ID.String(), cookieValue, time.Now().Add(24*time.Hour).Unix())
+	token, err := csrf.Tokens.Create(sessInfo.ID, sessInfo.Cookie, time.Now().Add(24*time.Hour).Unix())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("Handle CreateSession:  Create token failed")
@@ -46,7 +50,7 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
 		return
 	}
 
-	expiresAt, err := time.Parse(TimeFormat, authInfo.Expires)
+	expiresAt, err := time.Parse(TimeFormat, sessInfo.Expires)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("Handle CreateSession:  Time parsing failed")
@@ -57,14 +61,14 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
 
 	cookie := http.Cookie{
 		Name:    auth.CookieName,
-		Value:   cookieValue,
+		Value:   sessInfo.Cookie,
 		Expires: expiresAt,
 	}
 
 	w.Header().Set("Access-Control-Expose-Headers", "X-Csrf-Token")
 	w.Header().Set("X-Csrf-Token", token)
 	http.SetCookie(w, &cookie)
-	RoleJSON, _ := json.Marshal(Role{Role: authInfo.Role})
+	RoleJSON, _ := json.Marshal(Role{Role: sessInfo.Role})
 
 	w.Write([]byte(RoleJSON))
 }
