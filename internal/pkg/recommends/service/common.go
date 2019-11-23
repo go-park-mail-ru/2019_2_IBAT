@@ -18,3 +18,7 @@ func (serv Service) SetTagIDs(AuthRec AuthStorageValue, tagIDs []uuid.UUID) erro
 func (serv Service) GetTagIDs(AuthRec AuthStorageValue) ([]uuid.UUID, error) {
 	return serv.Storage.GetTagIDs(AuthRec)
 }
+
+func (serv Service) GetUsersForTags(tagIDs []uuid.UUID) ([]uuid.UUID, error) {
+	return serv.Storage.GetUsersForTags(tagIDs)
+}

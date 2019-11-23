@@ -2,9 +2,11 @@ package interfaces
 
 import (
 	"context"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/websocket"
 )
 
 const UnauthorizedMsg = "Unauthorized"
@@ -183,6 +185,11 @@ type Tag struct {
 	ChildTag  string `json:"child_tag"    db:"child_tag"`
 }
 
+type NotifStruct struct {
+	VacancyId uuid.UUID
+	TagIDs    []uuid.UUID
+}
+
 type key string
 
 const AuthRec key = "AuthRecord" ///fix
@@ -194,4 +201,9 @@ func NewContext(ctx context.Context, authInfo AuthStorageValue) context.Context 
 func FromContext(ctx context.Context) (AuthStorageValue, bool) {
 	authInfo, ok := ctx.Value(AuthRec).(AuthStorageValue)
 	return authInfo, ok
+}
+
+type Connections struct {
+	Conns []*websocket.Conn
+	Mu    *sync.Mutex
 }

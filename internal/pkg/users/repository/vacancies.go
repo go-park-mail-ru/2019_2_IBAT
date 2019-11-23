@@ -189,7 +189,13 @@ func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[strin
 
 	if query != "" || tagIDsLength > 0 {
 		query, args, err = sqlx.In(query, args...)
+		if err != nil {
+			log.Printf("GetVacancies: %s\n", err)
+			return vacancies, errors.New(InternalErrorMsg)
+		}
+
 		query = m.DbConn.Rebind(query)
+
 		rows, err = m.DbConn.Queryx(query, args...)
 	} else {
 		rows, err = m.DbConn.Queryx("SELECT v.id, v.own_id, c.company_name, v.experience," +

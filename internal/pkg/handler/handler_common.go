@@ -4,6 +4,10 @@ import (
 	"2019_2_IBAT/internal/pkg/auth"
 	"2019_2_IBAT/internal/pkg/auth/session"
 	. "2019_2_IBAT/internal/pkg/interfaces"
+	"fmt"
+	"sync"
+
+	// "2019_2_IBAT/internal/pkg/pool"
 	"2019_2_IBAT/internal/pkg/users"
 
 	"encoding/json"
@@ -16,6 +20,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/websocket"
 )
 
 const publicDir = "/static"
@@ -23,6 +28,9 @@ const publicDir = "/static"
 const maxUploadSize = 2 * 1024 * 1024 // 2 mb
 
 type Handler struct {
+	// Pool        *pool.Pool //
+	WsConnects map[string]Connections
+
 	InternalDir string
 	AuthService session.ServiceClient
 	UserService users.Service
@@ -237,4 +245,65 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		publicPath := filepath.Join(publicDir, fileName+fileEndings[0])
 		h.UserService.SetImage(authInfo.ID, authInfo.Role, publicPath)
 	})
+}
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
+func (h *Handler) Notifications(w http.ResponseWriter, r *http.Request) {
+	authInfo, ok := FromContext(r.Context())
+	// if !ok {
+	// 	log.Println("Notifications Handler: unauthorized")
+	// 	w.WriteHeader(http.StatusUnauthorized)
+	// 	return
+	// }
+	cookie, err := r.Cookie(auth.CookieName)
+	if err != nil {
+		fmt.Println("Failed to fetch cookie")
+	}
+	fmt.Printf("Cookie: %s\n", cookie.Value)
+
+	fmt.Println(r)
+
+	ws, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	node, ok := h.WsConnects[authInfo.ID.String()] //TODO can be deleted after check
+	if !ok {
+		node := Connections{
+			Conns: []*websocket.Conn{ws},
+			Mu:    &sync.Mutex{},
+		}
+		h.WsConnects[authInfo.ID.String()] = node
+	} else {
+		node.Mu.Lock()
+		node.Conns = append(node.Conns, ws) //careful with mu
+		h.WsConnects[authInfo.ID.String()] = node
+		node.Mu.Unlock()
+	}
+	// go sendNewMsgNotifications(ws)
+	fmt.Println(h.WsConnects)
+}
+
+func sendNewMsgNotifications(client *websocket.Conn) {
+	// ticker := time.NewTicker(10 * time.Second)
+	// for {
+	// 	w, err := client.NextWriter(websocket.TextMessage)
+	// 	if err != nil {
+	// 		ticker.Stop()
+	// 		break
+	// 	}
+
+	// 	msg := newMessage()
+	// 	w.Write(msg)
+	// 	w.Close()
+	// 	<-ticker.C
+	// }
 }
