@@ -1,0 +1,796 @@
+2019/11/22 04:11:15 http: TLS handshake error from [::1]:38356: EOF
+2019/11/22 04:11:15 LOG START [POST] [::1]:38358, /seeker 
+2019/11/22 04:11:15 AuthMiddleware: started
+2019/11/22 04:11:15 sessionInfo fetch error: rpc error: code = Canceled desc = grpc: the client connection is closing
+2019/11/22 04:11:15 LOG END [POST] [::1]:38358, /seeker 2.174481ms
+
+
+2019/11/22 04:11:20 LOG START [POST] [::1]:38358, /seeker 
+2019/11/22 04:11:20 AuthMiddleware: started
+2019/11/22 04:11:20 sessionInfo fetch error: rpc error: code = Canceled desc = grpc: the client connection is closing
+2019/11/22 04:11:20 LOG END [POST] [::1]:38358, /seeker 977.445µs
+
+
+2019/11/22 04:14:19 http: TLS handshake error from [::1]:38484: EOF
+2019/11/22 04:14:19 LOG START [GET] [::1]:38486, /vacancies 
+2019/11/22 04:14:19 AuthMiddleware: started
+2019/11/22 04:14:19 Tag array
+2019/11/22 04:14:19 map[]
+2019/11/22 04:14:19 Params map length: 0
+2019/11/22 04:14:19 Params: map[tag_ids:[]]
+
+2019/11/22 04:14:19 Query: 
+2019/11/22 04:14:19 LOG END [GET] [::1]:38486, /vacancies 10.505685ms
+
+
+2019/11/22 04:14:27 LOG START [POST] [::1]:38486, /seeker 
+2019/11/22 04:14:27 AuthMiddleware: started
+2019/11/22 04:14:27 LOG END [POST] [::1]:38486, /seeker 3.176252ms
+
+
+2019/11/22 14:34:09 http: TLS handshake error from [::1]:54084: remote error: tls: unknown certificate
+2019/11/22 14:34:18 LOG START [GET] [::1]:54086, /notifications 
+2019/11/22 14:34:18 AuthMiddleware: started
+2019/11/22 14:34:18 AuthMiddleware: No cookie detected
+2019/11/22 14:34:18 websocket: the client is not using the websocket protocol: 'upgrade' token not found in 'Connection' header
+2019/11/22 14:36:11 http: TLS handshake error from [::1]:54810: EOF
+2019/11/22 14:36:11 LOG START [GET] [::1]:54812, /notifications 
+2019/11/22 14:36:11 AuthMiddleware: started
+2019/11/22 14:36:11 sessionInfo fetch error: rpc error: code = Unavailable desc = all SubConns are in TransientFailure, latest connection error: connection error: desc = "transport: Error while dialing dial tcp 127.0.0.1:8081: connect: connection refused"
+2019/11/22 14:36:11 websocket: the client is not using the websocket protocol: 'websocket' token not found in 'Upgrade' header
+2019/11/22 14:40:32 listen tcp :8080: bind: address already in use
+2019/11/22 14:42:12 LOG START [GET] [::1]:56672, /notifications 
+2019/11/22 14:42:12 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/22 14:42:12 AuthMiddleware: started
+2019/11/22 14:42:12 AuthMiddleware: No cookie detected
+2019/11/22 14:42:12 http: panic serving [::1]:56672: assignment to entry in nil map
+goroutine 20 [running]:
+net/http.(*conn).serve.func1(0xc000268000)
+	/usr/local/go/src/net/http/server.go:1767 +0x139
+panic(0xa3c700, 0xbc6ca0)
+	/usr/local/go/src/runtime/panic.go:679 +0x1b2
+2019_2_IBAT/internal/pkg/handler.(*Handler).Notifications(0xc0001933c0, 0xbe1260, 0xc00027e000, 0xc00017c400)
+	/home/vltim/go_workspace/src/2019_2_IBAT/internal/pkg/handler/handler_common.go:272 +0x65c
+net/http.HandlerFunc.ServeHTTP(0xc0001d9030, 0xbe1260, 0xc00027e000, 0xc00017c400)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/internal/pkg/middleware.AuthMiddlewareGenerator.func1.1(0xbe1260, 0xc00027e000, 0xc00017c300)
+	/home/vltim/go_workspace/src/2019_2_IBAT/internal/pkg/middleware/auth.go:44 +0x24a
+net/http.HandlerFunc.ServeHTTP(0xc00014a360, 0xbe1260, 0xc00027e000, 0xc00017c300)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/internal/pkg/middleware.CorsMiddleware.func1(0xbe1260, 0xc00027e000, 0xc00017c300)
+	/home/vltim/go_workspace/src/2019_2_IBAT/internal/pkg/middleware/cors.go:59 +0xef
+net/http.HandlerFunc.ServeHTTP(0xc000146120, 0xbe1260, 0xc00027e000, 0xc00017c300)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/internal/pkg/middleware.Logger.AccessLogMiddleware.func1(0xbe1260, 0xc00027e000, 0xc00017c300)
+	/home/vltim/go_workspace/src/2019_2_IBAT/internal/pkg/middleware/logger.go:22 +0x1a2
+net/http.HandlerFunc.ServeHTTP(0xc000146140, 0xbe1260, 0xc00027e000, 0xc00017c300)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+github.com/gorilla/mux.(*Router).ServeHTTP(0xc00011a0c0, 0xbe1260, 0xc00027e000, 0xc00017c100)
+	/home/vltim/go_workspace/pkg/mod/github.com/gorilla/mux@v1.7.3/mux.go:212 +0xe2
+net/http.serverHandler.ServeHTTP(0xc000224380, 0xbe1260, 0xc00027e000, 0xc00017c100)
+	/usr/local/go/src/net/http/server.go:2802 +0xa4
+net/http.(*conn).serve(0xc000268000, 0xbe46e0, 0xc00017a0c0)
+	/usr/local/go/src/net/http/server.go:1890 +0x875
+created by net/http.(*Server).Serve
+	/usr/local/go/src/net/http/server.go:2927 +0x38e
+2019/11/22 14:45:20 listen tcp :8080: bind: address already in use
+2019/11/22 14:45:36 LOG START [GET] [::1]:58390, /notifications 
+2019/11/22 14:45:36 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/22 14:45:36 AuthMiddleware: started
+2019/11/22 14:45:36 AuthMiddleware: No cookie detected
+2019/11/22 14:45:36 LOG END [GET] [::1]:58390, /notifications 704.035µs
+
+
+2019/11/22 14:46:55 LOG START [GET] [::1]:59086, /notifications 
+2019/11/22 14:46:55 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/22 14:46:55 AuthMiddleware: started
+2019/11/22 14:46:55 AuthMiddleware: No cookie detected
+2019/11/22 14:46:55 Notifications Handler: unauthorized
+2019/11/22 14:46:55 LOG END [GET] [::1]:59086, /notifications 189.969µs
+
+
+2019/11/22 14:47:21 LOG START [GET] [::1]:59324, /notifications 
+2019/11/22 14:47:21 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/22 14:47:21 AuthMiddleware: started
+2019/11/22 14:47:21 AuthMiddleware: No cookie detected
+2019/11/22 14:47:21 LOG END [GET] [::1]:59324, /notifications 961.282µs
+
+
+2019/11/22 16:23:51 listen tcp :8080: bind: address already in use
+2019/11/22 16:26:11 LOG START [POST] [::1]:41164, /employer 
+2019/11/22 16:28:21 LOG START [POST] [::1]:43250, /employer 
+2019/11/22 16:28:21 AuthMiddleware: started
+2019/11/22 16:28:21 CreateEmployer Start
+2019/11/22 16:28:21 CreateEmployer Employer was created
+2019/11/22 16:28:21 LOG END [POST] [::1]:43250, /employer 11.453416ms
+
+
+2019/11/22 16:28:52 LOG START [POST] [::1]:43770, /vacancy 
+2019/11/22 16:28:59 AuthMiddleware: started
+2019/11/22 17:59:09 LOG START [POST] [::1]:55674, /vacancy 
+2019/11/22 17:59:09 AuthMiddleware: started
+2019/11/22 17:59:09 LOG END [POST] [::1]:55674, /vacancy 15.240225ms
+
+
+2019/11/22 17:59:24 LOG START [POST] [::1]:55674, /auth 
+2019/11/22 17:59:24 AuthMiddleware: started
+2019/11/22 17:59:24 Handle CreateSession: start
+2019/11/22 17:59:24 Handle CreateSession: end
+2019/11/22 17:59:24 LOG END [POST] [::1]:55674, /auth 2.293891ms
+
+
+2019/11/22 17:59:38 LOG START [GET] [::1]:55674, /vacancy/b90b045a-b920-4a12-86e6-3bee90bb2a59 
+2019/11/22 17:59:38 AuthMiddleware: started
+2019/11/22 17:59:38 GetVacancy: sql: Rows are closed
+2019/11/22 17:59:38 LOG END [GET] [::1]:55674, /vacancy/b90b045a-b920-4a12-86e6-3bee90bb2a59 6.992114ms
+
+
+2019/11/22 18:00:38 LOG START [GET] [::1]:55726, /vacancy/b90b045a-b920-4a12-86e6-3bee90bb2a59 
+2019/11/22 18:00:42 AuthMiddleware: started
+2019/11/22 18:04:05 LOG START [GET] [::1]:55798, /vacancy/b90b045a-b920-4a12-86e6-3bee90bb2a59 
+2019/11/22 18:04:08 AuthMiddleware: started
+2019/11/22 18:05:31 LOG START [GET] [::1]:55852, /vacancy/b90b045a-b920-4a12-86e6-3bee90bb2a59 
+2019/11/22 18:05:31 AuthMiddleware: started
+2019/11/22 18:05:31 SetTagIDs ОШИБКА: повторяющееся значение ключа нарушает ограничение уникальности "recommendations_pkey" (SQLSTATE 23505)
+2019/11/22 18:05:31 GetVacancy: sql: Rows are closed
+2019/11/22 18:05:31 LOG END [GET] [::1]:55852, /vacancy/b90b045a-b920-4a12-86e6-3bee90bb2a59 4.509686ms
+
+
+2019/11/22 18:06:52 LOG START [GET] [::1]:55914, /vacancy/b90b045a-b920-4a12-86e6-3bee90bb2a59 
+2019/11/22 18:06:52 AuthMiddleware: started
+2019/11/22 18:06:52 SetTagIDs %!s(<nil>)
+2019/11/22 18:06:52 GetVacancy: sql: Rows are closed
+2019/11/22 18:06:52 LOG END [GET] [::1]:55914, /vacancy/b90b045a-b920-4a12-86e6-3bee90bb2a59 6.542351ms
+
+
+2019/11/22 18:09:20 LOG START [POST] [::1]:55914, /seeker 
+2019/11/22 18:09:20 AuthMiddleware: started
+2019/11/22 18:09:20 LOG END [POST] [::1]:55914, /seeker 3.223625ms
+
+
+2019/11/22 18:09:26 LOG START [GET] [::1]:55914, /vacancy/b90b045a-b920-4a12-86e6-3bee90bb2a59 
+2019/11/22 18:09:26 AuthMiddleware: started
+2019/11/22 18:09:26 SetTagIDs %!s(<nil>)
+2019/11/22 18:09:26 GetVacancy: sql: Rows are closed
+2019/11/22 18:09:26 LOG END [GET] [::1]:55914, /vacancy/b90b045a-b920-4a12-86e6-3bee90bb2a59 3.350228ms
+
+
+2019/11/22 18:09:42 LOG START [POST] [::1]:55914, /employer 
+2019/11/22 18:09:42 AuthMiddleware: started
+2019/11/22 18:09:42 CreateEmployer Start
+2019/11/22 18:09:42 CreateEmployer Employer was created
+2019/11/22 18:09:42 LOG END [POST] [::1]:55914, /employer 5.937011ms
+
+
+2019/11/22 18:10:05 LOG START [POST] [::1]:56038, /vacancy 
+2019/11/22 18:10:19 AuthMiddleware: started
+2019/11/22 18:11:40 LOG START [POST] [::1]:56082, /vacancy 
+2019/11/22 18:11:46 AuthMiddleware: started
+2019/11/22 18:16:50 LOG START [POST] [::1]:56132, /vacancy 
+2019/11/22 18:16:50 AuthMiddleware: started
+2019/11/22 18:16:50 LOG END [POST] [::1]:56132, /vacancy 7.762563ms
+
+
+2019/11/22 18:17:37 LOG START [POST] [::1]:56148, /vacancy 
+2019/11/22 18:19:29 AuthMiddleware: started
+2019/11/22 18:20:25 LOG END [POST] [::1]:56148, /vacancy 2m47.816973357s
+
+
+2019/11/22 18:25:48 LOG START [POST] [::1]:56224, /vacancy 
+2019/11/22 18:25:48 AuthMiddleware: started
+2019/11/22 18:25:48 LOG END [POST] [::1]:56224, /vacancy 7.535625ms
+
+
+2019/11/22 18:25:48 Notifications Internal server error
+2019/11/22 18:30:49 LOG START [POST] [::1]:56262, /vacancy 
+2019/11/22 18:30:49 AuthMiddleware: started
+2019/11/22 18:30:49 LOG END [POST] [::1]:56262, /vacancy 6.62628ms
+
+
+2019/11/22 18:30:49 Notifications Internal server error
+2019/11/22 18:33:58 LOG START [POST] [::1]:56298, /vacancy 
+2019/11/22 18:33:58 AuthMiddleware: started
+2019/11/22 18:33:58 LOG END [POST] [::1]:56298, /vacancy 6.632503ms
+
+
+2019/11/22 18:34:29 LOG START [POST] [::1]:56312, /vacancy 
+2019/11/22 18:34:29 AuthMiddleware: started
+2019/11/22 18:34:29 LOG END [POST] [::1]:56312, /vacancy 5.425201ms
+
+
+2019/11/22 18:36:24 LOG START [POST] [::1]:56340, /vacancy 
+2019/11/22 18:36:24 AuthMiddleware: started
+2019/11/22 18:36:24 LOG END [POST] [::1]:56340, /vacancy 4.780155ms
+
+
+2019/11/22 18:41:35 LOG START [POST] [::1]:56372, /vacancy 
+2019/11/22 18:41:35 AuthMiddleware: started
+2019/11/22 18:41:35 LOG END [POST] [::1]:56372, /vacancy 6.298865ms
+
+
+2019/11/22 18:41:35 Notifications Internal server error
+2019/11/22 18:41:49 LOG START [POST] [::1]:56386, /vacancy 
+2019/11/22 18:41:49 AuthMiddleware: started
+2019/11/22 18:41:49 LOG END [POST] [::1]:56386, /vacancy 5.068388ms
+
+
+2019/11/22 18:56:10 LOG START [GET] [::1]:56614, /notifications 
+2019/11/22 18:56:10 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/22 18:56:10 AuthMiddleware: started
+2019/11/22 18:56:10 AuthMiddleware: No cookie detected
+2019/11/22 18:56:10 LOG END [GET] [::1]:56614, /notifications 1.404991ms
+
+
+2019/11/22 19:12:15 LOG START [POST] [::1]:36314, /seeker 
+2019/11/22 19:12:15 AuthMiddleware: started
+2019/11/22 19:12:15 LOG END [POST] [::1]:36314, /seeker 44.266805ms
+
+
+2019/11/22 19:13:32 LOG START [GET] [::1]:36946, /notifications 
+2019/11/22 19:13:32 AuthMiddleware: started
+2019/11/22 19:13:32 AuthMiddleware: No cookie detected
+2019/11/22 19:13:32 LOG END [GET] [::1]:36946, /notifications 5.657697ms
+
+
+2019/11/22 19:15:03 LOG START [GET] [::1]:37690, /notifications 
+2019/11/22 19:15:03 AuthMiddleware: started
+2019/11/22 19:15:03 AuthMiddleware: No cookie detected
+2019/11/22 19:15:03 http: panic serving [::1]:37690: runtime error: invalid memory address or nil pointer dereference
+goroutine 15 [running]:
+net/http.(*conn).serve.func1(0xc000246960)
+	/usr/local/go/src/net/http/server.go:1767 +0x139
+panic(0xa3d5c0, 0x1005790)
+	/usr/local/go/src/runtime/panic.go:679 +0x1b2
+2019_2_IBAT/internal/pkg/handler.(*Handler).Notifications(0xc000216240, 0xbe2080, 0xc00021e460, 0xc000236500)
+	/home/vltim/go_workspace/src/2019_2_IBAT/internal/pkg/handler/handler_common.go:266 +0x153
+net/http.HandlerFunc.ServeHTTP(0xc000222d30, 0xbe2080, 0xc00021e460, 0xc000236500)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/internal/pkg/middleware.AuthMiddlewareGenerator.func1.1(0xbe2080, 0xc00021e460, 0xc000236400)
+	/home/vltim/go_workspace/src/2019_2_IBAT/internal/pkg/middleware/auth.go:44 +0x24a
+net/http.HandlerFunc.ServeHTTP(0xc00022bc50, 0xbe2080, 0xc00021e460, 0xc000236400)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/internal/pkg/middleware.Logger.AccessLogMiddleware.func1(0xbe2080, 0xc00021e460, 0xc000236400)
+	/home/vltim/go_workspace/src/2019_2_IBAT/internal/pkg/middleware/logger.go:22 +0x1a2
+net/http.HandlerFunc.ServeHTTP(0xc000219a60, 0xbe2080, 0xc00021e460, 0xc000236400)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+github.com/gorilla/mux.(*Router).ServeHTTP(0xc00011a0c0, 0xbe2080, 0xc00021e460, 0xc000236200)
+	/home/vltim/go_workspace/pkg/mod/github.com/gorilla/mux@v1.7.3/mux.go:212 +0xe2
+net/http.serverHandler.ServeHTTP(0xc00021e380, 0xbe2080, 0xc00021e460, 0xc000236200)
+	/usr/local/go/src/net/http/server.go:2802 +0xa4
+net/http.(*conn).serve(0xc000246960, 0xbe5540, 0xc000216300)
+	/usr/local/go/src/net/http/server.go:1890 +0x875
+created by net/http.(*Server).Serve
+	/usr/local/go/src/net/http/server.go:2927 +0x38e
+2019/11/22 19:16:01 LOG START [GET] [::1]:38172, /notifications 
+2019/11/22 19:16:01 AuthMiddleware: started
+2019/11/22 19:16:01 AuthMiddleware: No cookie detected
+2019/11/22 19:16:01 http: panic serving [::1]:38172: runtime error: invalid memory address or nil pointer dereference
+goroutine 28 [running]:
+net/http.(*conn).serve.func1(0xc000240820)
+	/usr/local/go/src/net/http/server.go:1767 +0x139
+panic(0xa3d5c0, 0x1005790)
+	/usr/local/go/src/runtime/panic.go:679 +0x1b2
+2019_2_IBAT/internal/pkg/handler.(*Handler).Notifications(0xc000208180, 0xbe20c0, 0xc000286000, 0xc000166100)
+	/home/vltim/go_workspace/src/2019_2_IBAT/internal/pkg/handler/handler_common.go:269 +0x15f
+net/http.HandlerFunc.ServeHTTP(0xc00021ad10, 0xbe20c0, 0xc000286000, 0xc000166100)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/internal/pkg/middleware.AuthMiddlewareGenerator.func1.1(0xbe20c0, 0xc000286000, 0xc000276200)
+	/home/vltim/go_workspace/src/2019_2_IBAT/internal/pkg/middleware/auth.go:44 +0x24a
+net/http.HandlerFunc.ServeHTTP(0xc0002581b0, 0xbe20c0, 0xc000286000, 0xc000276200)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/internal/pkg/middleware.Logger.AccessLogMiddleware.func1(0xbe20c0, 0xc000286000, 0xc000276200)
+	/home/vltim/go_workspace/src/2019_2_IBAT/internal/pkg/middleware/logger.go:22 +0x1a2
+net/http.HandlerFunc.ServeHTTP(0xc000262020, 0xbe20c0, 0xc000286000, 0xc000276200)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+github.com/gorilla/mux.(*Router).ServeHTTP(0xc0001360c0, 0xbe20c0, 0xc000286000, 0xc000276000)
+	/home/vltim/go_workspace/pkg/mod/github.com/gorilla/mux@v1.7.3/mux.go:212 +0xe2
+net/http.serverHandler.ServeHTTP(0xc000216380, 0xbe20c0, 0xc000286000, 0xc000276000)
+	/usr/local/go/src/net/http/server.go:2802 +0xa4
+net/http.(*conn).serve(0xc000240820, 0xbe5580, 0xc00025a000)
+	/usr/local/go/src/net/http/server.go:1890 +0x875
+created by net/http.(*Server).Serve
+	/usr/local/go/src/net/http/server.go:2927 +0x38e
+2019/11/22 19:16:29 LOG START [GET] [::1]:38402, /notifications 
+2019/11/22 19:16:29 AuthMiddleware: started
+2019/11/22 19:16:29 AuthMiddleware: No cookie detected
+2019/11/22 19:16:29 http: panic serving [::1]:38402: runtime error: invalid memory address or nil pointer dereference
+goroutine 35 [running]:
+net/http.(*conn).serve.func1(0xc0002b6000)
+	/usr/local/go/src/net/http/server.go:1767 +0x139
+panic(0xa3d5c0, 0x1005790)
+	/usr/local/go/src/runtime/panic.go:679 +0x1b2
+2019_2_IBAT/internal/pkg/handler.(*Handler).Notifications(0xc000208180, 0xbe20c0, 0xc00018c0e0, 0xc000166500)
+	/home/vltim/go_workspace/src/2019_2_IBAT/internal/pkg/handler/handler_common.go:269 +0x15f
+net/http.HandlerFunc.ServeHTTP(0xc00021ad10, 0xbe20c0, 0xc00018c0e0, 0xc000166500)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/internal/pkg/middleware.AuthMiddlewareGenerator.func1.1(0xbe20c0, 0xc00018c0e0, 0xc000166400)
+	/home/vltim/go_workspace/src/2019_2_IBAT/internal/pkg/middleware/auth.go:44 +0x24a
+net/http.HandlerFunc.ServeHTTP(0xc00015e450, 0xbe20c0, 0xc00018c0e0, 0xc000166400)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/internal/pkg/middleware.Logger.AccessLogMiddleware.func1(0xbe20c0, 0xc00018c0e0, 0xc000166400)
+	/home/vltim/go_workspace/src/2019_2_IBAT/internal/pkg/middleware/logger.go:22 +0x1a2
+net/http.HandlerFunc.ServeHTTP(0xc00000e0c0, 0xbe20c0, 0xc00018c0e0, 0xc000166400)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+github.com/gorilla/mux.(*Router).ServeHTTP(0xc0001360c0, 0xbe20c0, 0xc00018c0e0, 0xc000166200)
+	/home/vltim/go_workspace/pkg/mod/github.com/gorilla/mux@v1.7.3/mux.go:212 +0xe2
+net/http.serverHandler.ServeHTTP(0xc000216380, 0xbe20c0, 0xc00018c0e0, 0xc000166200)
+	/usr/local/go/src/net/http/server.go:2802 +0xa4
+net/http.(*conn).serve(0xc0002b6000, 0xbe5580, 0xc0000361c0)
+	/usr/local/go/src/net/http/server.go:1890 +0x875
+created by net/http.(*Server).Serve
+	/usr/local/go/src/net/http/server.go:2927 +0x38e
+2019/11/22 20:16:16 listen tcp :8080: bind: address already in use
+2019/11/22 21:48:19 LOG START [GET] 127.0.0.1:34318, /metrics 
+2019/11/22 21:48:19 AuthMiddleware: started
+2019/11/22 21:48:19 AuthMiddleware: No cookie detected
+2019/11/22 21:48:19 LOG END [GET] 127.0.0.1:34318, /metrics 14.591072ms
+
+
+2019/11/22 21:48:34 LOG START [GET] 127.0.0.1:34318, /metrics 
+2019/11/22 21:48:34 AuthMiddleware: started
+2019/11/22 21:48:34 AuthMiddleware: No cookie detected
+2019/11/22 21:48:34 LOG END [GET] 127.0.0.1:34318, /metrics 10.570427ms
+
+
+2019/11/22 21:49:19 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:49:19 AuthMiddleware: started
+2019/11/22 21:49:19 AuthMiddleware: No cookie detected
+2019/11/22 21:49:19 LOG END [GET] 127.0.0.1:34350, /metrics 1.843003ms
+
+
+2019/11/22 21:49:34 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:49:34 AuthMiddleware: started
+2019/11/22 21:49:34 AuthMiddleware: No cookie detected
+2019/11/22 21:49:34 LOG END [GET] 127.0.0.1:34350, /metrics 18.457741ms
+
+
+2019/11/22 21:49:49 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:49:49 AuthMiddleware: started
+2019/11/22 21:49:49 AuthMiddleware: No cookie detected
+2019/11/22 21:49:49 LOG END [GET] 127.0.0.1:34350, /metrics 6.938721ms
+
+
+2019/11/22 21:50:04 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:50:04 AuthMiddleware: started
+2019/11/22 21:50:04 AuthMiddleware: No cookie detected
+2019/11/22 21:50:04 LOG END [GET] 127.0.0.1:34350, /metrics 6.976687ms
+
+
+2019/11/22 21:50:19 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:50:19 AuthMiddleware: started
+2019/11/22 21:50:19 AuthMiddleware: No cookie detected
+2019/11/22 21:50:19 LOG END [GET] 127.0.0.1:34350, /metrics 6.264774ms
+
+
+2019/11/22 21:50:34 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:50:34 AuthMiddleware: started
+2019/11/22 21:50:34 AuthMiddleware: No cookie detected
+2019/11/22 21:50:34 LOG END [GET] 127.0.0.1:34350, /metrics 10.787933ms
+
+
+2019/11/22 21:50:49 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:50:49 AuthMiddleware: started
+2019/11/22 21:50:49 AuthMiddleware: No cookie detected
+2019/11/22 21:50:49 LOG END [GET] 127.0.0.1:34350, /metrics 5.953794ms
+
+
+2019/11/22 21:51:04 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:51:04 AuthMiddleware: started
+2019/11/22 21:51:04 AuthMiddleware: No cookie detected
+2019/11/22 21:51:04 LOG END [GET] 127.0.0.1:34350, /metrics 7.737013ms
+
+
+2019/11/22 21:51:19 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:51:19 AuthMiddleware: started
+2019/11/22 21:51:19 AuthMiddleware: No cookie detected
+2019/11/22 21:51:19 LOG END [GET] 127.0.0.1:34350, /metrics 5.1005ms
+
+
+2019/11/22 21:51:34 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:51:34 AuthMiddleware: started
+2019/11/22 21:51:34 AuthMiddleware: No cookie detected
+2019/11/22 21:51:34 LOG END [GET] 127.0.0.1:34350, /metrics 6.237075ms
+
+
+2019/11/22 21:51:49 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:51:49 AuthMiddleware: started
+2019/11/22 21:51:49 AuthMiddleware: No cookie detected
+2019/11/22 21:51:49 LOG END [GET] 127.0.0.1:34350, /metrics 5.562697ms
+
+
+2019/11/22 21:52:04 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:52:04 AuthMiddleware: started
+2019/11/22 21:52:04 AuthMiddleware: No cookie detected
+2019/11/22 21:52:04 LOG END [GET] 127.0.0.1:34350, /metrics 4.7808ms
+
+
+2019/11/22 21:52:19 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:52:19 AuthMiddleware: started
+2019/11/22 21:52:19 AuthMiddleware: No cookie detected
+2019/11/22 21:52:19 LOG END [GET] 127.0.0.1:34350, /metrics 3.984171ms
+
+
+2019/11/22 21:52:34 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:52:34 AuthMiddleware: started
+2019/11/22 21:52:34 AuthMiddleware: No cookie detected
+2019/11/22 21:52:34 LOG END [GET] 127.0.0.1:34350, /metrics 4.792054ms
+
+
+2019/11/22 21:52:49 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:52:49 AuthMiddleware: started
+2019/11/22 21:52:49 AuthMiddleware: No cookie detected
+2019/11/22 21:52:49 LOG END [GET] 127.0.0.1:34350, /metrics 4.926812ms
+
+
+2019/11/22 21:53:04 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:53:04 AuthMiddleware: started
+2019/11/22 21:53:04 AuthMiddleware: No cookie detected
+2019/11/22 21:53:04 LOG END [GET] 127.0.0.1:34350, /metrics 3.652474ms
+
+
+2019/11/22 21:53:19 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:53:19 AuthMiddleware: started
+2019/11/22 21:53:19 AuthMiddleware: No cookie detected
+2019/11/22 21:53:19 LOG END [GET] 127.0.0.1:34350, /metrics 3.820474ms
+
+
+2019/11/22 21:53:34 LOG START [GET] 127.0.0.1:34350, /metrics 
+2019/11/22 21:53:34 AuthMiddleware: started
+2019/11/22 21:53:34 AuthMiddleware: No cookie detected
+2019/11/22 21:53:34 LOG END [GET] 127.0.0.1:34350, /metrics 4.43447ms
+
+
+2019/11/22 21:53:49 LOG START [GET] 127.0.0.1:34450, /metrics 
+2019/11/22 21:53:49 AuthMiddleware: started
+2019/11/22 21:53:49 AuthMiddleware: No cookie detected
+2019/11/22 21:53:49 LOG END [GET] 127.0.0.1:34450, /metrics 8.774287ms
+
+
+2019/11/22 21:54:04 LOG START [GET] 127.0.0.1:34450, /metrics 
+2019/11/22 21:54:04 AuthMiddleware: started
+2019/11/22 21:54:04 AuthMiddleware: No cookie detected
+2019/11/22 21:54:04 LOG END [GET] 127.0.0.1:34450, /metrics 11.68882ms
+
+
+2019/11/22 21:54:19 LOG START [GET] 127.0.0.1:34450, /metrics 
+2019/11/22 21:54:19 AuthMiddleware: started
+2019/11/22 21:54:19 AuthMiddleware: No cookie detected
+2019/11/22 21:54:19 LOG END [GET] 127.0.0.1:34450, /metrics 5.641404ms
+
+
+2019/11/22 21:54:34 LOG START [GET] 127.0.0.1:34450, /metrics 
+2019/11/22 21:54:34 AuthMiddleware: started
+2019/11/22 21:54:34 AuthMiddleware: No cookie detected
+2019/11/22 21:54:34 LOG END [GET] 127.0.0.1:34450, /metrics 4.580968ms
+
+
+2019/11/22 21:54:49 LOG START [GET] 127.0.0.1:34450, /metrics 
+2019/11/22 21:54:49 AuthMiddleware: started
+2019/11/22 21:54:49 AuthMiddleware: No cookie detected
+2019/11/22 21:54:49 LOG END [GET] 127.0.0.1:34450, /metrics 5.39592ms
+
+
+2019/11/22 21:55:04 LOG START [GET] 127.0.0.1:34450, /metrics 
+2019/11/22 21:55:04 AuthMiddleware: started
+2019/11/22 21:55:04 AuthMiddleware: No cookie detected
+2019/11/22 21:55:04 LOG END [GET] 127.0.0.1:34450, /metrics 12.251696ms
+
+
+2019/11/22 21:55:19 LOG START [GET] 127.0.0.1:34450, /metrics 
+2019/11/22 21:55:19 AuthMiddleware: started
+2019/11/22 21:55:19 AuthMiddleware: No cookie detected
+2019/11/22 21:55:19 LOG END [GET] 127.0.0.1:34450, /metrics 3.629118ms
+
+
+2019/11/22 21:55:34 LOG START [GET] 127.0.0.1:34450, /metrics 
+2019/11/22 21:55:34 AuthMiddleware: started
+2019/11/22 21:55:34 AuthMiddleware: No cookie detected
+2019/11/22 21:55:34 LOG END [GET] 127.0.0.1:34450, /metrics 4.068365ms
+
+
+2019/11/22 21:55:49 LOG START [GET] 127.0.0.1:34450, /metrics 
+2019/11/22 21:55:49 AuthMiddleware: started
+2019/11/22 21:55:49 AuthMiddleware: No cookie detected
+2019/11/22 21:55:49 LOG END [GET] 127.0.0.1:34450, /metrics 13.010484ms
+
+
+2019/11/22 21:56:04 LOG START [GET] 127.0.0.1:34450, /metrics 
+2019/11/22 21:56:04 AuthMiddleware: started
+2019/11/22 21:56:04 AuthMiddleware: No cookie detected
+2019/11/22 21:56:04 LOG END [GET] 127.0.0.1:34450, /metrics 2.365467ms
+
+
+2019/11/22 21:56:19 LOG START [GET] 127.0.0.1:34450, /metrics 
+2019/11/22 21:56:19 AuthMiddleware: started
+2019/11/22 21:56:19 AuthMiddleware: No cookie detected
+2019/11/22 21:56:19 LOG END [GET] 127.0.0.1:34450, /metrics 4.188401ms
+
+
+2019/11/22 21:56:34 LOG START [GET] 127.0.0.1:34450, /metrics 
+2019/11/22 21:56:34 AuthMiddleware: started
+2019/11/22 21:56:34 AuthMiddleware: No cookie detected
+2019/11/22 21:56:34 LOG END [GET] 127.0.0.1:34450, /metrics 6.910485ms
+
+
+2019/11/22 21:56:49 LOG START [GET] 127.0.0.1:34450, /metrics 
+2019/11/22 21:56:49 AuthMiddleware: started
+2019/11/22 21:56:49 AuthMiddleware: No cookie detected
+2019/11/22 21:56:49 LOG END [GET] 127.0.0.1:34450, /metrics 5.434332ms
+
+
+2019/11/22 21:57:04 LOG START [GET] 127.0.0.1:34450, /metrics 
+2019/11/22 21:57:04 AuthMiddleware: started
+2019/11/22 21:57:04 AuthMiddleware: No cookie detected
+2019/11/22 21:57:04 LOG END [GET] 127.0.0.1:34450, /metrics 4.592069ms
+
+
+2019/11/22 21:57:19 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 21:57:19 AuthMiddleware: started
+2019/11/22 21:57:19 AuthMiddleware: No cookie detected
+2019/11/22 21:57:19 LOG END [GET] 127.0.0.1:34550, /metrics 6.341874ms
+
+
+2019/11/22 21:57:34 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 21:57:34 AuthMiddleware: started
+2019/11/22 21:57:34 AuthMiddleware: No cookie detected
+2019/11/22 21:57:34 LOG END [GET] 127.0.0.1:34550, /metrics 4.445292ms
+
+
+2019/11/22 21:57:49 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 21:57:49 AuthMiddleware: started
+2019/11/22 21:57:49 AuthMiddleware: No cookie detected
+2019/11/22 21:57:49 LOG END [GET] 127.0.0.1:34550, /metrics 5.075056ms
+
+
+2019/11/22 21:58:04 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 21:58:04 AuthMiddleware: started
+2019/11/22 21:58:04 AuthMiddleware: No cookie detected
+2019/11/22 21:58:04 LOG END [GET] 127.0.0.1:34550, /metrics 5.211566ms
+
+
+2019/11/22 21:58:19 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 21:58:19 AuthMiddleware: started
+2019/11/22 21:58:19 AuthMiddleware: No cookie detected
+2019/11/22 21:58:19 LOG END [GET] 127.0.0.1:34550, /metrics 5.277508ms
+
+
+2019/11/22 21:58:34 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 21:58:34 AuthMiddleware: started
+2019/11/22 21:58:34 AuthMiddleware: No cookie detected
+2019/11/22 21:58:34 LOG END [GET] 127.0.0.1:34550, /metrics 6.238327ms
+
+
+2019/11/22 21:58:49 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 21:58:49 AuthMiddleware: started
+2019/11/22 21:58:49 AuthMiddleware: No cookie detected
+2019/11/22 21:58:49 LOG END [GET] 127.0.0.1:34550, /metrics 1.416316ms
+
+
+2019/11/22 21:59:04 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 21:59:04 AuthMiddleware: started
+2019/11/22 21:59:04 AuthMiddleware: No cookie detected
+2019/11/22 21:59:04 LOG END [GET] 127.0.0.1:34550, /metrics 5.782322ms
+
+
+2019/11/22 21:59:19 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 21:59:19 AuthMiddleware: started
+2019/11/22 21:59:19 AuthMiddleware: No cookie detected
+2019/11/22 21:59:19 LOG END [GET] 127.0.0.1:34550, /metrics 6.002054ms
+
+
+2019/11/22 21:59:23 LOG START [GET] [::1]:45252, /metrics 
+2019/11/22 21:59:23 AuthMiddleware: started
+2019/11/22 21:59:23 AuthMiddleware: No cookie detected
+2019/11/22 21:59:23 LOG END [GET] [::1]:45252, /metrics 3.826375ms
+
+
+2019/11/22 21:59:34 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 21:59:34 AuthMiddleware: started
+2019/11/22 21:59:34 AuthMiddleware: No cookie detected
+2019/11/22 21:59:34 LOG END [GET] 127.0.0.1:34550, /metrics 1.447404ms
+
+
+2019/11/22 21:59:49 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 21:59:49 AuthMiddleware: started
+2019/11/22 21:59:49 AuthMiddleware: No cookie detected
+2019/11/22 21:59:49 LOG END [GET] 127.0.0.1:34550, /metrics 5.946776ms
+
+
+2019/11/22 22:00:04 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:00:04 AuthMiddleware: started
+2019/11/22 22:00:04 AuthMiddleware: No cookie detected
+2019/11/22 22:00:04 LOG END [GET] 127.0.0.1:34550, /metrics 4.441595ms
+
+
+2019/11/22 22:00:19 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:00:19 AuthMiddleware: started
+2019/11/22 22:00:19 AuthMiddleware: No cookie detected
+2019/11/22 22:00:19 LOG END [GET] 127.0.0.1:34550, /metrics 3.66885ms
+
+
+2019/11/22 22:00:34 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:00:34 AuthMiddleware: started
+2019/11/22 22:00:34 AuthMiddleware: No cookie detected
+2019/11/22 22:00:34 LOG END [GET] 127.0.0.1:34550, /metrics 4.338916ms
+
+
+2019/11/22 22:00:49 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:00:49 AuthMiddleware: started
+2019/11/22 22:00:49 AuthMiddleware: No cookie detected
+2019/11/22 22:00:49 LOG END [GET] 127.0.0.1:34550, /metrics 5.007245ms
+
+
+2019/11/22 22:01:04 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:01:04 AuthMiddleware: started
+2019/11/22 22:01:04 AuthMiddleware: No cookie detected
+2019/11/22 22:01:04 LOG END [GET] 127.0.0.1:34550, /metrics 4.922287ms
+
+
+2019/11/22 22:01:19 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:01:19 AuthMiddleware: started
+2019/11/22 22:01:19 AuthMiddleware: No cookie detected
+2019/11/22 22:01:19 LOG END [GET] 127.0.0.1:34550, /metrics 3.335371ms
+
+
+2019/11/22 22:01:34 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:01:34 AuthMiddleware: started
+2019/11/22 22:01:34 AuthMiddleware: No cookie detected
+2019/11/22 22:01:34 LOG END [GET] 127.0.0.1:34550, /metrics 2.683679ms
+
+
+2019/11/22 22:01:49 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:01:49 AuthMiddleware: started
+2019/11/22 22:01:49 AuthMiddleware: No cookie detected
+2019/11/22 22:01:49 LOG END [GET] 127.0.0.1:34550, /metrics 5.063553ms
+
+
+2019/11/22 22:02:04 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:02:04 AuthMiddleware: started
+2019/11/22 22:02:04 AuthMiddleware: No cookie detected
+2019/11/22 22:02:04 LOG END [GET] 127.0.0.1:34550, /metrics 4.16656ms
+
+
+2019/11/22 22:02:19 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:02:19 AuthMiddleware: started
+2019/11/22 22:02:19 AuthMiddleware: No cookie detected
+2019/11/22 22:02:19 LOG END [GET] 127.0.0.1:34550, /metrics 2.694439ms
+
+
+2019/11/22 22:02:34 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:02:34 AuthMiddleware: started
+2019/11/22 22:02:34 AuthMiddleware: No cookie detected
+2019/11/22 22:02:34 LOG END [GET] 127.0.0.1:34550, /metrics 4.752792ms
+
+
+2019/11/22 22:02:49 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:02:49 AuthMiddleware: started
+2019/11/22 22:02:49 AuthMiddleware: No cookie detected
+2019/11/22 22:02:49 LOG END [GET] 127.0.0.1:34550, /metrics 3.222668ms
+
+
+2019/11/22 22:03:04 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:03:04 AuthMiddleware: started
+2019/11/22 22:03:04 AuthMiddleware: No cookie detected
+2019/11/22 22:03:04 LOG END [GET] 127.0.0.1:34550, /metrics 5.827415ms
+
+
+2019/11/22 22:03:19 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:03:19 AuthMiddleware: started
+2019/11/22 22:03:19 AuthMiddleware: No cookie detected
+2019/11/22 22:03:19 LOG END [GET] 127.0.0.1:34550, /metrics 3.900001ms
+
+
+2019/11/22 22:03:34 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:03:34 AuthMiddleware: started
+2019/11/22 22:03:34 AuthMiddleware: No cookie detected
+2019/11/22 22:03:34 LOG END [GET] 127.0.0.1:34550, /metrics 8.662833ms
+
+
+2019/11/22 22:03:49 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:03:49 AuthMiddleware: started
+2019/11/22 22:03:49 AuthMiddleware: No cookie detected
+2019/11/22 22:03:49 LOG END [GET] 127.0.0.1:34550, /metrics 13.053494ms
+
+
+2019/11/22 22:04:04 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:04:04 AuthMiddleware: started
+2019/11/22 22:04:04 AuthMiddleware: No cookie detected
+2019/11/22 22:04:04 LOG END [GET] 127.0.0.1:34550, /metrics 5.030287ms
+
+
+2019/11/22 22:04:19 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:04:19 AuthMiddleware: started
+2019/11/22 22:04:19 AuthMiddleware: No cookie detected
+2019/11/22 22:04:19 LOG END [GET] 127.0.0.1:34550, /metrics 3.643398ms
+
+
+2019/11/22 22:04:34 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:04:34 AuthMiddleware: started
+2019/11/22 22:04:34 AuthMiddleware: No cookie detected
+2019/11/22 22:04:34 LOG END [GET] 127.0.0.1:34550, /metrics 4.719028ms
+
+
+2019/11/22 22:04:49 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:04:49 AuthMiddleware: started
+2019/11/22 22:04:49 AuthMiddleware: No cookie detected
+2019/11/22 22:04:49 LOG END [GET] 127.0.0.1:34550, /metrics 4.040405ms
+
+
+2019/11/22 22:05:04 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:05:04 AuthMiddleware: started
+2019/11/22 22:05:04 AuthMiddleware: No cookie detected
+2019/11/22 22:05:04 LOG END [GET] 127.0.0.1:34550, /metrics 2.366509ms
+
+
+2019/11/22 22:05:19 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:05:19 AuthMiddleware: started
+2019/11/22 22:05:19 AuthMiddleware: No cookie detected
+2019/11/22 22:05:19 LOG END [GET] 127.0.0.1:34550, /metrics 4.539804ms
+
+
+2019/11/22 22:05:34 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:05:34 AuthMiddleware: started
+2019/11/22 22:05:34 AuthMiddleware: No cookie detected
+2019/11/22 22:05:34 LOG END [GET] 127.0.0.1:34550, /metrics 8.674908ms
+
+
+2019/11/22 22:05:49 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:05:49 AuthMiddleware: started
+2019/11/22 22:05:49 AuthMiddleware: No cookie detected
+2019/11/22 22:05:49 LOG END [GET] 127.0.0.1:34550, /metrics 2.784171ms
+
+
+2019/11/22 22:06:04 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:06:04 AuthMiddleware: started
+2019/11/22 22:06:04 AuthMiddleware: No cookie detected
+2019/11/22 22:06:04 LOG END [GET] 127.0.0.1:34550, /metrics 4.597768ms
+
+
+2019/11/22 22:06:19 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:06:19 AuthMiddleware: started
+2019/11/22 22:06:19 AuthMiddleware: No cookie detected
+2019/11/22 22:06:19 LOG END [GET] 127.0.0.1:34550, /metrics 49.218895ms
+
+
+2019/11/22 22:06:34 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:06:34 AuthMiddleware: started
+2019/11/22 22:06:34 AuthMiddleware: No cookie detected
+2019/11/22 22:06:34 LOG END [GET] 127.0.0.1:34550, /metrics 5.254846ms
+
+
+2019/11/22 22:06:49 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:06:49 AuthMiddleware: started
+2019/11/22 22:06:49 AuthMiddleware: No cookie detected
+2019/11/22 22:06:49 LOG END [GET] 127.0.0.1:34550, /metrics 3.453786ms
+
+
+2019/11/22 22:07:04 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:07:04 AuthMiddleware: started
+2019/11/22 22:07:04 AuthMiddleware: No cookie detected
+2019/11/22 22:07:04 LOG END [GET] 127.0.0.1:34550, /metrics 5.25542ms
+
+
+2019/11/22 22:07:19 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:07:19 AuthMiddleware: started
+2019/11/22 22:07:19 AuthMiddleware: No cookie detected
+2019/11/22 22:07:19 LOG END [GET] 127.0.0.1:34550, /metrics 5.062563ms
+
+
+2019/11/22 22:07:34 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:07:34 AuthMiddleware: started
+2019/11/22 22:07:34 AuthMiddleware: No cookie detected
+2019/11/22 22:07:34 LOG END [GET] 127.0.0.1:34550, /metrics 1.218556ms
+
+
+2019/11/22 22:07:49 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:07:49 AuthMiddleware: started
+2019/11/22 22:07:49 AuthMiddleware: No cookie detected
+2019/11/22 22:07:49 LOG END [GET] 127.0.0.1:34550, /metrics 5.501796ms
+
+
+2019/11/22 22:08:04 LOG START [GET] 127.0.0.1:34550, /metrics 
+2019/11/22 22:08:04 AuthMiddleware: started
+2019/11/22 22:08:04 AuthMiddleware: No cookie detected
+2019/11/22 22:08:04 LOG END [GET] 127.0.0.1:34550, /metrics 3.459827ms
+
+
