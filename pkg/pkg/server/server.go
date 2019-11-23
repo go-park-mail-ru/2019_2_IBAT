@@ -62,7 +62,7 @@ func NewRouter() (*mux.Router, error) {
 	}
 
 	h := handler.Handler{
-		pkgDir: staticDir,
+		InternalDir: staticDir,
 		AuthService: sessManager,
 		UserService: &uS,
 	}
