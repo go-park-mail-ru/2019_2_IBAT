@@ -21,7 +21,7 @@ func (h *Handler) CreateResume(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -41,7 +41,7 @@ func (h *Handler) CreateResume(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(code)
 
 		errJSON, _ := json.Marshal(Error{Message: err.Error()})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -49,12 +49,12 @@ func (h *Handler) CreateResume(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		errJSON, _ := json.Marshal(Error{Message: err.Error()})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 	log.Printf("Returning id: %s", id.String())
 
-	w.Write([]byte(idJSON))
+	w.Write(idJSON)
 }
 
 func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) {
@@ -65,7 +65,7 @@ func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -74,7 +74,7 @@ func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 	err = h.UserService.DeleteResume(resId, authInfo)
@@ -94,7 +94,7 @@ func (h *Handler) DeleteResume(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(code)
 
 		errJSON, _ := json.Marshal(Error{Message: err.Error()})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 }
@@ -109,7 +109,7 @@ func (h *Handler) GetResume(w http.ResponseWriter, r *http.Request) { //+
 		log.Println("Handle GetResume: invalid id")
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -119,13 +119,13 @@ func (h *Handler) GetResume(w http.ResponseWriter, r *http.Request) { //+
 		log.Println("Handle GetResume: failed to get resume")
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
 	resumeJSON, _ := json.Marshal(resume)
 
-	w.Write([]byte(resumeJSON))
+	w.Write(resumeJSON)
 }
 
 func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
@@ -137,7 +137,7 @@ func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -147,7 +147,7 @@ func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
 		log.Println("Handle PutResume: invalid id")
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -168,7 +168,7 @@ func (h *Handler) PutResume(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(code)
 
 		errJSON, _ := json.Marshal(Error{Message: err.Error()})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 }
@@ -190,7 +190,7 @@ func (h *Handler) GetResumes(w http.ResponseWriter, r *http.Request) {
 
 	resumesJSON, _ := json.Marshal(resumes)
 
-	w.Write([]byte(resumesJSON))
+	w.Write(resumesJSON)
 }
 
 func (h *Handler) ParseResumesQuery(query url.Values) map[string]interface{} {

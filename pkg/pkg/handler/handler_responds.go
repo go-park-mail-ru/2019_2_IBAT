@@ -15,7 +15,7 @@ func (h *Handler) GetResponds(w http.ResponseWriter, r *http.Request) { //+
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 	}
 
 	v := r.URL.Query()
@@ -28,7 +28,7 @@ func (h *Handler) GetResponds(w http.ResponseWriter, r *http.Request) { //+
 
 	respondsJSON, _ := json.Marshal(responds)
 
-	w.Write([]byte(respondsJSON))
+	w.Write(respondsJSON)
 
 }
 
@@ -39,7 +39,7 @@ func (h *Handler) CreateRespond(w http.ResponseWriter, r *http.Request) { //+
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -47,7 +47,7 @@ func (h *Handler) CreateRespond(w http.ResponseWriter, r *http.Request) { //+
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 }

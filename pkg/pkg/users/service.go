@@ -45,4 +45,5 @@ type Service interface {
 	SetImage(id uuid.UUID, class string, imageName string) bool
 
 	CheckUser(email string, password string) (uuid.UUID, string, bool)
+	Notifications(connects *WsConnects)
 }

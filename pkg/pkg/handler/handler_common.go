@@ -5,8 +5,6 @@ import (
 	"2019_2_IBAT/pkg/pkg/auth/session"
 	. "2019_2_IBAT/pkg/pkg/interfaces"
 	"2019_2_IBAT/pkg/pkg/users"
-	"fmt"
-	"sync"
 
 	"encoding/json"
 	"io/ioutil"
@@ -18,7 +16,6 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
-	"github.com/gorilla/websocket"
 )
 
 const publicDir = "/static"
@@ -27,7 +24,7 @@ const maxUploadSize = 2 * 1024 * 1024 // 2 mb
 
 type Handler struct {
 	// Pool        *pool.Pool //
-	WsConnects map[string]Connections
+	ConnectsPool WsConnects
 
 	InternalDir string
 	AuthService session.ServiceClient
@@ -43,7 +40,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		log.Println("GetUser Handler: unauthorized")
 		w.WriteHeader(http.StatusUnauthorized)
 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -54,7 +51,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 			log.Println("GetUser Handler: failed to get seeker")
 			w.WriteHeader(http.StatusBadRequest)
 			errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-			w.Write([]byte(errJSON))
+			w.Write(errJSON)
 			return
 		}
 
@@ -64,7 +61,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		}
 		answerJSON, _ := json.Marshal(answer)
 
-		w.Write([]byte(answerJSON))
+		w.Write(answerJSON)
 	} else if authInfo.Role == EmployerStr {
 		employer, err := h.UserService.GetEmployer(authInfo.ID)
 
@@ -72,7 +69,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 			log.Println("GetUser Handler: failed to get employer")
 			w.WriteHeader(http.StatusBadRequest)
 			errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-			w.Write([]byte(errJSON))
+			w.Write(errJSON)
 			return
 		}
 
@@ -87,7 +84,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 		log.Println("GetUser Handler: unauthorized")
 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 }
@@ -100,7 +97,7 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -109,7 +106,7 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -121,7 +118,7 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	if !sessionBool.Ok {
 		w.WriteHeader(http.StatusInternalServerError)
 		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -137,7 +134,7 @@ func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -146,7 +143,7 @@ func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			w.WriteHeader(http.StatusForbidden) //should add invalid email case
 			errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
-			w.Write([]byte(errJSON))
+			w.Write(errJSON)
 			return
 		}
 	} else if authInfo.Role == EmployerStr {
@@ -154,7 +151,7 @@ func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			w.WriteHeader(http.StatusForbidden) //should add invalid email case
 			errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
-			w.Write([]byte(errJSON))
+			w.Write(errJSON)
 			return
 		}
 	}
@@ -169,7 +166,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		if !ok {
 			w.WriteHeader(http.StatusUnauthorized)
 			errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-			w.Write([]byte(errJSON))
+			w.Write(errJSON)
 			return
 		}
 
@@ -177,7 +174,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		if err := r.ParseMultipartForm(maxUploadSize); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			errJSON, _ := json.Marshal(Error{Message: "Invalid size"})
-			w.Write([]byte(errJSON))
+			w.Write(errJSON)
 			return
 		}
 
@@ -186,7 +183,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			errJSON, _ := json.Marshal(Error{Message: "Invalid form key"})
-			w.Write([]byte(errJSON))
+			w.Write(errJSON)
 			return
 		}
 		defer file.Close()
@@ -195,7 +192,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			errJSON, _ := json.Marshal(Error{Message: "Bad file"})
-			w.Write([]byte(errJSON))
+			w.Write(errJSON)
 			return
 		}
 
@@ -208,7 +205,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		default:
 			w.WriteHeader(http.StatusBadRequest)
 			errJSON, _ := json.Marshal(Error{Message: "Invalid extension"})
-			w.Write([]byte(errJSON))
+			w.Write(errJSON)
 			return
 		}
 
@@ -217,7 +214,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			errJSON, _ := json.Marshal(Error{Message: "Invalid extension"})
-			w.Write([]byte(errJSON))
+			w.Write(errJSON)
 			return
 		}
 
@@ -228,7 +225,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			errJSON, _ := json.Marshal(Error{Message: "Failed to set image"})
-			w.Write([]byte(errJSON))
+			w.Write(errJSON)
 			return
 		}
 
@@ -236,72 +233,11 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		if _, err := newFile.Write(fileBytes); err != nil || newFile.Close() != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-			w.Write([]byte(errJSON))
+			w.Write(errJSON)
 			return
 		}
 
 		publicPath := filepath.Join(publicDir, fileName+fileEndings[0])
 		h.UserService.SetImage(authInfo.ID, authInfo.Role, publicPath)
 	})
-}
-
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
-
-func (h *Handler) Notifications(w http.ResponseWriter, r *http.Request) {
-	authInfo, ok := FromContext(r.Context())
-	// if !ok {
-	// 	log.Println("Notifications Handler: unauthorized")
-	// 	w.WriteHeader(http.StatusUnauthorized)
-	// 	return
-	// }
-	cookie, err := r.Cookie(auth.CookieName)
-	if err != nil {
-		fmt.Println("Failed to fetch cookie")
-	}
-	fmt.Printf("Cookie: %s\n", cookie.Value)
-
-	fmt.Println(r)
-
-	ws, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	node, ok := h.WsConnects[authInfo.ID.String()] //TODO can be deleted after check
-	if !ok {
-		node := Connections{
-			Conns: []*websocket.Conn{ws},
-			Mu:    &sync.Mutex{},
-		}
-		h.WsConnects[authInfo.ID.String()] = node
-	} else {
-		node.Mu.Lock()
-		node.Conns = append(node.Conns, ws) //careful with mu
-		h.WsConnects[authInfo.ID.String()] = node
-		node.Mu.Unlock()
-	}
-	// go sendNewMsgNotifications(ws)
-	fmt.Println(h.WsConnects)
-}
-
-func sendNewMsgNotifications(client *websocket.Conn) {
-	// ticker := time.NewTicker(10 * time.Second)
-	// for {
-	// 	w, err := client.NextWriter(websocket.TextMessage)
-	// 	if err != nil {
-	// 		ticker.Stop()
-	// 		break
-	// 	}
-
-	// 	msg := newMessage()
-	// 	w.Write(msg)
-	// 	w.Close()
-	// 	<-ticker.C
-	// }
 }

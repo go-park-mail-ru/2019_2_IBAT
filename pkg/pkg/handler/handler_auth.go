@@ -23,7 +23,7 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 		log.Println("Handle CreateSession: error while reading body")
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{Message: BadRequestMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -33,7 +33,7 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 		log.Println("Handle CreateSession: error while unmarshaling")
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{Message: InvalidJSONMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -42,7 +42,7 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 		log.Println("Handle CreateSession: Check user failed")
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{Message: InvPassOrEmailMsg}) //
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -55,7 +55,7 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("Handle CreateSession:  Create session failed")
 		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -64,7 +64,7 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("Handle CreateSession:  Create token failed")
 		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -73,7 +73,7 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("Handle CreateSession:  Time parsing failed")
 		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -88,7 +88,7 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 	http.SetCookie(w, &cookie)
 	RoleJSON, _ := json.Marshal(Role{Role: role})
 
-	w.Write([]byte(RoleJSON))
+	w.Write(RoleJSON)
 	log.Println("Handle CreateSession: end")
 }
 
@@ -100,13 +100,13 @@ func (h *Handler) GetSession(w http.ResponseWriter, r *http.Request) { //+
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
 	RoleJSON, _ := json.Marshal(Role{Role: authInfo.Role})
 
-	w.Write([]byte(RoleJSON))
+	w.Write(RoleJSON)
 }
 
 func (h *Handler) DeleteSession(w http.ResponseWriter, r *http.Request) { //+
@@ -117,7 +117,7 @@ func (h *Handler) DeleteSession(w http.ResponseWriter, r *http.Request) { //+
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -127,7 +127,7 @@ func (h *Handler) DeleteSession(w http.ResponseWriter, r *http.Request) { //+
 	if !sessionBool.Ok {
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{Message: BadRequestMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 

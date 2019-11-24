@@ -203,7 +203,13 @@ func FromContext(ctx context.Context) (AuthStorageValue, bool) {
 	return authInfo, ok
 }
 
-type Connections struct {
+type ConnectsPerUser struct {
 	Conns []*websocket.Conn
+	Ch    chan uuid.UUID
 	Mu    *sync.Mutex
+}
+
+type WsConnects struct {
+	ConsMu   *sync.Mutex
+	Connects map[uuid.UUID]*ConnectsPerUser
 }

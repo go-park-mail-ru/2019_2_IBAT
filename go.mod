@@ -13,6 +13,7 @@ require (
 	github.com/gorilla/context v1.1.1
 	github.com/gorilla/mux v1.7.3
 	github.com/gorilla/websocket v1.4.1
+	github.com/icrowley/fake v0.0.0-20180203215853-4178557ae428 // indirect
 	github.com/jackc/pgx v3.6.0+incompatible
 	github.com/jackc/pgx/v4 v4.1.0
 	github.com/jmoiron/sqlx v1.2.0

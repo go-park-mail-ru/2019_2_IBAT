@@ -18,7 +18,7 @@ func (h *Handler) CreateFavorite(w http.ResponseWriter, r *http.Request) { //+
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -32,7 +32,7 @@ func (h *Handler) CreateFavorite(w http.ResponseWriter, r *http.Request) { //+
 		log.Printf("Handle CreateFavorite: invalid id - %s", err)
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -41,7 +41,7 @@ func (h *Handler) CreateFavorite(w http.ResponseWriter, r *http.Request) { //+
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
 		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -54,7 +54,7 @@ func (h *Handler) GetFavoriteVacancies(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -62,7 +62,7 @@ func (h *Handler) GetFavoriteVacancies(w http.ResponseWriter, r *http.Request) {
 
 	respondsJSON, _ := json.Marshal(vacancies)
 
-	w.Write([]byte(respondsJSON))
+	w.Write(respondsJSON)
 
 }
 
@@ -73,7 +73,7 @@ func (h *Handler) DeleteFavoriteVacancy(w http.ResponseWriter, r *http.Request) 
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
 		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -82,7 +82,7 @@ func (h *Handler) DeleteFavoriteVacancy(w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -103,7 +103,7 @@ func (h *Handler) DeleteFavoriteVacancy(w http.ResponseWriter, r *http.Request) 
 		w.WriteHeader(code)
 
 		errJSON, _ := json.Marshal(Error{Message: err.Error()})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 }

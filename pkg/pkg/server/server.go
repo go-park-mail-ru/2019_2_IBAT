@@ -3,6 +3,7 @@ package server
 import (
 	"log"
 	"net/http"
+	"sync"
 	"time"
 
 	"2019_2_IBAT/pkg/pkg/handler"
@@ -13,8 +14,11 @@ import (
 	recRep "2019_2_IBAT/pkg/pkg/recommends/repository"
 	recServ "2019_2_IBAT/pkg/pkg/recommends/service"
 
+	. "2019_2_IBAT/pkg/pkg/interfaces"
+
 	"2019_2_IBAT/pkg/pkg/middleware"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx"
 	"google.golang.org/grpc"
@@ -108,12 +112,20 @@ func NewRouter() (*mux.Router, error) {
 			DbConn: OpenSqlxViaPgxConnPool(),
 		},
 		RecomService: rS,
+		NotifChan:    make(chan NotifStruct, 64),
 	}
 
 	h := handler.Handler{
 		InternalDir: staticDir,
 		AuthService: sessManager,
 		UserService: &uS,
+		ConnectsPool: WsConnects{
+			Connects: map[uuid.UUID]*ConnectsPerUser{},
+			ConsMu:   &sync.Mutex{},
+		},
+		// ConnectsPool: WsConnects{},
+		// ConsMu:      &sync.Mutex{},
+		// WsConnects:  map[string]Connections{},
 	}
 
 	loger := middleware.NewLogger()
@@ -127,7 +139,6 @@ func NewRouter() (*mux.Router, error) {
 	// router.Use(middleware.CSRFMiddleware)
 
 	router = router.PathPrefix("/api/").Subrouter()
-	// router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
 
 	router.Use(loger.AccessLogMiddleware)
 	router.Use(middleware.CorsMiddleware)
@@ -175,7 +186,10 @@ func NewRouter() (*mux.Router, error) {
 
 	router.HandleFunc("/tags", h.GetTags).Methods(http.MethodGet, http.MethodOptions)
 
+	router.HandleFunc("/notifications", h.Notifications)
+
 	// router.Handle("/metrics", promhttp.Handler())
+	go h.UserService.Notifications(&h.ConnectsPool)
 
 	return router, nil
 }
@@ -227,7 +241,7 @@ func RunServer() {
 	}
 	// log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", router))
 	log.Fatal(http.ListenAndServe(":8080", router))
-	// go uS.Notifications(h.WsConnects)
+	// go uS.Notifications(h.  )
 }
 
 func OpenSqlxViaPgxConnPool() *sqlx.DB {

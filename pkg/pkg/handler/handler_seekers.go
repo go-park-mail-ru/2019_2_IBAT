@@ -23,7 +23,7 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{Message: err.Error()})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -37,7 +37,7 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
 		// err = errors.Wrap(err, "error while unmarshaling")
 		w.WriteHeader(http.StatusInternalServerError)
 		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -46,7 +46,7 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("Handle CreateSession:  Create token failed")
 		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -55,7 +55,7 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("Handle CreateSession:  Time parsing failed")
 		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -70,7 +70,7 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
 	http.SetCookie(w, &cookie)
 	RoleJSON, _ := json.Marshal(Role{Role: sessInfo.Role})
 
-	w.Write([]byte(RoleJSON))
+	w.Write(RoleJSON)
 }
 
 //should test method
@@ -81,7 +81,7 @@ func (h *Handler) GetSeekerById(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
@@ -90,12 +90,12 @@ func (h *Handler) GetSeekerById(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
 	seeker.Password = "" //danger
 	seekerJSON, _ := json.Marshal(seeker)
 
-	w.Write([]byte(seekerJSON))
+	w.Write(seekerJSON)
 }

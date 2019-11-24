@@ -15,12 +15,12 @@ func (h *Handler) GetTags(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write([]byte(errJSON))
+		w.Write(errJSON)
 		return
 	}
 
 	tagsJSON, _ := json.Marshal(tags)
 
-	w.Write([]byte(tagsJSON))
+	w.Write(tagsJSON)
 
 }
