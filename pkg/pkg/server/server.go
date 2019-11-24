@@ -169,7 +169,9 @@ func RunServer() {
 	if err != nil {
 		log.Fatal("Failed to create router")
 	}
-	log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", router))
+	// log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", router))
+	log.Fatal(http.ListenAndServe(":8080", router))
+
 }
 
 func OpenSqlxViaPgxConnPool() *sqlx.DB {
