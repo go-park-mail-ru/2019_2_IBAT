@@ -4,8 +4,8 @@ DROP TABLE recommendations;
 
 CREATE TABLE recommendations (
     timestamp timestamp NOT NULL DEFAULT NOW(),
-    person_id uuid NOT NULL UNIQUE,
-    tag_id uuid NOT NULL UNIQUE,
+    person_id uuid NOT NULL,
+    tag_id uuid NOT NULL,
     -- name TEXT NOT NULL
     PRIMARY KEY(person_id, tag_id)
 );

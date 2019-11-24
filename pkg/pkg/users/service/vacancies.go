@@ -13,7 +13,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValue) (uuid.UUID, error) { //should do this part by one r with if?
+func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValue) (uuid.UUID, error) {
+
 	if authInfo.Role != EmployerStr {
 		// log.Printf("Invalid action: %s", err)
 		return uuid.UUID{}, errors.New(ForbiddenMsg)
@@ -47,6 +48,13 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 	if !ok {
 		log.Printf("Error while creating vacancy: %s", err)
 		return uuid.UUID{}, errors.New(BadRequestMsg)
+	}
+
+	tagIDs := h.Storage.GetTagIDs(vacancyReg.Spheres)
+
+	h.NotifChan <- NotifStruct{
+		VacancyId: id,
+		TagIDs:    tagIDs,
 	}
 
 	return id, nil

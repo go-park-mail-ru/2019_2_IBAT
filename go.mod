@@ -12,11 +12,14 @@ require (
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/context v1.1.1
 	github.com/gorilla/mux v1.7.3
+	github.com/gorilla/websocket v1.4.1
 	github.com/jackc/pgx v3.6.0+incompatible
 	github.com/jackc/pgx/v4 v4.1.0
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/jwangsadinata/go-multimap v0.0.0-20190620162914-c29f3d7f33b6
 	github.com/pkg/errors v0.8.1
+	github.com/prometheus/client_golang v0.9.2
+	github.com/prometheus/node_exporter v0.18.1 // indirect
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/blog v0.0.0-20191108185507-584205eb2c4d // indirect
 	golang.org/x/crypto v0.0.0-20191117063200-497ca9f6d64f

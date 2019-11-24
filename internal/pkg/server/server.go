@@ -1,6 +1,7 @@
 package server
 
 import (
+	"flag"
 	"log"
 	"net/http"
 	"time"
@@ -24,16 +25,68 @@ import (
 )
 
 const staticDir = "/media/vltim/img"
+const NotifChanSize = 50
+
+var addr = flag.String("listen-address", ":8080",
+	"The address to listen on for HTTP requests.")
 
 func NewRouter() (*mux.Router, error) {
+	// flag.Parse()
+
+	// usersRegistered := prometheus.NewCounter(
+	// 	prometheus.CounterOpts{
+	// 		Name: "users_registered",
+	// 	})
+	// prometheus.MustRegister(usersRegistered)
+
+	// usersOnline := prometheus.NewGauge(
+	// 	prometheus.GaugeOpts{
+	// 		Name: "users_online",
+	// 	})
+	// prometheus.MustRegister(usersOnline)
+
+	// requestProcessingTimeSummaryMs := prometheus.NewSummary(
+	// 	prometheus.SummaryOpts{
+	// 		Name:       "request_processing_time_summary_ms",
+	// 		Objectives: map[float64]float64{0.5: 0.05, 0.9: 0.01, 0.99: 0.001},
+	// 	})
+	// prometheus.MustRegister(requestProcessingTimeSummaryMs)
+
+	// requestProcessingTimeHistogramMs := prometheus.NewHistogram(
+	// 	prometheus.HistogramOpts{
+	// 		Name:    "request_processing_time_histogram_ms",
+	// 		Buckets: prometheus.LinearBuckets(0, 10, 20),
+	// 	})
+	// prometheus.MustRegister(requestProcessingTimeHistogramMs)
+
+	// go func() {
+	// 	for {
+	// 		usersRegistered.Inc() // or: Add(5)
+	// 		time.Sleep(1000 * time.Millisecond)
+	// 	}
+	// }()
+
+	// go func() {
+	// 	for {
+	// 		for i := 0; i < 10000; i++ {
+	// 			usersOnline.Set(float64(i)) // or: Inc(), Dec(), Add(5), Dec(5)
+	// 			time.Sleep(10 * time.Millisecond)
+	// 		}
+	// 	}
+	// }()
+
+	// go func() {
+	// 	src := rand.NewSource(time.Now().UnixNano())
+	// 	rnd := rand.New(src)
+	// 	for {
+	// 		obs := float64(100 + rnd.Intn(30))
+	// 		requestProcessingTimeSummaryMs.Observe(obs)
+	// 		requestProcessingTimeHistogramMs.Observe(obs)
+	// 		time.Sleep(10 * time.Millisecond)
+	// 	}
+	// }()
+
 	router := mux.NewRouter()
-
-	// redisAddr := flag.String("redisServer", ":6379", "")
-
-	// aS := auth_serv.AuthService{
-	// 	Storage: auth_rep.NewSessionManager(auth_rep.RedNewPool(*redisAddr)),
-	// }
-	// func main() {
 
 	grcpConn, err := grpc.Dial(
 		"127.0.0.1:8081",
@@ -59,21 +112,24 @@ func NewRouter() (*mux.Router, error) {
 			DbConn: OpenSqlxViaPgxConnPool(),
 		},
 		RecomService: rS,
+		NotifChan:    make(chan NotifStruct, NotifChanSize),
 	}
 
 	h := handler.Handler{
 		pkgDir: staticDir,
 		AuthService: sessManager,
 		UserService: &uS,
+		WsConnects:  map[string]Connections{},
 	}
 
+	//should remove
+	go uS.Notifications(h.WsConnects)
+
 	loger := middleware.NewLogger()
-	// AccessLogOut := new(middleware.AccessLogger)
-	// AccessLogOut.StdLogger = log.New(os.Stdout, "STD ", log.LUTC|log.Lshortfile)
 	authMiddleware := middleware.AuthMiddlewareGenerator(sessManager)
 
 	router.Use(loger.AccessLogMiddleware)
-	router.Use(middleware.CorsMiddleware)
+	// router.Use(middleware.CorsMiddleware)
 	router.Use(authMiddleware)
 	// router.Use(middleware.CSRFMiddleware)
 
@@ -81,7 +137,7 @@ func NewRouter() (*mux.Router, error) {
 
 	router.HandleFunc("/upload", h.UploadFile()).Methods(http.MethodPost, http.MethodOptions)
 
-	router.HandleFunc("/auth", h.CreateSession).Methods(http.MethodPost, http.MethodOptions)
+	router.HandleFunc("/auth", h.CreateSession).Methods(http.MethodPost) //, http.MethodOptions)
 	router.HandleFunc("/auth", h.GetSession).Methods(http.MethodGet, http.MethodOptions)
 	router.HandleFunc("/auth", h.DeleteSession).Methods(http.MethodDelete, http.MethodOptions)
 
@@ -121,6 +177,9 @@ func NewRouter() (*mux.Router, error) {
 
 	router.HandleFunc("/tags", h.GetTags).Methods(http.MethodGet, http.MethodOptions)
 
+	router.HandleFunc("/notifications", h.Notifications)
+
+	// router.Handle("/metrics", promhttp.Handler())
 	return router, nil
 }
 
@@ -169,7 +228,10 @@ func RunServer() {
 	if err != nil {
 		log.Fatal("Failed to create router")
 	}
-	log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", router))
+	// log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", router))
+	log.Fatal(http.ListenAndServe(":8080", router))
+	// go uS.Notifications(h.WsConnects)
+
 }
 
 func OpenSqlxViaPgxConnPool() *sqlx.DB {

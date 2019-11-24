@@ -9,4 +9,5 @@ import (
 type Repository interface {
 	SetTagIDs(AuthRec AuthStorageValue, tagIDs []uuid.UUID) error
 	GetTagIDs(AuthRec AuthStorageValue) ([]uuid.UUID, error)
+	GetUsersForTags([]uuid.UUID) ([]uuid.UUID, error)
 }
