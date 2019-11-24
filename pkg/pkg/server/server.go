@@ -77,7 +77,14 @@ func NewRouter() (*mux.Router, error) {
 	router.Use(authMiddleware)
 	// router.Use(middleware.CSRFMiddleware)
 
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
+	// router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
+
+	router = router.PathPrefix("/api/").Subrouter()
+	// router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir))))
+
+	router.Use(loger.AccessLogMiddleware)
+	router.Use(middleware.CorsMiddleware)
+	router.Use(authMiddleware)
 
 	router.HandleFunc("/upload", h.UploadFile()).Methods(http.MethodPost, http.MethodOptions)
 
