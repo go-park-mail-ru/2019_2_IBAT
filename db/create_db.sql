@@ -113,6 +113,12 @@ VALUES(gen_random_uuid(), 'vasyapupkin@mail.ru', 'Vasya', 'Pupkin', 'iearoiqdsfw
 INSERT INTO persons(id, email, first_name, second_name, password_hash, role)
 VALUES(gen_random_uuid(), 'main@mail.ru', 'Vladimir', 'Lenin', 'iearoiqdsfwejfka', 'employer');
 
+INSERT INTO persons(id, email, first_name, second_name, password_hash, role)
+VALUES(gen_random_uuid(), 'sup@mail.ru', 'Vlad', '1', '1111', 'support');
+
+INSERT INTO persons(id, email, first_name, second_name, password_hash, role)
+VALUES(gen_random_uuid(), 'sup2@mail.ru', 'Vlad', '1', '1111', 'support');
+
 INSERT INTO companies(own_id, company_name, site, region, spheres_of_work, empl_num,
 description, phone_number, extra_phone_number)
 VALUES((SELECT id FROM persons WHERE email = 'main@mail.ru'), 'Mail.ru', 'Mail.ru',
