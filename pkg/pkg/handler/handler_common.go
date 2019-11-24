@@ -5,6 +5,8 @@ import (
 	"2019_2_IBAT/pkg/pkg/auth/session"
 	. "2019_2_IBAT/pkg/pkg/interfaces"
 	"2019_2_IBAT/pkg/pkg/users"
+	"fmt"
+	"sync"
 
 	"encoding/json"
 	"io/ioutil"

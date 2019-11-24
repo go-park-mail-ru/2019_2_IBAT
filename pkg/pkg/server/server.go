@@ -26,14 +26,63 @@ import (
 const staticDir = "/media/vltim/img"
 
 func NewRouter() (*mux.Router, error) {
+
+	// flag.Parse()
+
+	// usersRegistered := prometheus.NewCounter(
+	// 	prometheus.CounterOpts{
+	// 		Name: "users_registered",
+	// 	})
+	// prometheus.MustRegister(usersRegistered)
+
+	// usersOnline := prometheus.NewGauge(
+	// 	prometheus.GaugeOpts{
+	// 		Name: "users_online",
+	// 	})
+	// prometheus.MustRegister(usersOnline)
+
+	// requestProcessingTimeSummaryMs := prometheus.NewSummary(
+	// 	prometheus.SummaryOpts{
+	// 		Name:       "request_processing_time_summary_ms",
+	// 		Objectives: map[float64]float64{0.5: 0.05, 0.9: 0.01, 0.99: 0.001},
+	// 	})
+	// prometheus.MustRegister(requestProcessingTimeSummaryMs)
+
+	// requestProcessingTimeHistogramMs := prometheus.NewHistogram(
+	// 	prometheus.HistogramOpts{
+	// 		Name:    "request_processing_time_histogram_ms",
+	// 		Buckets: prometheus.LinearBuckets(0, 10, 20),
+	// 	})
+	// prometheus.MustRegister(requestProcessingTimeHistogramMs)
+
+	// go func() {
+	// 	for {
+	// 		usersRegistered.Inc() // or: Add(5)
+	// 		time.Sleep(1000 * time.Millisecond)
+	// 	}
+	// }()
+
+	// go func() {
+	// 	for {
+	// 		for i := 0; i < 10000; i++ {
+	// 			usersOnline.Set(float64(i)) // or: Inc(), Dec(), Add(5), Dec(5)
+	// 			time.Sleep(10 * time.Millisecond)
+	// 		}
+	// 	}
+	// }()
+
+	// go func() {
+	// 	src := rand.NewSource(time.Now().UnixNano())
+	// 	rnd := rand.New(src)
+	// 	for {
+	// 		obs := float64(100 + rnd.Intn(30))
+	// 		requestProcessingTimeSummaryMs.Observe(obs)
+	// 		requestProcessingTimeHistogramMs.Observe(obs)
+	// 		time.Sleep(10 * time.Millisecond)
+	// 	}
+	// }()
+
 	router := mux.NewRouter()
-
-	// redisAddr := flag.String("redisServer", ":6379", "")
-
-	// aS := auth_serv.AuthService{
-	// 	Storage: auth_rep.NewSessionManager(auth_rep.RedNewPool(*redisAddr)),
-	// }
-	// func main() {
 
 	grcpConn, err := grpc.Dial(
 		"127.0.0.1:8081",
@@ -126,6 +175,8 @@ func NewRouter() (*mux.Router, error) {
 
 	router.HandleFunc("/tags", h.GetTags).Methods(http.MethodGet, http.MethodOptions)
 
+	// router.Handle("/metrics", promhttp.Handler())
+
 	return router, nil
 }
 
@@ -176,7 +227,7 @@ func RunServer() {
 	}
 	// log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", router))
 	log.Fatal(http.ListenAndServe(":8080", router))
-
+	// go uS.Notifications(h.WsConnects)
 }
 
 func OpenSqlxViaPgxConnPool() *sqlx.DB {

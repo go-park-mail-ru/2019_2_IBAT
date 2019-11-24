@@ -2,6 +2,8 @@ package users
 
 import (
 	"2019_2_IBAT/pkg/pkg/users"
+	"fmt"
+	"log"
 
 	. "2019_2_IBAT/pkg/pkg/interfaces"
 	recServ "2019_2_IBAT/pkg/pkg/recommends/service"
