@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"2019_2_IBAT/pkg/pkg/auth"
-	"2019_2_IBAT/pkg/pkg/auth/session"
+	"2019_2_IBAT/pkg/app/auth"
+	"2019_2_IBAT/pkg/app/auth/session"
 	. "2019_2_IBAT/pkg/pkg/interfaces"
 
 	"log"

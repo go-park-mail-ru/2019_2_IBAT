@@ -1,5 +1,8 @@
-*/.vscode
+.vscode/*
 go.sum
 */app
 cmd/main/testlogfile
 cmd/main/main
+cmd/auth/auth
+cmd/recommends/recommends
+./.vscode/launch.json

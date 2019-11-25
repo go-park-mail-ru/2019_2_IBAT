@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	auth "2019_2_IBAT/pkg/pkg/auth"
+	auth "2019_2_IBAT/pkg/app/auth"
 	csrf "2019_2_IBAT/pkg/pkg/csrf"
 	. "2019_2_IBAT/pkg/pkg/interfaces"
 	"log"

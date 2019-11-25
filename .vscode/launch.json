@@ -10,7 +10,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/internal/app",
+            "program": "${workspaceFolder}/cmd/main",
             "env": {},
             "args": []
         }

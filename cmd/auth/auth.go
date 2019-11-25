@@ -3,16 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
-	// "lectures/7/4_grpc/session"
-	"2019_2_IBAT/pkg/pkg/auth/service"
-	auth_rep "2019_2_IBAT/pkg/pkg/auth/repository"
-	// auth_serv "2019_2_IBAT/pkg/pkg/auth/service"
-
-	"2019_2_IBAT/pkg/pkg/auth/session"
 	"log"
 	"net"
 
 	"google.golang.org/grpc"
+
+	auth_rep "2019_2_IBAT/pkg/app/auth/repository"
+	"2019_2_IBAT/pkg/app/auth/service"
+	"2019_2_IBAT/pkg/app/auth/session"
 )
 
 func main() {

@@ -794,3 +794,597 @@ created by net/http.(*Server).Serve
 2019/11/22 22:08:04 LOG END [GET] 127.0.0.1:34550, /metrics 3.459827ms
 
 
+2019/11/24 19:53:22 LOG START [GET] [::1]:49966, /api/vacancies 
+2019/11/24 19:53:22 AuthMiddleware: started
+2019/11/24 19:53:22 Tag array
+2019/11/24 19:53:22 map[]
+2019/11/24 19:53:22 Params map length: 0
+2019/11/24 19:53:22 Params: map[tag_ids:[]]
+
+2019/11/24 19:53:22 Query: 
+2019/11/24 19:53:22 LOG END [GET] [::1]:49966, /api/vacancies 4.47832ms
+
+
+2019/11/24 19:57:09 LOG START [GET] [::1]:50066, /api/vacancies 
+2019/11/24 19:57:09 AuthMiddleware: started
+2019/11/24 19:57:09 Tag array
+2019/11/24 19:57:09 map[]
+2019/11/24 19:57:09 Params map length: 0
+2019/11/24 19:57:09 Params: map[tag_ids:[]]
+
+2019/11/24 19:57:09 Query: 
+2019/11/24 19:57:09 LOG END [GET] [::1]:50066, /api/vacancies 7.680595ms
+
+
+2019/11/24 19:57:18 LOG START [GET] [::1]:50066, /api/notifications 
+2019/11/24 19:57:18 AuthMiddleware: started
+2019/11/24 19:57:18 LOG END [GET] [::1]:50066, /api/notifications 455.932µs
+
+
+2019/11/24 21:13:59 LOG START [GET] [::1]:52004, /api/vacancies 
+2019/11/24 21:13:59 AuthMiddleware: started
+2019/11/24 21:13:59 Tag array
+2019/11/24 21:13:59 map[]
+2019/11/24 21:13:59 Params map length: 0
+2019/11/24 21:13:59 Params: map[tag_ids:[]]
+
+2019/11/24 21:13:59 Query: 
+2019/11/24 21:13:59 LOG END [GET] [::1]:52004, /api/vacancies 8.323184ms
+
+
+2019/11/24 21:14:14 LOG START [GET] [::1]:52004, /api/employers 
+2019/11/24 21:14:14 AuthMiddleware: started
+2019/11/24 21:14:14 Query: 
+2019/11/24 21:14:14 GetEmployers: query is empty
+2019/11/24 21:14:14 LOG END [GET] [::1]:52004, /api/employers 6.953364ms
+
+
+2019/11/24 21:19:09 LOG START [GET] [::1]:54522, /api/notifications 
+2019/11/24 21:19:09 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 21:19:09 AuthMiddleware: started
+2019/11/24 21:19:09 AuthMiddleware: No cookie detected
+2019/11/24 21:19:09 LOG END [GET] [::1]:54522, /api/notifications 576.735µs
+
+
+2019/11/24 21:19:45 LOG START [POST] [::1]:54822, /api/auth 
+2019/11/24 21:19:45 AuthMiddleware: started
+2019/11/24 21:19:45 Handle CreateSession: start
+2019/11/24 21:19:45 Handle CreateSession: end
+2019/11/24 21:19:45 LOG END [POST] [::1]:54822, /api/auth 5.391675ms
+
+
+2019/11/24 21:20:38 LOG START [GET] [::1]:55266, /api/notifications 
+2019/11/24 21:20:38 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 21:20:38 AuthMiddleware: started
+2019/11/24 21:20:38 LOG END [GET] [::1]:55266, /api/notifications 1.803667ms
+
+
+2019/11/24 21:26:56 LOG START [POST] [::1]:58418, /api/auth 
+2019/11/24 21:26:56 AuthMiddleware: started
+2019/11/24 21:26:56 Handle CreateSession: start
+2019/11/24 21:26:56 Handle CreateSession: end
+2019/11/24 21:26:56 LOG END [POST] [::1]:58418, /api/auth 3.51513ms
+
+
+2019/11/24 21:27:11 LOG START [POST] [::1]:58418, /api/vacancy 
+2019/11/24 21:27:11 AuthMiddleware: started
+2019/11/24 21:31:47 LOG START [POST] [::1]:60820, /api/vacancy 
+2019/11/24 21:31:47 AuthMiddleware: started
+2019/11/24 21:31:47 LOG END [POST] [::1]:60820, /api/vacancy 4.18533ms
+
+
+2019/11/24 21:32:25 LOG START [POST] [::1]:60820, /api/seeker 
+2019/11/24 21:32:25 AuthMiddleware: started
+2019/11/24 21:32:25 LOG END [POST] [::1]:60820, /api/seeker 2.405407ms
+
+
+2019/11/24 21:32:58 LOG START [GET] [::1]:60820, /api/vacancy/8271ec71-c539-41b5-bbed-8f81f9658783 
+2019/11/24 21:32:58 AuthMiddleware: started
+2019/11/24 21:32:58 SetTagIDs %!s(<nil>)
+2019/11/24 21:32:58 GetVacancy: sql: Rows are closed
+2019/11/24 21:32:58 LOG END [GET] [::1]:60820, /api/vacancy/8271ec71-c539-41b5-bbed-8f81f9658783 16.572382ms
+
+
+2019/11/24 21:33:39 LOG START [POST] [::1]:60820, /api/auth 
+2019/11/24 21:33:39 AuthMiddleware: started
+2019/11/24 21:33:39 Handle CreateSession: start
+2019/11/24 21:33:39 Handle CreateSession: end
+2019/11/24 21:33:39 LOG END [POST] [::1]:60820, /api/auth 1.353204ms
+
+
+2019/11/24 21:34:16 LOG START [POST] [::1]:60820, /api/auth 
+2019/11/24 21:34:16 AuthMiddleware: started
+2019/11/24 21:34:16 Handle CreateSession: start
+2019/11/24 21:34:16 Handle CreateSession: Check user failed
+2019/11/24 21:34:16 LOG END [POST] [::1]:60820, /api/auth 855.858µs
+
+
+2019/11/24 21:34:32 LOG START [POST] [::1]:60820, /api/auth 
+2019/11/24 21:34:32 AuthMiddleware: started
+2019/11/24 21:34:32 Handle CreateSession: start
+2019/11/24 21:34:32 Handle CreateSession: end
+2019/11/24 21:34:32 LOG END [POST] [::1]:60820, /api/auth 1.631246ms
+
+
+2019/11/24 21:35:15 LOG START [GET] [::1]:34304, /api/notifications 
+2019/11/24 21:35:15 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 21:35:15 AuthMiddleware: started
+2019/11/24 21:35:37 LOG START [POST] [::1]:60820, /api/auth 
+2019/11/24 21:35:37 AuthMiddleware: started
+2019/11/24 21:35:37 Handle CreateSession: start
+2019/11/24 21:35:37 Handle CreateSession: end
+2019/11/24 21:35:37 LOG END [POST] [::1]:60820, /api/auth 1.366984ms
+
+
+2019/11/24 21:35:47 LOG START [POST] [::1]:60820, /api/vacancy 
+2019/11/24 21:35:47 AuthMiddleware: started
+2019/11/24 21:35:47 LOG END [POST] [::1]:60820, /api/vacancy 2.733264ms
+
+
+2019/11/24 21:36:25 LOG START [POST] [::1]:60820, /api/vacancy 
+2019/11/24 21:36:25 AuthMiddleware: started
+2019/11/24 21:36:25 LOG END [POST] [::1]:60820, /api/vacancy 2.729775ms
+
+
+2019/11/24 21:36:26 LOG START [POST] [::1]:60820, /api/vacancy 
+2019/11/24 21:36:26 AuthMiddleware: started
+2019/11/24 21:36:26 LOG END [POST] [::1]:60820, /api/vacancy 2.538411ms
+
+
+2019/11/24 21:36:27 LOG START [POST] [::1]:60820, /api/vacancy 
+2019/11/24 21:36:27 AuthMiddleware: started
+2019/11/24 21:36:27 LOG END [POST] [::1]:60820, /api/vacancy 2.531427ms
+
+
+2019/11/24 21:36:42 LOG START [POST] [::1]:60820, /api/auth 
+2019/11/24 21:36:42 AuthMiddleware: started
+2019/11/24 21:36:42 Handle CreateSession: start
+2019/11/24 21:36:42 Handle CreateSession: end
+2019/11/24 21:36:42 LOG END [POST] [::1]:60820, /api/auth 1.04341ms
+
+
+2019/11/24 21:36:56 LOG START [GET] [::1]:60820, /api/vacancy/f6e7a1b1-580c-413a-929c-3d5f6748e57c 
+2019/11/24 21:36:56 AuthMiddleware: started
+2019/11/24 21:36:56 SetTagIDs ОШИБКА: повторяющееся значение ключа нарушает ограничение уникальности "recommendations_pkey" (SQLSTATE 23505)
+2019/11/24 21:36:56 GetVacancy: sql: Rows are closed
+2019/11/24 21:36:56 LOG END [GET] [::1]:60820, /api/vacancy/f6e7a1b1-580c-413a-929c-3d5f6748e57c 4.907321ms
+
+
+2019/11/24 21:37:30 LOG START [POST] [::1]:60820, /api/auth 
+2019/11/24 21:37:30 AuthMiddleware: started
+2019/11/24 21:37:30 Handle CreateSession: start
+2019/11/24 21:37:30 Handle CreateSession: end
+2019/11/24 21:37:30 LOG END [POST] [::1]:60820, /api/auth 1.377534ms
+
+
+2019/11/24 21:37:34 LOG START [GET] [::1]:35540, /api/notifications 
+2019/11/24 21:37:34 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 21:37:34 AuthMiddleware: started
+2019/11/24 21:37:39 LOG START [POST] [::1]:60820, /api/vacancy 
+2019/11/24 21:37:39 AuthMiddleware: started
+2019/11/24 21:37:39 LOG END [POST] [::1]:60820, /api/vacancy 4.218057ms
+
+
+2019/11/24 21:37:39 LOG START [POST] [::1]:60820, /api/vacancy 
+2019/11/24 21:37:39 AuthMiddleware: started
+2019/11/24 21:37:39 LOG END [POST] [::1]:60820, /api/vacancy 2.768377ms
+
+
+2019/11/24 21:37:40 LOG START [POST] [::1]:60820, /api/vacancy 
+2019/11/24 21:37:40 AuthMiddleware: started
+2019/11/24 21:37:40 LOG END [POST] [::1]:60820, /api/vacancy 2.496474ms
+
+
+2019/11/24 21:37:40 LOG START [POST] [::1]:60820, /api/vacancy 
+2019/11/24 21:37:40 AuthMiddleware: started
+2019/11/24 21:37:40 LOG END [POST] [::1]:60820, /api/vacancy 2.77452ms
+
+
+2019/11/24 21:37:41 LOG START [POST] [::1]:60820, /api/vacancy 
+2019/11/24 21:37:41 AuthMiddleware: started
+2019/11/24 21:37:41 LOG END [POST] [::1]:60820, /api/vacancy 3.009485ms
+
+
+2019/11/24 21:45:58 LOG START [GET] [::1]:39836, /api/notifications 
+2019/11/24 21:45:58 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 21:45:58 AuthMiddleware: started
+2019/11/24 21:45:58 LOG END [GET] [::1]:39836, /api/notifications 2.308123ms
+
+
+2019/11/24 21:46:16 LOG START [POST] [::1]:39982, /api/vacancy 
+2019/11/24 21:46:16 AuthMiddleware: started
+2019/11/24 21:46:16 LOG END [POST] [::1]:39982, /api/vacancy 4.80283ms
+
+
+2019/11/24 21:48:42 LOG START [POST] [::1]:41192, /api/seeker 
+2019/11/24 21:48:42 AuthMiddleware: started
+2019/11/24 21:48:42 LOG END [POST] [::1]:41192, /api/seeker 3.51935ms
+
+
+2019/11/24 21:48:48 LOG START [POST] [::1]:41192, /api/vacancy 
+2019/11/24 21:48:48 AuthMiddleware: started
+2019/11/24 21:48:48 LOG END [POST] [::1]:41192, /api/vacancy 3.787563ms
+
+
+2019/11/24 21:49:46 LOG START [GET] [::1]:41722, /api/notifications 
+2019/11/24 21:49:46 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 21:49:46 AuthMiddleware: started
+2019/11/24 21:49:53 LOG START [POST] [::1]:41192, /api/vacancy 
+2019/11/24 21:49:53 AuthMiddleware: started
+2019/11/24 21:49:54 LOG END [POST] [::1]:41192, /api/vacancy 3.421837ms
+
+
+2019/11/24 21:51:04 LOG START [GET] [::1]:42372, /api/notifications 
+2019/11/24 21:51:04 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 21:51:04 AuthMiddleware: started
+2019/11/24 21:51:04 LOG END [GET] [::1]:42372, /api/notifications 1.509452ms
+
+
+2019/11/24 21:51:06 LOG START [POST] [::1]:42402, /api/vacancy 
+2019/11/24 21:51:06 AuthMiddleware: started
+2019/11/24 21:51:06 LOG END [POST] [::1]:42402, /api/vacancy 4.224141ms
+
+
+2019/11/24 21:52:32 LOG START [POST] [::1]:43114, /api/vacancy 
+2019/11/24 21:52:32 AuthMiddleware: started
+2019/11/24 21:52:32 LOG END [POST] [::1]:43114, /api/vacancy 5.089423ms
+
+
+2019/11/24 21:52:58 LOG START [GET] [::1]:43338, /api/notifications 
+2019/11/24 21:52:58 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 21:52:58 AuthMiddleware: started
+2019/11/24 21:52:58 LOG END [GET] [::1]:43338, /api/notifications 1.662475ms
+
+
+2019/11/24 21:53:01 LOG START [POST] [::1]:43366, /api/vacancy 
+2019/11/24 21:53:01 AuthMiddleware: started
+2019/11/24 21:53:01 LOG END [POST] [::1]:43366, /api/vacancy 4.265503ms
+
+
+2019/11/24 21:59:03 LOG START [GET] [::1]:46422, /api/notifications 
+2019/11/24 21:59:03 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 21:59:03 AuthMiddleware: started
+2019/11/24 21:59:03 LOG END [GET] [::1]:46422, /api/notifications 10.265961ms
+
+
+2019/11/24 21:59:06 LOG START [POST] [::1]:46460, /api/vacancy 
+2019/11/24 21:59:06 AuthMiddleware: started
+2019/11/24 21:59:06 LOG END [POST] [::1]:46460, /api/vacancy 5.180968ms
+
+
+2019/11/24 22:00:50 LOG START [POST] [::1]:47348, /api/vacancy 
+2019/11/24 22:00:50 AuthMiddleware: started
+2019/11/24 22:00:50 LOG END [POST] [::1]:47348, /api/vacancy 7.722298ms
+
+
+2019/11/24 22:01:51 LOG START [POST] [::1]:47872, /api/vacancy 
+2019/11/24 22:01:51 AuthMiddleware: started
+2019/11/24 22:01:51 LOG END [POST] [::1]:47872, /api/vacancy 4.719618ms
+
+
+2019/11/24 22:04:28 LOG START [POST] [::1]:49184, /api/vacancy 
+2019/11/24 22:04:28 AuthMiddleware: started
+2019/11/24 22:04:28 LOG END [POST] [::1]:49184, /api/vacancy 5.088315ms
+
+
+2019/11/24 22:04:49 LOG START [POST] [::1]:49380, /api/vacancy 
+2019/11/24 22:04:49 AuthMiddleware: started
+2019/11/24 22:04:49 LOG END [POST] [::1]:49380, /api/vacancy 6.212251ms
+
+
+2019/11/24 22:06:34 LOG START [POST] [::1]:50266, /api/vacancy 
+2019/11/24 22:06:34 AuthMiddleware: started
+2019/11/24 22:06:34 LOG END [POST] [::1]:50266, /api/vacancy 4.656028ms
+
+
+2019/11/24 22:08:25 LOG START [POST] [::1]:51204, /api/vacancy 
+2019/11/24 22:08:25 AuthMiddleware: started
+2019/11/24 22:08:25 LOG END [POST] [::1]:51204, /api/vacancy 3.998479ms
+
+
+2019/11/24 22:09:01 LOG START [POST] [::1]:51514, /api/vacancy 
+2019/11/24 22:09:01 AuthMiddleware: started
+2019/11/24 22:09:01 LOG END [POST] [::1]:51514, /api/vacancy 5.482147ms
+
+
+2019/11/24 22:09:19 LOG START [GET] [::1]:51664, /api/notifications 
+2019/11/24 22:09:19 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 22:09:19 AuthMiddleware: started
+2019/11/24 22:09:19 LOG END [GET] [::1]:51664, /api/notifications 842.338µs
+
+
+2019/11/24 22:09:39 LOG START [GET] [::1]:51838, /api/notifications 
+2019/11/24 22:09:39 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 22:09:39 AuthMiddleware: started
+2019/11/24 22:09:39 LOG END [GET] [::1]:51838, /api/notifications 1.389394ms
+
+
+2019/11/24 22:10:13 LOG START [POST] [::1]:52128, /api/vacancy 
+2019/11/24 22:10:13 AuthMiddleware: started
+2019/11/24 22:10:13 LOG END [POST] [::1]:52128, /api/vacancy 5.91642ms
+
+
+2019/11/24 22:10:27 LOG START [GET] [::1]:52262, /api/notifications 
+2019/11/24 22:10:27 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 22:10:27 AuthMiddleware: started
+2019/11/24 22:11:47 LOG START [GET] [::1]:52950, /api/notifications 
+2019/11/24 22:11:47 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 22:11:47 AuthMiddleware: started
+2019/11/24 22:11:47 LOG END [GET] [::1]:52950, /api/notifications 9.150224ms
+
+
+2019/11/24 22:12:08 LOG START [GET] [::1]:53140, /api/notifications 
+2019/11/24 22:12:08 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 22:12:08 AuthMiddleware: started
+2019/11/24 22:12:08 LOG END [GET] [::1]:53140, /api/notifications 1.942947ms
+
+
+2019/11/24 22:14:54 LOG START [POST] [::1]:54556, /api/vacancy 
+2019/11/24 22:14:54 AuthMiddleware: started
+2019/11/24 22:14:54 LOG END [POST] [::1]:54556, /api/vacancy 8.659515ms
+
+
+2019/11/24 22:15:00 LOG START [GET] [::1]:54600, /api/notifications 
+2019/11/24 22:15:00 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 22:15:00 AuthMiddleware: started
+2019/11/24 22:15:00 LOG END [GET] [::1]:54600, /api/notifications 833.051µs
+
+
+2019/11/24 22:15:45 LOG START [GET] [::1]:54988, /api/notifications 
+2019/11/24 22:15:45 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 22:15:45 AuthMiddleware: started
+2019/11/24 22:15:45 LOG END [GET] [::1]:54988, /api/notifications 1.54883ms
+
+
+2019/11/24 22:16:28 LOG START [POST] [::1]:55362, /api/vacancy 
+2019/11/24 22:16:28 AuthMiddleware: started
+2019/11/24 22:16:28 LOG END [POST] [::1]:55362, /api/vacancy 5.74487ms
+
+
+2019/11/24 22:17:15 LOG START [GET] [::1]:55772, /api/notifications 
+2019/11/24 22:17:15 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 22:17:15 AuthMiddleware: started
+2019/11/24 22:18:45 LOG START [GET] [::1]:56534, /api/notifications 
+2019/11/24 22:18:45 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 22:18:45 AuthMiddleware: started
+2019/11/24 22:18:45 LOG END [GET] [::1]:56534, /api/notifications 1.390316ms
+
+
+2019/11/24 22:18:53 LOG START [POST] [::1]:56604, /api/vacancy 
+2019/11/24 22:18:53 AuthMiddleware: started
+2019/11/24 22:18:53 LOG END [POST] [::1]:56604, /api/vacancy 3.992677ms
+
+
+2019/11/24 22:19:40 LOG START [POST] [::1]:56604, /api/vacancy 
+2019/11/24 22:19:40 AuthMiddleware: started
+2019/11/24 22:19:40 LOG END [POST] [::1]:56604, /api/vacancy 2.907861ms
+
+
+2019/11/24 22:19:45 LOG START [POST] [::1]:56604, /api/vacancy 
+2019/11/24 22:19:45 AuthMiddleware: started
+2019/11/24 22:19:45 LOG END [POST] [::1]:56604, /api/vacancy 2.800793ms
+
+
+2019/11/24 22:20:42 LOG START [POST] [::1]:56604, /api/vacancy 
+2019/11/24 22:20:42 AuthMiddleware: started
+2019/11/24 22:20:42 LOG END [POST] [::1]:56604, /api/vacancy 4.04168ms
+
+
+2019/11/24 22:21:42 LOG START [POST] [::1]:56604, /api/vacancy 
+2019/11/24 22:21:42 AuthMiddleware: started
+2019/11/24 22:21:42 LOG END [POST] [::1]:56604, /api/vacancy 4.054926ms
+
+
+2019/11/24 22:22:01 LOG START [POST] [::1]:56604, /api/vacancy 
+2019/11/24 22:22:01 AuthMiddleware: started
+2019/11/24 22:22:01 LOG END [POST] [::1]:56604, /api/vacancy 2.403334ms
+
+
+2019/11/24 22:22:36 LOG START [POST] [::1]:56604, /api/vacancy 
+2019/11/24 22:22:36 AuthMiddleware: started
+2019/11/24 22:22:36 LOG END [POST] [::1]:56604, /api/vacancy 3.142936ms
+
+
+2019/11/24 22:32:35 LOG START [POST] [::1]:35108, /api/vacancy 
+2019/11/24 22:32:35 AuthMiddleware: started
+2019/11/24 22:32:35 LOG END [POST] [::1]:35108, /api/vacancy 10.184311ms
+
+
+2019/11/24 22:32:53 LOG START [POST] [::1]:35108, /api/vacancy 
+2019/11/24 22:32:53 AuthMiddleware: started
+2019/11/24 22:32:53 LOG END [POST] [::1]:35108, /api/vacancy 2.852662ms
+
+
+2019/11/24 22:32:59 LOG START [GET] [::1]:35308, /api/notifications 
+2019/11/24 22:32:59 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 22:32:59 AuthMiddleware: started
+2019/11/24 22:32:59 LOG END [GET] [::1]:35308, /api/notifications 850.64µs
+
+
+2019/11/24 22:33:02 LOG START [POST] [::1]:35108, /api/vacancy 
+2019/11/24 22:33:02 AuthMiddleware: started
+2019/11/24 22:33:02 LOG END [POST] [::1]:35108, /api/vacancy 3.323592ms
+
+
+2019/11/24 22:33:23 LOG START [POST] [::1]:35108, /api/seeker 
+2019/11/24 22:33:23 AuthMiddleware: started
+2019/11/24 22:33:23 LOG END [POST] [::1]:35108, /api/seeker 2.507754ms
+
+
+2019/11/24 22:34:27 LOG START [GET] [::1]:36026, /api/notifications 
+2019/11/24 22:34:27 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 22:34:27 AuthMiddleware: started
+2019/11/24 22:34:27 LOG END [GET] [::1]:36026, /api/notifications 3.355181ms
+
+
+2019/11/24 22:34:52 LOG START [POST] [::1]:35108, /api/employer 
+2019/11/24 22:34:52 AuthMiddleware: started
+2019/11/24 22:34:52 CreateEmployer Start
+2019/11/24 22:34:52 CreateEmployer Employer was created
+2019/11/24 22:34:52 LOG END [POST] [::1]:35108, /api/employer 6.204131ms
+
+
+2019/11/24 22:35:21 LOG START [POST] [::1]:35108, /api/vacancy 
+2019/11/24 22:35:21 AuthMiddleware: started
+2019/11/24 22:35:21 LOG END [POST] [::1]:35108, /api/vacancy 4.659307ms
+
+
+2019/11/24 22:35:59 LOG START [POST] [::1]:35108, /api/seeker 
+2019/11/24 22:35:59 AuthMiddleware: started
+2019/11/24 22:35:59 LOG END [POST] [::1]:35108, /api/seeker 1.675876ms
+
+
+2019/11/24 22:36:26 LOG START [GET] [::1]:35108, /api/vacancy/f6e7a1b1-580c-413a-929c-3d5f6748e57c 
+2019/11/24 22:36:26 AuthMiddleware: started
+2019/11/24 22:36:26 SetTagIDs %!s(<nil>)
+2019/11/24 22:36:26 GetVacancy: sql: Rows are closed
+2019/11/24 22:36:26 LOG END [GET] [::1]:35108, /api/vacancy/f6e7a1b1-580c-413a-929c-3d5f6748e57c 14.839911ms
+
+
+2019/11/24 22:36:29 LOG START [GET] [::1]:35108, /api/vacancy/f6e7a1b1-580c-413a-929c-3d5f6748e57c 
+2019/11/24 22:36:29 AuthMiddleware: started
+2019/11/24 22:36:29 SetTagIDs ОШИБКА: повторяющееся значение ключа нарушает ограничение уникальности "recommendations_pkey" (SQLSTATE 23505)
+2019/11/24 22:36:29 GetVacancy: sql: Rows are closed
+2019/11/24 22:36:29 LOG END [GET] [::1]:35108, /api/vacancy/f6e7a1b1-580c-413a-929c-3d5f6748e57c 5.69374ms
+
+
+2019/11/24 22:36:48 LOG START [GET] [::1]:37190, /api/notifications 
+2019/11/24 22:36:48 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 22:36:48 AuthMiddleware: started
+2019/11/24 22:36:48 LOG END [GET] [::1]:37190, /api/notifications 1.522041ms
+
+
+2019/11/24 22:36:54 LOG START [POST] [::1]:35108, /api/employer 
+2019/11/24 22:36:54 AuthMiddleware: started
+2019/11/24 22:36:54 CreateEmployer Start
+2019/11/24 22:36:54 CreateEmployer Employer was created
+2019/11/24 22:36:54 LOG END [POST] [::1]:35108, /api/employer 2.75266ms
+
+
+2019/11/24 22:36:57 LOG START [POST] [::1]:35108, /api/vacancy 
+2019/11/24 22:36:57 AuthMiddleware: started
+2019/11/24 22:36:57 LOG END [POST] [::1]:35108, /api/vacancy 4.022018ms
+
+
+2019/11/24 22:37:34 LOG START [POST] [::1]:35108, /api/seeker 
+2019/11/24 22:37:34 AuthMiddleware: started
+2019/11/24 22:37:34 LOG END [POST] [::1]:35108, /api/seeker 1.557939ms
+
+
+2019/11/24 22:38:19 LOG START [GET] [::1]:37928, /api/notifications 
+2019/11/24 22:38:19 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 22:38:19 AuthMiddleware: started
+2019/11/24 22:38:19 LOG END [GET] [::1]:37928, /api/notifications 2.39218ms
+
+
+2019/11/24 22:38:32 LOG START [GET] [::1]:35108, /api/vacancy/f6e7a1b1-580c-413a-929c-3d5f6748e57c 
+2019/11/24 22:38:32 AuthMiddleware: started
+2019/11/24 22:38:32 SetTagIDs %!s(<nil>)
+2019/11/24 22:38:32 GetVacancy: sql: Rows are closed
+2019/11/24 22:38:32 LOG END [GET] [::1]:35108, /api/vacancy/f6e7a1b1-580c-413a-929c-3d5f6748e57c 2.609941ms
+
+
+2019/11/24 22:38:33 LOG START [GET] [::1]:35108, /api/vacancy/f6e7a1b1-580c-413a-929c-3d5f6748e57c 
+2019/11/24 22:38:33 AuthMiddleware: started
+2019/11/24 22:38:33 SetTagIDs ОШИБКА: повторяющееся значение ключа нарушает ограничение уникальности "recommendations_pkey" (SQLSTATE 23505)
+2019/11/24 22:38:33 GetVacancy: sql: Rows are closed
+2019/11/24 22:38:33 LOG END [GET] [::1]:35108, /api/vacancy/f6e7a1b1-580c-413a-929c-3d5f6748e57c 2.272133ms
+
+
+2019/11/24 22:38:38 LOG START [POST] [::1]:35108, /api/employer 
+2019/11/24 22:38:38 AuthMiddleware: started
+2019/11/24 22:38:38 CreateEmployer Start
+2019/11/24 22:38:38 CreateEmployer Employer was created
+2019/11/24 22:38:38 LOG END [POST] [::1]:35108, /api/employer 3.138214ms
+
+
+2019/11/24 22:38:40 LOG START [POST] [::1]:35108, /api/vacancy 
+2019/11/24 22:38:40 AuthMiddleware: started
+2019/11/24 22:38:40 LOG END [POST] [::1]:35108, /api/vacancy 3.102288ms
+
+
+2019/11/24 22:38:41 LOG START [POST] [::1]:35108, /api/vacancy 
+2019/11/24 22:38:41 AuthMiddleware: started
+2019/11/24 22:38:41 LOG END [POST] [::1]:35108, /api/vacancy 4.349969ms
+
+
+2019/11/24 22:38:41 LOG START [POST] [::1]:35108, /api/vacancy 
+2019/11/24 22:38:41 AuthMiddleware: started
+2019/11/24 22:38:41 LOG END [POST] [::1]:35108, /api/vacancy 2.83958ms
+
+
+2019/11/24 22:38:57 LOG START [POST] [::1]:35108, /api/vacancy 
+2019/11/24 22:38:57 AuthMiddleware: started
+2019/11/24 22:38:57 LOG END [POST] [::1]:35108, /api/vacancy 2.97764ms
+
+
+2019/11/24 22:39:06 LOG START [POST] [::1]:35108, /api/vacancy 
+2019/11/24 22:39:06 AuthMiddleware: started
+2019/11/24 22:39:06 LOG END [POST] [::1]:35108, /api/vacancy 2.71759ms
+
+
+2019/11/24 22:41:01 LOG START [GET] [::1]:39272, /api/notifications 
+2019/11/24 22:41:01 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 22:41:01 AuthMiddleware: started
+2019/11/24 22:41:01 LOG END [GET] [::1]:39272, /api/notifications 6.194997ms
+
+
+2019/11/24 22:41:11 LOG START [GET] [::1]:39364, /api/notifications 
+2019/11/24 22:41:11 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/24 22:41:11 AuthMiddleware: started
+2019/11/24 22:41:11 LOG END [GET] [::1]:39364, /api/notifications 958.874µs
+
+
+2019/11/24 22:41:20 LOG START [POST] [::1]:39432, /api/vacancy 
+2019/11/24 22:41:20 AuthMiddleware: started
+2019/11/24 22:41:20 LOG END [POST] [::1]:39432, /api/vacancy 3.959071ms
+
+
+2019/11/26 01:18:56 LOG START [POST] [::1]:44528, /api/seeker 
+2019/11/26 01:18:56 AuthMiddleware: started
+2019/11/26 01:18:56 AuthMiddleware: No cookie detected
+2019/11/26 01:18:56 LOG END [POST] [::1]:44528, /api/seeker 34.606359ms
+
+
+2019/11/26 01:19:50 LOG START [POST] [::1]:44528, /api/seeker 
+2019/11/26 01:19:50 AuthMiddleware: started
+2019/11/26 01:19:50 AuthMiddleware: No cookie detected
+2019/11/26 01:19:50 LOG END [POST] [::1]:44528, /api/seeker 34.891958ms
+
+
+2019/11/26 01:20:00 LOG START [GET] [::1]:44528, /api/vacancy/f6e7a1b1-580c-413a-929c-3d5f6748e57c 
+2019/11/26 01:20:00 AuthMiddleware: started
+2019/11/26 01:20:00 GetVacancy: sql: Rows are closed
+2019/11/26 01:20:00 LOG END [GET] [::1]:44528, /api/vacancy/f6e7a1b1-580c-413a-929c-3d5f6748e57c 60.111635ms
+
+
+2019/11/26 01:20:14 LOG START [POST] [::1]:44528, /api/employer 
+2019/11/26 01:20:14 AuthMiddleware: started
+2019/11/26 01:20:14 CreateEmployer Start
+2019/11/26 01:20:14 CreateEmployer Employer was created
+2019/11/26 01:20:14 LOG END [POST] [::1]:44528, /api/employer 11.157635ms
+
+
+2019/11/26 01:20:21 LOG START [POST] [::1]:44528, /api/vacancy 
+2019/11/26 01:20:21 AuthMiddleware: started
+2019/11/26 01:20:21 LOG END [POST] [::1]:44528, /api/vacancy 9.991308ms
+
+
+2019/11/26 01:21:13 LOG START [POST] [::1]:44528, /api/auth 
+2019/11/26 01:21:13 AuthMiddleware: started
+2019/11/26 01:21:13 Handle CreateSession: start
+2019/11/26 01:21:13 Handle CreateSession: end
+2019/11/26 01:21:13 LOG END [POST] [::1]:44528, /api/auth 4.196476ms
+
+
+2019/11/26 01:21:34 LOG START [GET] [::1]:44528, /api/vacancies 
+2019/11/26 01:21:34 AuthMiddleware: started
+2019/11/26 01:21:34 Tag array
+2019/11/26 01:21:34 map[recommended:[true]]
+2019/11/26 01:21:34 Params map length: 1
+2019/11/26 01:21:34 Params: map[recommended:true tag_ids:[dd199995-6078-48d0-b3ed-b8e0a214deeb]]
+
+2019/11/26 01:21:34 Query: 
+2019/11/26 01:21:34 LOG END [GET] [::1]:44528, /api/vacancies 17.23575ms
+
+
