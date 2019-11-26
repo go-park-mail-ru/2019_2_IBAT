@@ -35,7 +35,7 @@ func NewSessionManager(pool *redis.Pool) *SessionManager {
 }
 
 func (st *SessionManager) Get(cookie string) (AuthStorageValue, bool) {
-	log.Println("AuthStorage: Get started")
+	// log.Println("AuthStorage: Get started")
 	redisConn := st.redisPool.Get()
 	defer redisConn.Close()
 
