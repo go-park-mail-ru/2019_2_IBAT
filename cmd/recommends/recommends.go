@@ -32,3 +32,9 @@ func main() {
 	fmt.Println("starting server at :8082")
 	server.Serve(lis)
 }
+
+// изменено:      .vscode/launch.json
+// изменено:      cmd/auth/auth.go
+// изменено:      cmd/main/main
+// изменено:      cmd/main/main.go
+// изменено:      cmd/main/testlogfile

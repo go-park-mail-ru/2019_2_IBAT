@@ -1,12 +1,10 @@
 package handler
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"sync"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -15,18 +13,18 @@ import (
 	. "2019_2_IBAT/pkg/pkg/interfaces"
 )
 
-const (
-	// Time allowed to write a message to the peer.
-	writeWait = 10 * time.Second
+// const (
+// 	// Time allowed to write a message to the peer.
+// 	writeWait = 10 * time.Second
 
-	// Time allowed to read the next pong message from the peer.
-	pongWait = 60 * time.Second
+// 	// Time allowed to read the next pong message from the peer.
+// 	pongWait = 60 * time.Second
 
-	// Send pings to peer with this period. Must be less than pongWait.
-	pingPeriod = (pongWait * 9) / 10
+// 	// Send pings to peer with this period. Must be less than pongWait.
+// 	pingPeriod = (pongWait * 9) / 10
 
-	maxMessageSize = 512
-)
+// 	maxMessageSize = 512
+// )
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -35,6 +33,22 @@ var upgrader = websocket.Upgrader{
 		return true
 	},
 }
+
+// type Connect struct {
+// 	Conn *websocket.Conn
+// 	Ch   chan uuid.UUID
+// }
+
+// type ConnectsPerUser struct {
+// 	Channels []chan uuid.UUID
+// 	Mu       *sync.Mutex
+// 	Ch       chan uuid.UUID
+// }
+
+// type WsConnects struct {
+// 	ConsMu   *sync.Mutex
+// 	Connects map[uuid.UUID]*ConnectsPerUser
+// }
 
 func (h *Handler) Notifications(w http.ResponseWriter, r *http.Request) {
 	authInfo, ok := FromContext(r.Context())
@@ -61,102 +75,117 @@ func (h *Handler) Notifications(w http.ResponseWriter, r *http.Request) {
 
 	h.ConnectsPool.ConsMu.Lock()
 
+	conn := Connect{
+		Conn: ws,
+		Ch:   make(chan uuid.UUID, 1),
+	}
+
 	//TODO can be deleted after check
 	node, ok := h.ConnectsPool.Connects[authInfo.ID]
+
 	if !ok {
 		node = &ConnectsPerUser{
-			Conns: []*websocket.Conn{ws},
-			Mu:    &sync.Mutex{},
-			Ch:    make(chan uuid.UUID, 5),
+			Channels: make([]chan uuid.UUID, 0),
+			Mu:       &sync.Mutex{},
+			Ch:       make(chan uuid.UUID, 5),
 		}
+		node.Channels = append(node.Channels, conn.Ch)
 		h.ConnectsPool.Connects[authInfo.ID] = node
 		fmt.Printf("Connection pool for user %s was created\n", authInfo.ID)
 	} else {
 		node.Mu.Lock()
-		node.Conns = append(node.Conns, ws) //careful with mu
-		// h.WsConnects[authInfo.ID.String()] = node
+		node.Channels = append(node.Channels, conn.Ch) //careful with mu
 		h.ConnectsPool.Connects[authInfo.ID] = node
 		node.Mu.Unlock()
 		fmt.Printf("Connection pool for user %s was updated\n", authInfo.ID)
 	}
 	h.ConnectsPool.ConsMu.Unlock() //careful
 
+	go conn.ReadPump()
+	go conn.WritePump()
+
 	go sendNewMsgNotifications(node)
 	// fmt.Println(h.WsConnects)
 }
 
 func sendNewMsgNotifications(clientConn *ConnectsPerUser) {
-	// ticker := time.NewTicker(10 * time.Second)
-	// for {
-	// 	w, err := client.NextWriter(websocket.TextMessage)
-	// 	if err != nil {
-	// 		ticker.Stop()
-	// 		break
-	// 	}
-
-	// 	msg := newMessage()
-	// 	w.Write(msg)
-	// 	w.Close()
-	// 	<-ticker.C
-	// }
 	for {
-		select {
-		case id, _ := <-clientConn.Ch:
-			// if !ok {
-			// 	continue
-			// }
+		// select {
+		id := <-clientConn.Ch
+		fmt.Printf("id %s got from channel for user", id.String())
+		clientConn.Mu.Lock()
 
-			fmt.Printf("id %s got from channel for user", id.String())
-			clientConn.Mu.Lock()
-			for i, client := range clientConn.Conns {
-				// select {
-				// case client <- message:
-				// default:
-				// 	close(client.send)
-				// 	delete(h.clients, client)
-				// }
-				// client.
-				if client != nil {
-					w, _ := client.NextWriter(websocket.TextMessage)
-					// if err != nil {
-					// 	ticker.Stop()
-					// 	break
-					// }
-
-					idJSON, _ := json.Marshal(Id{Id: id.String()})
-					w.Write(idJSON)
-					w.Close()
-					fmt.Printf("id %s was sent user", id.String())
-				} else {
-					// ticker.Stop()
-					fmt.Println("connection disconnected")
-					clientConn.Conns[i] = clientConn.Conns[len(clientConn.Conns)-1]
-					clientConn.Conns[len(clientConn.Conns)-1] = nil
-					clientConn.Conns = clientConn.Conns[:len(clientConn.Conns)-1]
-				}
-			}
-			clientConn.Mu.Unlock()
+		for _, ch := range clientConn.Channels {
+			ch <- id
+			fmt.Printf("id %s sent to user\n", id.String())
 		}
+		clientConn.Mu.Unlock()
+		// }_
 	}
+	//clear gorutine
 }
 
-// func readPump() {
-// 	defer func() {
-// 		c.hub.unregister <- c
-// 		c.conn.Close()
-// 	}()
-// 	c.conn.SetReadLimit(maxMessageSize)
-// 	c.conn.SetReadDeadline(time.Now().Add(pongWait))
-// 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+// func (c *Connect) readPump() {
+// 	// defer func() {
+// 	// 	c.hub.unregister <- c
+// 	// 	c.conn.Close()
+// 	// }()
+// 	c.Conn.SetReadLimit(maxMessageSize)
+// 	c.Conn.SetReadDeadline(time.Now().Add(pongWait))
+// 	c.Conn.SetPongHandler(func(string) error { c.Conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 // 	for {
-// 		_, message, err := c.conn.ReadMessage()
-// 		if err != nil {
+// 		if _, _, err := c.Conn.NextReader(); err != nil {
 // 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 // 				log.Printf("error: %v", err)
 // 			}
+// 			// c.Close()
 // 			break
 // 		}
-// 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-// 		c.hub.broadcast <- message
+// 	}
+// }
+
+// // for {
+// // 	_, message, err := c.conn.ReadMessage()
+// // 	if err != nil {
+// // 		if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+// // 			log.Printf("error: %v", err)
+// // 		}
+// // 		break
+// // 	}
+// // 	message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+// // 	c.hub.broadcast <- message
+// // }
+
+// func (c *Connect) writePump() {
+// 	ticker := time.NewTicker(pingPeriod)
+// 	defer func() {
+// 		ticker.Stop()
+// 		c.Conn.Close()
+// 	}()
+// 	for {
+// 		select {
+// 		case id, ok := <-c.Ch:
+// 			if ok {
+// 				w, _ := c.Conn.NextWriter(websocket.TextMessage)
+// 				// if err != nil {
+// 				// 	ticker.Stop()
+// 				// 	break
+// 				// }
+// 				idJSON, _ := json.Marshal(Id{Id: id.String()})
+// 				w.Write(idJSON)
+// 				w.Close()
+// 				fmt.Printf("id %s was sent user", id.String())
+// 			} else {
+// 				fmt.Println("Channel closed!")
+// 				//close channel
+// 				return
+// 				// break
+// 			}
+// 		case <-ticker.C:
+// 			c.Conn.SetWriteDeadline(time.Now().Add(writeWait))
+// 			if err := c.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+// 				return
+// 			}
+// 		}
 // 	}
 // }

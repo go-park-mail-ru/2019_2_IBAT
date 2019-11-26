@@ -60,8 +60,11 @@ func (h *UserService) Notifications(connects *WsConnects) {
 			if _, ok := connects.Connects[id]; ok {
 				connects.Connects[id].Ch <- notif.VacancyId
 				fmt.Printf("Notification was sent to user %s\n", id.String())
+			} else {
+				fmt.Printf("Notification can not be sent to user %s\n", id.String())
+				delete(connects.Connects, id)
+				fmt.Printf("Connections to user were removed\nd")
 			}
-			fmt.Printf("Notification can not be sent to user %s\n", id.String())
 		}
 		connects.ConsMu.Unlock()
 		fmt.Println("connects.ConsMu.Unlock()")

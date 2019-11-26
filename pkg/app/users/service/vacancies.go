@@ -52,12 +52,12 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 		return uuid.UUID{}, errors.New(BadRequestMsg)
 	}
 
-	tagIDs := h.Storage.GetTagIDs(vacancyReg.Spheres)
+	// tagIDs := h.Storage.GetTagIDs(vacancyReg.Spheres)
 
-	h.NotifChan <- NotifStruct{
-		VacancyId: id,
-		TagIDs:    tagIDs,
-	}
+	// h.NotifChan <- NotifStruct{
+	// 	VacancyId: id,
+	// 	TagIDs:    tagIDs,
+	// }
 
 	return id, nil
 }
