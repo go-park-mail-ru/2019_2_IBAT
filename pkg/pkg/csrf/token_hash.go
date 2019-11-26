@@ -10,11 +10,6 @@ import (
 	"time"
 )
 
-// fbc1fd86ab53d52c3ffeb6529aea9676e14bc52b792414c32f5612b4eb2c9745:1567618546
-// JSv5M7FZ5iPHnHiLXR1QbhnMcdoY/wvEae4a76KrGBxeHruFb1S90d4GkwsoQQU4R1zqEdSa0KMGflriF2dHj5XWm4Zp6OBxLp6BJFUhqpQxEBEr5yl4sxEHadgssvVWfWtDKe0bENU=
-// JSv5M7FZ5iPHnHiLXR1QbhnMcDAU/wvEae4a76KrGBxeHruFb1S90d4GkwsoQQU4R1zqEdSa0KMGflriF2dHj5XWm4Zp6OBxLp6BJFUhqpQxEBEr5yl4sxEHadgssvVWfWtDKe0bENU=
-// JSv5M7FZ5iPHnHiLXR1QbhnMcNEF/wvEae4a76KrGBxeHruFb1S90d4GkwsoQQU4R1zqEdSa0KMGflriF2dHj5XWm4Zp6OBxLp6BJFUhqpQxEBEr5yl4sxEHadgssvVWfWtDKe0bENU=
-
 var Tokens *HashToken
 
 func init() {

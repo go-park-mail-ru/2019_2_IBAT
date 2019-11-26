@@ -3,19 +3,20 @@ package server
 import (
 	"log"
 	"net/http"
-	"sync"
+	"strconv"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
 
 	"2019_2_IBAT/pkg/app/auth/session"
+	"2019_2_IBAT/pkg/app/notifs/notifsproto"
 	"2019_2_IBAT/pkg/app/recommends/recomsproto"
+
 	"2019_2_IBAT/pkg/app/server/handler"
 	usRep "2019_2_IBAT/pkg/app/users/repository"
 	usServ "2019_2_IBAT/pkg/app/users/service"
+	"2019_2_IBAT/pkg/pkg/config"
 	"2019_2_IBAT/pkg/pkg/db_connect"
-	. "2019_2_IBAT/pkg/pkg/interfaces"
 	"2019_2_IBAT/pkg/pkg/middleware"
 )
 
@@ -81,11 +82,11 @@ func NewRouter() (*mux.Router, error) {
 	router := mux.NewRouter()
 
 	authGrcpConn, err := grpc.Dial(
-		"127.0.0.1:8081",
+		"127.0.0.1:"+strconv.Itoa(config.AuthServicePort),
 		grpc.WithInsecure(),
 	)
 	if err != nil {
-		log.Fatalf("cant connect to grpc")
+		log.Fatalf("cant connect to authGrcpConn")
 		return router, err
 	}
 
@@ -94,28 +95,45 @@ func NewRouter() (*mux.Router, error) {
 	sessManager := session.NewServiceClient(authGrcpConn)
 
 	recomsGrcpConn, err := grpc.Dial(
-		"127.0.0.1:8082",
+		"127.0.0.1:"+strconv.Itoa(config.RecommendsServicePort),
 		grpc.WithInsecure(),
 	)
 
+	if err != nil {
+		log.Fatalf("cant connect to recomsGrcpConn")
+		return router, err
+	}
+
 	recommsManager := recomsproto.NewServiceClient(recomsGrcpConn)
+
+	notifGrcpConn, err := grpc.Dial(
+		"127.0.0.1:"+strconv.Itoa(config.NotifsServicePort),
+		grpc.WithInsecure(),
+	)
+
+	if err != nil {
+		log.Fatalf("cant connect to recomsGrcpConn")
+		return router, err
+	}
+
+	notifManager := notifsproto.NewServiceClient(notifGrcpConn)
 
 	uS := usServ.UserService{
 		Storage: &usRep.DBUserStorage{
 			DbConn: db_connect.OpenSqlxViaPgxConnPool(),
 		},
 		RecomService: recommsManager,
-		NotifChan:    make(chan NotifStruct, 64),
+		NotifService: notifManager,
 	}
 
 	h := handler.Handler{
 		InternalDir: staticDir,
 		AuthService: sessManager,
 		UserService: &uS,
-		ConnectsPool: WsConnects{
-			Connects: map[uuid.UUID]*ConnectsPerUser{},
-			ConsMu:   &sync.Mutex{},
-		},
+		// ConnectsPool: WsConnects{
+		// 	Connects: map[uuid.UUID]*ConnectsPerUser{},
+		// 	ConsMu:   &sync.Mutex{},
+		// },
 		// ConnectsPool: WsConnects{},
 		// ConsMu:      &sync.Mutex{},
 		// WsConnects:  map[string]Connections{},
@@ -126,9 +144,9 @@ func NewRouter() (*mux.Router, error) {
 	// AccessLogOut.StdLogger = log.New(os.Stdout, "STD ", log.LUTC|log.Lshortfile)
 	authMiddleware := middleware.AuthMiddlewareGenerator(sessManager)
 
-	router.Use(loger.AccessLogMiddleware)
-	router.Use(middleware.CorsMiddleware)
-	router.Use(authMiddleware)
+	// router.Use(loger.AccessLogMiddleware)
+	// router.Use(middleware.CorsMiddleware)
+	// router.Use(authMiddleware)
 	// router.Use(middleware.CSRFMiddleware)
 
 	router = router.PathPrefix("/api/").Subrouter()
@@ -136,6 +154,7 @@ func NewRouter() (*mux.Router, error) {
 	router.Use(loger.AccessLogMiddleware)
 	router.Use(middleware.CorsMiddleware)
 	router.Use(authMiddleware)
+	// router.Use(middleware.CSRFMiddleware)
 
 	router.HandleFunc("/upload", h.UploadFile()).Methods(http.MethodPost, http.MethodOptions)
 
@@ -179,10 +198,7 @@ func NewRouter() (*mux.Router, error) {
 
 	router.HandleFunc("/tags", h.GetTags).Methods(http.MethodGet, http.MethodOptions)
 
-	router.HandleFunc("/notifications", h.Notifications)
-
 	// router.Handle("/metrics", promhttp.Handler())
-	go h.UserService.Notifications(&h.ConnectsPool)
 
 	return router, nil
 }
@@ -233,5 +249,5 @@ func RunServer() {
 		log.Fatal("Failed to create router")
 	}
 	// log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", router))
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(config.MainAppPort), router))
 }

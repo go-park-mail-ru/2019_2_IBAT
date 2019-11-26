@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 
+	"2019_2_IBAT/pkg/app/notifs/notifsproto"
 	"2019_2_IBAT/pkg/app/recommends/recomsproto"
 	. "2019_2_IBAT/pkg/pkg/interfaces"
 
@@ -54,31 +55,22 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 
 	tagIDs := h.Storage.GetTagIDs(vacancyReg.Spheres)
 
-	h.NotifChan <- NotifStruct{
-		VacancyId: id,
-		TagIDs:    tagIDs,
-	}
-	// strTagsIds := UuidsToStrings(tagIDs)
+	ctx := context.Background()
+	_, err = h.NotifService.SendNotification(
+		ctx,
+		&notifsproto.SendNotificationMessage{
+			VacancyID: id.String(),
+			TagIDs:    UuidsToStrings(tagIDs),
+		})
 
-	// err := h.NotifsService.SendNotification(
-	// 	ctx,
-	// 	// &recomsproto.GetTagIDsMessage{
-	// 	// 	ID:      authInfo.ID.String(),
-	// 	// 	Role:    authInfo.Role,
-	// 	// 	Expires: authInfo.Expires,
-	// 	// })
-	// 	nofifsproto.SendNotificationMessage{
-	// 		VacancyID: id.String(),
-	// 		TagIDs:    strTagsIds,
-	// 	})
+	if err != nil {
+		log.Printf("NotifService failed: %s\n", err)
+	}
 
 	return id, nil
 }
 
 func (h *UserService) GetVacancy(vacancyId uuid.UUID, authInfo AuthStorageValue) (Vacancy, error) {
-	// wg := &sync.WaitGroup{}
-	// wg.Add(1)
-
 	tagIDs, err := h.Storage.GetVacancyTagIDs(vacancyId)
 
 	ctx := context.Background()
@@ -127,7 +119,6 @@ func (h *UserService) DeleteVacancy(vacancyId uuid.UUID, authInfo AuthStorageVal
 
 func (h *UserService) PutVacancy(vacancyId uuid.UUID, body io.ReadCloser, authInfo AuthStorageValue) error {
 	if authInfo.Role != EmployerStr {
-		// log.Printf("Invalid action: %s", err)
 		return errors.New(ForbiddenMsg)
 	}
 

@@ -23,7 +23,7 @@ const maxUploadSize = 2 * 1024 * 1024 // 2 mb
 
 type Handler struct {
 	// Pool        *pool.Pool //
-	ConnectsPool WsConnects
+	// ConnectsPool WsConnects
 
 	InternalDir string
 	AuthService session.ServiceClient

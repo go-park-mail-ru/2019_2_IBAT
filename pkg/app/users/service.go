@@ -46,5 +46,5 @@ type Service interface {
 
 	CheckUser(email string, password string) (uuid.UUID, string, bool)
 
-	Notifications(connects *WsConnects)
+	// Notifications(connects *WsConnects)
 }

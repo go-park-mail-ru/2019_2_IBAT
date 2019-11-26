@@ -4,17 +4,19 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strconv"
 
 	"google.golang.org/grpc"
 
 	"2019_2_IBAT/pkg/app/recommends/recomsproto"
 	"2019_2_IBAT/pkg/app/recommends/repository"
 	"2019_2_IBAT/pkg/app/recommends/service"
+	"2019_2_IBAT/pkg/pkg/config"
 	"2019_2_IBAT/pkg/pkg/db_connect"
 )
 
 func main() {
-	lis, err := net.Listen("tcp", ":8082")
+	lis, err := net.Listen("tcp", ":"+strconv.Itoa(config.RecommendsServicePort))
 	if err != nil {
 		log.Fatalln("cant listet port", err)
 	}
@@ -29,12 +31,6 @@ func main() {
 		},
 	)
 
-	fmt.Println("starting server at :8082")
+	fmt.Println("starting server at :" + strconv.Itoa(config.RecommendsServicePort))
 	server.Serve(lis)
 }
-
-// изменено:      .vscode/launch.json
-// изменено:      cmd/auth/auth.go
-// изменено:      cmd/main/main
-// изменено:      cmd/main/main.go
-// изменено:      cmd/main/testlogfile

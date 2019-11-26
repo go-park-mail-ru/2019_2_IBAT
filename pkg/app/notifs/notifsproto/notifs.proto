@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+// protoc --go_out=plugins=grpc:. *.proto
+
+package notifsproto;
+
+message SendNotificationMessage {
+  string VacancyID = 1;
+  repeated string TagIDs = 2;
+}
+
+
+message Bool {
+  bool ok = 1;
+}
+
+service Service {
+	rpc SendNotification(SendNotificationMessage) returns (Bool) {}
+}
