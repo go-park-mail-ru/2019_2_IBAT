@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+// protoc --go_out=plugins=grpc:. *.proto
+
+package recomsproto;
+
+message GetTagIDsMessage {
+  string ID = 1;
+  string role = 2;
+  string expires = 3;
+}
+
+message SetTagIDsMessage {
+  string ID = 1;
+  string role = 2;
+  string expires = 3;
+  repeated string IDs = 4;
+}
+
+
+message Bool {
+  bool ok = 1;
+}
+
+message IDsMessage {
+    repeated string IDs = 1;
+}
+
+service Service {
+	rpc SetTagIDs(SetTagIDsMessage) returns (Bool) {}
+	rpc GetTagIDs(GetTagIDsMessage) returns (IDsMessage) {}
+	rpc GetUsersForTags(IDsMessage) returns (IDsMessage) {}
+}
