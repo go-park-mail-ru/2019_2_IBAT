@@ -18,7 +18,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	mock_users "2019_2_IBAT/pkg/app/server/handler/mock_users"
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 func TestHandler_GetVacancies(t *testing.T) {
@@ -36,7 +36,6 @@ func TestHandler_GetVacancies(t *testing.T) {
 			OwnerID:      uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
 			CompanyName:  "MCDonalds",
 			Experience:   "None",
-			Profession:   "waiter",
 			Position:     "",
 			Tasks:        "bring food to costumers",
 			Requirements: "middle school education",
@@ -63,7 +62,7 @@ func TestHandler_GetVacancies(t *testing.T) {
 
 	mockUserService.
 		EXPECT().
-		GetVacancies(params).
+		GetVacancies(gomock.Any(), params, gomock.Any()).
 		Return(expected, nil)
 
 	r := httptest.NewRequest("GET", "/vacancies/", nil)
@@ -111,7 +110,6 @@ func TestHandler_GetVacancy(t *testing.T) {
 			OwnerID:      uuid.MustParse("6ba7b810-9bbb-1111-1111-00c04fd430c8"),
 			CompanyName:  "PETUH",
 			Experience:   "None",
-			Profession:   "driver",
 			Position:     "",
 			Tasks:        "drive",
 			Requirements: "middle school education",
@@ -123,12 +121,12 @@ func TestHandler_GetVacancy(t *testing.T) {
 
 	mockUserService.
 		EXPECT().
-		GetVacancy(uuid.MustParse("22222222-9dad-11d1-80b1-00c04fd435c8")).
+		GetVacancy(uuid.MustParse("22222222-9dad-11d1-80b1-00c04fd435c8"), gomock.Any()).
 		Return(wantVacancies[0], nil)
 
 	mockUserService.
 		EXPECT().
-		GetVacancy(uuid.MustParse("12222222-9dad-11d1-80b1-00c04fd435c8")).
+		GetVacancy(uuid.MustParse("12222222-9dad-11d1-80b1-00c04fd435c8"), gomock.Any()).
 		Return(Vacancy{}, errors.New(InvalidIdMsg))
 
 	tests := []struct {
@@ -220,7 +218,6 @@ func TestHandler_CreateVacancy(t *testing.T) {
 				OwnerID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 				CompanyName:  "PETUH",
 				Experience:   "None",
-				Profession:   "driver",
 				Position:     "",
 				Tasks:        "drive",
 				Requirements: "middle school education",
@@ -240,7 +237,6 @@ func TestHandler_CreateVacancy(t *testing.T) {
 				OwnerID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 				CompanyName:  "PETUH",
 				Experience:   "None",
-				Profession:   "driver",
 				Position:     "",
 				Tasks:        "drive",
 				Requirements: "middle school education",
@@ -258,7 +254,6 @@ func TestHandler_CreateVacancy(t *testing.T) {
 				OwnerID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 				CompanyName:  "PETUH",
 				Experience:   "None",
-				Profession:   "driver",
 				Position:     "",
 				Tasks:        "drive",
 				Requirements: "middle school education",
@@ -286,7 +281,6 @@ func TestHandler_CreateVacancy(t *testing.T) {
 				OwnerID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 				CompanyName:  "PETUH",
 				Experience:   "None",
-				Profession:   "driver",
 				Position:     "",
 				Tasks:        "drive",
 				Requirements: "middle school education",
@@ -301,8 +295,8 @@ func TestHandler_CreateVacancy(t *testing.T) {
 				Role:    EmployerStr,
 				Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
 			},
-			wantStatusCode:   http.StatuspkgServerError,
-			wantErrorMessage: pkgErrorMsg,
+			wantStatusCode:   http.StatusInternalServerError,
+			wantErrorMessage: InternalErrorMsg,
 		},
 	}
 
@@ -329,7 +323,7 @@ func TestHandler_CreateVacancy(t *testing.T) {
 					Return(id1, nil)
 				mockUserService.
 					EXPECT().
-					GetVacancy(id1).
+					GetVacancy(id1, gomock.Any()).
 					Return(tc.vacancy, nil)
 			} else if !tc.wantUnauth {
 				mockUserService.
@@ -359,7 +353,7 @@ func TestHandler_CreateVacancy(t *testing.T) {
 				if err != nil {
 					t.Errorf("corrupted returned id: %s", err)
 				} else {
-					gotVacancy, _ := h.UserService.GetVacancy(uuid.MustParse(id.Id))
+					gotVacancy, _ := h.UserService.GetVacancy(uuid.MustParse(id.Id), AuthStorageValue{})
 
 					if rr.Code != http.StatusOK {
 						t.Error("status is not ok")
@@ -412,7 +406,6 @@ func TestHandler_DeleteVacancy(t *testing.T) {
 				OwnerID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 				CompanyName:  "PETUH",
 				Experience:   "None",
-				Profession:   "driver",
 				Position:     "",
 				Tasks:        "drive",
 				Requirements: "middle school education",
@@ -444,7 +437,6 @@ func TestHandler_DeleteVacancy(t *testing.T) {
 				OwnerID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 				CompanyName:  "PETUH",
 				Experience:   "None",
-				Profession:   "driver",
 				Position:     "",
 				Tasks:        "drive",
 				Requirements: "middle school education",
@@ -476,14 +468,13 @@ func TestHandler_DeleteVacancy(t *testing.T) {
 			pathArg:          "7aa7b810-9dad-11d1-72b5-04c04fd430c8",
 			wantUnauth:       false,
 			wantFail:         true,
-			wantStatusCode:   http.StatuspkgServerError,
-			wantErrorMessage: pkgErrorMsg,
+			wantStatusCode:   http.StatusInternalServerError,
+			wantErrorMessage: InternalErrorMsg,
 			vacancy: Vacancy{
 				ID:           uuid.MustParse("7aa7b810-9dad-11d1-72b5-04c04fd430c8"),
 				OwnerID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 				CompanyName:  "PETUH",
 				Experience:   "None",
-				Profession:   "driver",
 				Position:     "",
 				Tasks:        "drive",
 				Requirements: "middle school education",
@@ -514,7 +505,7 @@ func TestHandler_DeleteVacancy(t *testing.T) {
 					Return(nil)
 				mockUserService.
 					EXPECT().
-					GetVacancy(tc.vacancy.ID).
+					GetVacancy(tc.vacancy.ID, gomock.Any()).
 					Return(Vacancy{}, errors.New(InvalidIdMsg))
 			} else if !tc.wantUnauth && tc.wantErrorMessage != InvalidIdMsg {
 				mockUserService.
@@ -542,10 +533,10 @@ func TestHandler_DeleteVacancy(t *testing.T) {
 					t.Error("status is not ok")
 				}
 
-				gotVacancy, err := h.UserService.GetVacancy(uuid.MustParse(tc.pathArg))
+				gotVacancy, err := h.UserService.GetVacancy(uuid.MustParse(tc.pathArg), AuthStorageValue{})
 
 				var empVacancy Vacancy
-				if err != nil && gotVacancy != empVacancy {
+				if err != nil {
 					require.Equal(t, gotVacancy, empVacancy, "The two values should be the same.")
 				}
 			} else {
@@ -587,7 +578,6 @@ func TestHandler_PutVacancy(t *testing.T) {
 				OwnerID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 				CompanyName:  "PETUH",
 				Experience:   "None",
-				Profession:   "driver",
 				Position:     "",
 				Tasks:        "drive",
 				Requirements: "middle school education",
@@ -609,7 +599,6 @@ func TestHandler_PutVacancy(t *testing.T) {
 				OwnerID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
 				CompanyName:  "PETUH",
 				Experience:   "None",
-				Profession:   "driver",
 				Position:     "",
 				Tasks:        "drive",
 				Requirements: "middle school education",
@@ -656,7 +645,7 @@ func TestHandler_PutVacancy(t *testing.T) {
 					Return(nil)
 				mockUserService.
 					EXPECT().
-					GetVacancy(tc.vacancy.ID).
+					GetVacancy(tc.vacancy.ID, gomock.Any()).
 					Return(tc.vacancy, nil)
 			} else if !tc.wantUnauth {
 				mockUserService.
@@ -678,14 +667,13 @@ func TestHandler_PutVacancy(t *testing.T) {
 			router.ServeHTTP(rr, req.WithContext(ctx))
 
 			if !tc.wantFail {
-				gotVacancy, _ := h.UserService.GetVacancy(uuid.MustParse(tc.pathArg))
+				gotVacancy, _ := h.UserService.GetVacancy(uuid.MustParse(tc.pathArg), tc.record)
 
 				if rr.Code != http.StatusOK {
 					t.Error("status is not ok")
 				}
-				if tc.vacancy != gotVacancy {
-					require.Equal(t, tc.vacancy, gotVacancy, "The two values should be the same.")
-				}
+
+				require.Equal(t, tc.vacancy, gotVacancy, "The two values should be the same.")
 			} else {
 				bytes, _ := ioutil.ReadAll(rr.Body)
 				var gotError Error

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -16,9 +17,10 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/require"
 
+	"2019_2_IBAT/pkg/app/auth/session"
 	mock_auth "2019_2_IBAT/pkg/app/server/handler/mock_auth"
 	mock_users "2019_2_IBAT/pkg/app/server/handler/mock_users"
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 func TestHandler_CreateEmployer(t *testing.T) {
@@ -30,7 +32,7 @@ func TestHandler_CreateEmployer(t *testing.T) {
 	mockCtrl2 := gomock.NewController(t)
 	defer mockCtrl2.Finish()
 
-	mockAuthService := mock_auth.NewMockService(mockCtrl2)
+	mockAuthService := mock_auth.NewMockServiceClient(mockCtrl2)
 
 	h := Handler{
 		UserService: mockUserService,
@@ -47,6 +49,8 @@ func TestHandler_CreateEmployer(t *testing.T) {
 		wantInvJSON       bool
 		wantCreateSession bool
 		invJSON           string
+		sessionMsg        session.Session
+		ctx               context.Context
 	}{
 		{
 			name: "Test1",
@@ -63,6 +67,11 @@ func TestHandler_CreateEmployer(t *testing.T) {
 				EmplNum:          "322",
 			},
 			wantRole: EmployerStr,
+			ctx:      context.Background(),
+			sessionMsg: session.Session{
+				Id:    uuid.New().String(),
+				Class: EmployerStr,
+			},
 		},
 		{
 			name: "Test2",
@@ -118,11 +127,16 @@ func TestHandler_CreateEmployer(t *testing.T) {
 				Region:           "Petushki",
 				EmplNum:          "322",
 			},
-			wantRole:          SeekerStr,
+			wantRole:          EmployerStr,
 			wantFail:          true,
-			wantStatusCode:    http.StatuspkgServerError,
-			wantErrorMessage:  pkgErrorMsg,
+			wantStatusCode:    http.StatusInternalServerError,
+			wantErrorMessage:  InternalErrorMsg,
 			wantCreateSession: true,
+			ctx:               context.Background(),
+			sessionMsg: session.Session{
+				Id:    uuid.New().String(),
+				Class: SeekerStr,
+			},
 		},
 	}
 	for _, tc := range tests {
@@ -143,41 +157,41 @@ func TestHandler_CreateEmployer(t *testing.T) {
 			}
 			req.Header.Set("Content-Type", "application/json")
 
-			id1 := uuid.New()
+			// id1 := uuid.New()
 			if !tc.wantFail {
 				mockUserService.
 					EXPECT().
 					CreateEmployer(req.Body).
-					Return(id1, nil)
+					Return(uuid.MustParse(tc.sessionMsg.Id), nil)
 				mockAuthService.
 					EXPECT().
-					CreateSession(id1, EmployerStr).
+					CreateSession(tc.ctx, &tc.sessionMsg).
 					Return(
-						AuthStorageValue{
-							ID:      id1,
-							Role:    EmployerStr,
+						&session.CreateSessionInfo{
+							ID:      tc.sessionMsg.Id,
+							Role:    tc.wantRole,
 							Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
-						},
-						"cookie", nil)
+							Cookie:  "cookie",
+						}, nil)
 			} else if tc.wantCreateSession {
 				mockUserService.
 					EXPECT().
 					CreateEmployer(req.Body).
-					Return(id1, nil)
+					Return(uuid.MustParse(tc.sessionMsg.Id), nil)
 				mockAuthService.
 					EXPECT().
-					CreateSession(id1, EmployerStr).
-					Return(
-						AuthStorageValue{},
-						"", errors.New("Create session error"))
+					CreateSession(tc.ctx, &session.Session{
+						Id:    tc.sessionMsg.Id,
+						Class: tc.wantRole,
+					}).
+					Return(&session.CreateSessionInfo{}, errors.New("Create session error"))
+
 			} else {
 				mockUserService.
 					EXPECT().
 					CreateEmployer(req.Body).
 					Return(uuid.UUID{}, errors.New(tc.wantErrorMessage))
 			}
-
-			req.Header.Set("Content-Type", "application/json")
 
 			rr := httptest.NewRecorder()
 
@@ -356,8 +370,8 @@ func TestHandler_GetEmployers(t *testing.T) {
 		{
 			name:             "Test2",
 			wantFail:         true,
-			wantStatusCode:   http.StatuspkgServerError,
-			wantErrorMessage: pkgErrorMsg,
+			wantStatusCode:   http.StatusInternalServerError,
+			wantErrorMessage: InternalErrorMsg,
 		},
 	}
 
@@ -366,13 +380,13 @@ func TestHandler_GetEmployers(t *testing.T) {
 			if !tt.wantFail {
 				mockUserService.
 					EXPECT().
-					GetEmployers().
+					GetEmployers(gomock.Any()).
 					Return(expected, nil)
 			} else {
 				mockUserService.
 					EXPECT().
-					GetEmployers().
-					Return([]Employer{}, errors.New(pkgErrorMsg))
+					GetEmployers(gomock.Any()).
+					Return([]Employer{}, errors.New(InternalErrorMsg))
 			}
 
 			r := httptest.NewRequest("GET", "/employers/", nil)

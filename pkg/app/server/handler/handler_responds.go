@@ -1,11 +1,10 @@
 package handler
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 func (h *Handler) GetResponds(w http.ResponseWriter, r *http.Request) { //+
@@ -13,9 +12,8 @@ func (h *Handler) GetResponds(w http.ResponseWriter, r *http.Request) { //+
 
 	authInfo, ok := FromContext(r.Context())
 	if !ok {
-		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusUnauthorized, UnauthorizedMsg)
+		return
 	}
 
 	v := r.URL.Query()
@@ -24,9 +22,10 @@ func (h *Handler) GetResponds(w http.ResponseWriter, r *http.Request) { //+
 	params["resume_id"] = v.Get("resume_id")
 	fmt.Printf("vacancyid = %s, resumeid = %s", params["vacancyid"], params["resumeid"])
 
-	responds, _ := h.UserService.GetResponds(authInfo, params) //error handling
+	var responds RespondSlice
+	responds, _ = h.UserService.GetResponds(authInfo, params) //error handling
 
-	respondsJSON, _ := json.Marshal(responds)
+	respondsJSON, _ := responds.MarshalJSON()
 
 	w.Write(respondsJSON)
 
@@ -37,17 +36,13 @@ func (h *Handler) CreateRespond(w http.ResponseWriter, r *http.Request) { //+
 
 	authInfo, ok := FromContext(r.Context())
 	if !ok {
-		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusUnauthorized, UnauthorizedMsg)
 		return
 	}
 
 	err := h.UserService.CreateRespond(r.Body, authInfo)
 	if err != nil {
-		w.WriteHeader(http.StatusForbidden)
-		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusForbidden, ForbiddenMsg)
 		return
 	}
 }

@@ -3,10 +3,9 @@ package middleware
 import (
 	auth "2019_2_IBAT/pkg/app/auth"
 	csrf "2019_2_IBAT/pkg/pkg/csrf"
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 	"log"
 
-	"encoding/json"
 	"net/http"
 )
 
@@ -24,9 +23,7 @@ func CSRFMiddleware(h http.Handler) http.Handler {
 			authInfo, ok := FromContext(req.Context())
 			if !ok {
 				res.Header().Set("Content-Type", "application/json; charset=UTF-8")
-				res.WriteHeader(http.StatusUnauthorized)
-				errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg}) //token msg
-				res.Write([]byte(errJSON))
+				SetError(res, http.StatusUnauthorized, UnauthorizedMsg)
 				return
 			}
 
@@ -35,9 +32,7 @@ func CSRFMiddleware(h http.Handler) http.Handler {
 			_, err := csrf.Tokens.Check(authInfo.ID.String(), cookie.Value, token)
 			if err != nil {
 				res.Header().Set("Content-Type", "application/json; charset=UTF-8")
-				res.WriteHeader(http.StatusUnauthorized)
-				errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg}) //token msg
-				res.Write([]byte(errJSON))
+				SetError(res, http.StatusUnauthorized, UnauthorizedMsg)
 				return
 			}
 		}

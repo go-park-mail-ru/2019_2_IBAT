@@ -2,7 +2,6 @@ package users
 
 import (
 	"context"
-	"encoding/json"
 
 	"io"
 	"io/ioutil"
@@ -10,7 +9,7 @@ import (
 
 	"2019_2_IBAT/pkg/app/notifs/notifsproto"
 	"2019_2_IBAT/pkg/app/recommends/recomsproto"
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
@@ -35,7 +34,7 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 	// vacancyReg.ID = id
 	// vacancyReg.OwnerID = authInfo.ID
 
-	err = json.Unmarshal(bytes, &vacancyReg)
+	err = vacancyReg.UnmarshalJSON(bytes)
 	if err != nil {
 		log.Printf("Error while unmarshaling: %s", err)
 		err = errors.Wrap(err, "unmarshaling error")
@@ -128,7 +127,7 @@ func (h *UserService) PutVacancy(vacancyId uuid.UUID, body io.ReadCloser, authIn
 	}
 
 	var vacancy Vacancy
-	err = json.Unmarshal(bytes, &vacancy)
+	err = vacancy.UnmarshalJSON(bytes)
 	if err != nil {
 		log.Printf("Error while unmarshaling: %s", err)
 		err = errors.New(InvalidJSONMsg)

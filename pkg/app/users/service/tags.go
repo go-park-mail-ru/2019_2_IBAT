@@ -7,7 +7,6 @@ func (h *UserService) GetTags() (map[string][]string, error) {
 	if err != nil {
 		return tagMap, err
 	}
-	// fmt.Println(tags)
 
 	for _, item := range tags {
 		if tagMap[item.ParentTag] == nil {

@@ -7,7 +7,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 type DBRecommendsStorage struct {

@@ -7,7 +7,7 @@ import (
 
 	"2019_2_IBAT/pkg/app/recommends"
 	"2019_2_IBAT/pkg/app/recommends/recomsproto"
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 // func NewRecommendsService(DbConn *recommends.Repository) *Service {

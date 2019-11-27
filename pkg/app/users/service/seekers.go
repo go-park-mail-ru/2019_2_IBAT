@@ -1,12 +1,10 @@
 package users
 
 import (
-	"encoding/json"
-
 	"io"
 	"io/ioutil"
 
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
@@ -23,7 +21,7 @@ func (h *UserService) CreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
 	var newSeekerReg Seeker
 	// id := uuid.New()
 	// newSeekerReg.ID = id
-	err = json.Unmarshal(bytes, &newSeekerReg)
+	err = newSeekerReg.UnmarshalJSON(bytes)
 	if err != nil {
 		// log.Printf("Error while unmarshaling: %s", err)
 		// err = errors.Wrap(err, "unmarshaling error")
@@ -51,7 +49,7 @@ func (h *UserService) PutSeeker(body io.ReadCloser, id uuid.UUID) error {
 	}
 
 	var newSeekerReg SeekerReg
-	err = json.Unmarshal(bytes, &newSeekerReg)
+	err = newSeekerReg.UnmarshalJSON(bytes)
 	if err != nil {
 		// log.Printf("Error while unmarshaling: %s", err)
 		return errors.New(InvalidJSONMsg)

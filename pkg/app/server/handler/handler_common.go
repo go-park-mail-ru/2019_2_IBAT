@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"log"
 	"mime"
@@ -14,7 +13,7 @@ import (
 	"2019_2_IBAT/pkg/app/auth"
 	"2019_2_IBAT/pkg/app/auth/session"
 	"2019_2_IBAT/pkg/app/users"
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 const publicDir = "/static"
@@ -22,9 +21,6 @@ const publicDir = "/static"
 const maxUploadSize = 2 * 1024 * 1024 // 2 mb
 
 type Handler struct {
-	// Pool        *pool.Pool //
-	// ConnectsPool WsConnects
-
 	InternalDir string
 	AuthService session.ServiceClient
 	UserService users.Service
@@ -37,9 +33,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 
 	if !ok {
 		log.Println("GetUser Handler: unauthorized")
-		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusUnauthorized, UnauthorizedMsg)
 		return
 	}
 
@@ -48,9 +42,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			log.Println("GetUser Handler: failed to get seeker")
-			w.WriteHeader(http.StatusBadRequest)
-			errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-			w.Write(errJSON)
+			SetError(w, http.StatusBadRequest, InternalErrorMsg)
 			return
 		}
 
@@ -58,7 +50,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 			Role:   SeekerStr,
 			Seeker: seeker,
 		}
-		answerJSON, _ := json.Marshal(answer)
+		answerJSON, _ := answer.MarshalJSON()
 
 		w.Write(answerJSON)
 	} else if authInfo.Role == EmployerStr {
@@ -66,9 +58,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			log.Println("GetUser Handler: failed to get employer")
-			w.WriteHeader(http.StatusBadRequest)
-			errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-			w.Write(errJSON)
+			SetError(w, http.StatusBadRequest, InternalErrorMsg)
 			return
 		}
 
@@ -76,14 +66,12 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 			Role:     EmployerStr,
 			Employer: employer,
 		}
-		answerJSON, _ := json.Marshal(answer)
+		answerJSON, _ := answer.MarshalJSON()
 
 		w.Write([]byte(answerJSON))
 	} else {
-		w.WriteHeader(http.StatusUnauthorized)
 		log.Println("GetUser Handler: unauthorized")
-		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusUnauthorized, UnauthorizedMsg)
 		return
 	}
 }
@@ -94,18 +82,14 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	authInfo, ok := FromContext(r.Context())
 
 	if !ok {
-		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusUnauthorized, UnauthorizedMsg)
 		return
 	}
 
 	err := h.UserService.DeleteUser(authInfo)
 
 	if err != nil {
-		w.WriteHeader(http.StatusForbidden)
-		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusForbidden, ForbiddenMsg)
 		return
 	}
 
@@ -115,9 +99,7 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		Cookie: cookie.Value,
 	})
 	if !sessionBool.Ok {
-		w.WriteHeader(http.StatusInternalServerError)
-		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusInternalServerError, InternalErrorMsg)
 		return
 	}
 
@@ -131,26 +113,20 @@ func (h *Handler) PutUser(w http.ResponseWriter, r *http.Request) {
 	authInfo, ok := FromContext(r.Context())
 
 	if !ok {
-		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusUnauthorized, UnauthorizedMsg)
 		return
 	}
 
 	if authInfo.Role == SeekerStr {
 		err := h.UserService.PutSeeker(r.Body, authInfo.ID)
 		if err != nil {
-			w.WriteHeader(http.StatusForbidden) //should add invalid email case
-			errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
-			w.Write(errJSON)
+			SetError(w, http.StatusForbidden, ForbiddenMsg)
 			return
 		}
 	} else if authInfo.Role == EmployerStr {
 		err := h.UserService.PutEmployer(r.Body, authInfo.ID)
 		if err != nil {
-			w.WriteHeader(http.StatusForbidden) //should add invalid email case
-			errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
-			w.Write(errJSON)
+			SetError(w, http.StatusForbidden, ForbiddenMsg)
 			return
 		}
 	}
@@ -163,35 +139,26 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		authInfo, ok := FromContext(r.Context())
 
 		if !ok {
-			w.WriteHeader(http.StatusUnauthorized)
-			errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-			w.Write(errJSON)
+			SetError(w, http.StatusUnauthorized, UnauthorizedMsg)
 			return
 		}
 
 		r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 		if err := r.ParseMultipartForm(maxUploadSize); err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			errJSON, _ := json.Marshal(Error{Message: "Invalid size"})
-			w.Write(errJSON)
+			SetError(w, http.StatusBadRequest, "Invalid size")
 			return
 		}
 
-		// parse and validate file and post parameters
 		file, _, err := r.FormFile("my_file")
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			errJSON, _ := json.Marshal(Error{Message: "Invalid form key"})
-			w.Write(errJSON)
+			SetError(w, http.StatusBadRequest, "Invalid form key")
 			return
 		}
 		defer file.Close()
 
 		fileBytes, err := ioutil.ReadAll(file)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			errJSON, _ := json.Marshal(Error{Message: "Bad file"})
-			w.Write(errJSON)
+			SetError(w, http.StatusBadRequest, "Bad file")
 			return
 		}
 
@@ -202,37 +169,28 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 		case "image/gif", "image/png":
 			break
 		default:
-			w.WriteHeader(http.StatusBadRequest)
-			errJSON, _ := json.Marshal(Error{Message: "Invalid extension"})
-			w.Write(errJSON)
+			SetError(w, http.StatusBadRequest, "Invalid extension")
 			return
 		}
 
 		fileName := uuid.New().String()
 		fileEndings, err := mime.ExtensionsByType(filetype)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			errJSON, _ := json.Marshal(Error{Message: "Invalid extension"})
-			w.Write(errJSON)
+			SetError(w, http.StatusBadRequest, "Invalid extension")
 			return
 		}
 
 		pkgPath := filepath.Join(h.InternalDir, fileName+fileEndings[0])
 
-		//fmt.Println(pkgPath)
 		newFile, err := os.Create(pkgPath)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			errJSON, _ := json.Marshal(Error{Message: "Failed to set image"})
-			w.Write(errJSON)
+			SetError(w, http.StatusInternalServerError, "Failed to set image")
 			return
 		}
 
-		defer newFile.Close() // idempotent, okay to call twice
+		defer newFile.Close()
 		if _, err := newFile.Write(fileBytes); err != nil || newFile.Close() != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-			w.Write(errJSON)
+			SetError(w, http.StatusInternalServerError, InternalErrorMsg)
 			return
 		}
 

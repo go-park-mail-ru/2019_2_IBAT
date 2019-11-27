@@ -3,7 +3,7 @@ package auth
 import (
 	"github.com/google/uuid"
 
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 type Repository interface {

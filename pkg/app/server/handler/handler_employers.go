@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"encoding/json"
+	"context"
 	"log"
 	"net/http"
 	"net/url"
@@ -13,7 +13,7 @@ import (
 	"2019_2_IBAT/pkg/app/auth"
 	"2019_2_IBAT/pkg/app/auth/session"
 	csrf "2019_2_IBAT/pkg/pkg/csrf"
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) { //+
@@ -23,42 +23,34 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) { //+
 
 	uuid, err := h.UserService.CreateEmployer(r.Body)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{Message: err.Error()})
-		w.Write(errJSON)
+		SetError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	log.Println("CreateEmployer Employer was created")
 
-	sessInfo, err := h.AuthService.CreateSession(r.Context(), &session.Session{
+	sessInfo, err := h.AuthService.CreateSession(context.Background(), &session.Session{
 		Id:    uuid.String(),
 		Class: EmployerStr,
 	})
 
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusInternalServerError, InternalErrorMsg)
 		return
 	}
 
 	token, err := csrf.Tokens.Create(sessInfo.ID, sessInfo.Cookie,
 		time.Now().Add(24*time.Hour).Unix())
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("Handle CreateSession:  Create token failed")
-		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusInternalServerError, InternalErrorMsg)
 		return
 	}
 
 	expiresAt, err := time.Parse(TimeFormat, sessInfo.Expires)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("Handle CreateSession:  Time parsing failed")
-		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusInternalServerError, InternalErrorMsg)
 		return
 	}
 
@@ -71,7 +63,7 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) { //+
 	w.Header().Set("Access-Control-Expose-Headers", "X-Csrf-Token")
 	w.Header().Set("X-Csrf-Token", token)
 	http.SetCookie(w, &cookie)
-	RoleJSON, _ := json.Marshal(Role{Role: sessInfo.Role})
+	RoleJSON, _ := Role{Role: sessInfo.Role}.MarshalJSON()
 
 	w.Write(RoleJSON)
 }
@@ -85,23 +77,19 @@ func (h *Handler) GetEmployerById(w http.ResponseWriter, r *http.Request) { //+
 
 	if err != nil {
 		log.Printf("GetEmployerById Parse id error: %s\n", err)
-		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusBadRequest, InvalidIdMsg)
 		return
 	}
 
 	employer, err := h.UserService.GetEmployer(emplId)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusBadRequest, InvalidIdMsg)
 		return
 	}
 
 	employer.Password = "" //danger
-	employerJSON, _ := json.Marshal(employer)
+	employerJSON, _ := employer.MarshalJSON()
 
 	w.Write(employerJSON)
 }
@@ -110,16 +98,16 @@ func (h *Handler) GetEmployers(w http.ResponseWriter, r *http.Request) { //+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	params := h.ParseEmplQuery(r.URL.Query())
+
+	var employers EmployerSlice
 	employers, err := h.UserService.GetEmployers(params)
 
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusInternalServerError, InternalErrorMsg)
 		return
 	}
 
-	employerJSON, _ := json.Marshal(employers)
+	employerJSON, _ := employers.MarshalJSON()
 
 	w.Write(employerJSON)
 }

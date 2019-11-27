@@ -9,7 +9,7 @@ import (
 
 	"2019_2_IBAT/pkg/app/auth"
 	"2019_2_IBAT/pkg/app/auth/session"
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 type AuthService struct {

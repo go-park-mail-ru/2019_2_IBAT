@@ -4,12 +4,10 @@
 package mock_users
 
 import (
-	io "io"
-
+	. "2019_2_IBAT/pkg/pkg/models"
 	gomock "github.com/golang/mock/gomock"
 	uuid "github.com/google/uuid"
-
-	. "2019_2_IBAT/internal/pkg/interfaces"
+	io "io"
 )
 
 // Mock of Service interface
@@ -128,15 +126,15 @@ func (_mr *_MockServiceRecorder) DeleteVacancy(arg0, arg1 interface{}) *gomock.C
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "DeleteVacancy", arg0, arg1)
 }
 
-func (_m *MockService) GetVacancy(vacancyId uuid.UUID) (Vacancy, error) {
-	ret := _m.ctrl.Call(_m, "GetVacancy", vacancyId)
+func (_m *MockService) GetVacancy(vacancyId uuid.UUID, authInfo AuthStorageValue) (Vacancy, error) {
+	ret := _m.ctrl.Call(_m, "GetVacancy", vacancyId, authInfo)
 	ret0, _ := ret[0].(Vacancy)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockServiceRecorder) GetVacancy(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetVacancy", arg0)
+func (_mr *_MockServiceRecorder) GetVacancy(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetVacancy", arg0, arg1)
 }
 
 func (_m *MockService) PutVacancy(vacancyId uuid.UUID, body io.ReadCloser, authInfo AuthStorageValue) error {
@@ -191,11 +189,10 @@ func (_mr *_MockServiceRecorder) PutResume(arg0, arg1, arg2 interface{}) *gomock
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "PutResume", arg0, arg1, arg2)
 }
 
-func (_m *MockService) CreateRespond(body io.ReadCloser, authInfo AuthStorageValue) (uuid.UUID, error) {
+func (_m *MockService) CreateRespond(body io.ReadCloser, authInfo AuthStorageValue) error {
 	ret := _m.ctrl.Call(_m, "CreateRespond", body, authInfo)
-	ret0, _ := ret[0].(uuid.UUID)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 func (_mr *_MockServiceRecorder) CreateRespond(arg0, arg1 interface{}) *gomock.Call {
@@ -213,15 +210,46 @@ func (_mr *_MockServiceRecorder) GetResponds(arg0, arg1 interface{}) *gomock.Cal
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetResponds", arg0, arg1)
 }
 
-func (_m *MockService) GetEmployers() ([]Employer, error) {
-	ret := _m.ctrl.Call(_m, "GetEmployers")
+func (_m *MockService) CreateFavorite(vacancyId uuid.UUID, authInfo AuthStorageValue) error {
+	ret := _m.ctrl.Call(_m, "CreateFavorite", vacancyId, authInfo)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+func (_mr *_MockServiceRecorder) CreateFavorite(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "CreateFavorite", arg0, arg1)
+}
+
+func (_m *MockService) DeleteFavoriteVacancy(vacancyId uuid.UUID, authInfo AuthStorageValue) error {
+	ret := _m.ctrl.Call(_m, "DeleteFavoriteVacancy", vacancyId, authInfo)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+func (_mr *_MockServiceRecorder) DeleteFavoriteVacancy(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "DeleteFavoriteVacancy", arg0, arg1)
+}
+
+func (_m *MockService) GetFavoriteVacancies(authInfo AuthStorageValue) ([]Vacancy, error) {
+	ret := _m.ctrl.Call(_m, "GetFavoriteVacancies", authInfo)
+	ret0, _ := ret[0].([]Vacancy)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockServiceRecorder) GetFavoriteVacancies(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetFavoriteVacancies", arg0)
+}
+
+func (_m *MockService) GetEmployers(params map[string]interface{}) ([]Employer, error) {
+	ret := _m.ctrl.Call(_m, "GetEmployers", params)
 	ret0, _ := ret[0].([]Employer)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockServiceRecorder) GetEmployers() *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetEmployers")
+func (_mr *_MockServiceRecorder) GetEmployers(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetEmployers", arg0)
 }
 
 func (_m *MockService) GetSeekers() ([]Seeker, error) {
@@ -235,26 +263,37 @@ func (_mr *_MockServiceRecorder) GetSeekers() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetSeekers")
 }
 
-func (_m *MockService) GetResumes() ([]Resume, error) {
-	ret := _m.ctrl.Call(_m, "GetResumes")
+func (_m *MockService) GetResumes(authInfo AuthStorageValue, params map[string]interface{}) ([]Resume, error) {
+	ret := _m.ctrl.Call(_m, "GetResumes", authInfo, params)
 	ret0, _ := ret[0].([]Resume)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockServiceRecorder) GetResumes() *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetResumes")
+func (_mr *_MockServiceRecorder) GetResumes(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetResumes", arg0, arg1)
 }
 
-func (_m *MockService) GetVacancies(params map[string]interface{}) ([]Vacancy, error) {
-	ret := _m.ctrl.Call(_m, "GetVacancies", params)
+func (_m *MockService) GetVacancies(authInfo AuthStorageValue, params map[string]interface{}, tagParams map[string]interface{}) ([]Vacancy, error) {
+	ret := _m.ctrl.Call(_m, "GetVacancies", authInfo, params, tagParams)
 	ret0, _ := ret[0].([]Vacancy)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockServiceRecorder) GetVacancies(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetVacancies", arg0)
+func (_mr *_MockServiceRecorder) GetVacancies(arg0, arg1, arg2 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetVacancies", arg0, arg1, arg2)
+}
+
+func (_m *MockService) GetTags() (map[string][]string, error) {
+	ret := _m.ctrl.Call(_m, "GetTags")
+	ret0, _ := ret[0].(map[string][]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockServiceRecorder) GetTags() *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetTags")
 }
 
 func (_m *MockService) SetImage(id uuid.UUID, class string, imageName string) bool {

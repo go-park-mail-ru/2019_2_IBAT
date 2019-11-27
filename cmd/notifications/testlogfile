@@ -86,3 +86,14 @@
 2019/11/26 20:37:07 LOG END [GET] [::1]:48606, /api/notifications 2.682241ms
 
 
+2019/11/26 23:01:23 LOG START [GET] [::1]:35904, /api/notifications 
+2019/11/26 23:01:23 AuthMiddleware: started
+2019/11/26 23:01:23 LOG START [GET] [::1]:35904, /api/notifications 
+2019/11/26 23:01:23 Access-Control-Allow-Origin and Access-Control-Allow-Credentials headers were set
+2019/11/26 23:01:23 AuthMiddleware: started
+2019/11/26 23:01:23 LOG END [GET] [::1]:35904, /api/notifications 2.638461ms
+
+
+2019/11/26 23:01:23 LOG END [GET] [::1]:35904, /api/notifications 24.76703ms
+
+

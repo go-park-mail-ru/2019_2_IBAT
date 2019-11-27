@@ -130,24 +130,10 @@ func NewRouter() (*mux.Router, error) {
 		InternalDir: staticDir,
 		AuthService: sessManager,
 		UserService: &uS,
-		// ConnectsPool: WsConnects{
-		// 	Connects: map[uuid.UUID]*ConnectsPerUser{},
-		// 	ConsMu:   &sync.Mutex{},
-		// },
-		// ConnectsPool: WsConnects{},
-		// ConsMu:      &sync.Mutex{},
-		// WsConnects:  map[string]Connections{},
 	}
 
 	loger := middleware.NewLogger()
-	// AccessLogOut := new(middleware.AccessLogger)
-	// AccessLogOut.StdLogger = log.New(os.Stdout, "STD ", log.LUTC|log.Lshortfile)
 	authMiddleware := middleware.AuthMiddlewareGenerator(sessManager)
-
-	// router.Use(loger.AccessLogMiddleware)
-	// router.Use(middleware.CorsMiddleware)
-	// router.Use(authMiddleware)
-	// router.Use(middleware.CSRFMiddleware)
 
 	router = router.PathPrefix("/api/").Subrouter()
 

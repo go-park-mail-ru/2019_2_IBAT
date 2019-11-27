@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 func (h *UserService) CreateFavorite(vacancyId uuid.UUID, record AuthStorageValue) error { //should do this part by one r with if?

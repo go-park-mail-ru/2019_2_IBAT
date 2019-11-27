@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -16,9 +17,10 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/require"
 
+	"2019_2_IBAT/pkg/app/auth/session"
 	mock_auth "2019_2_IBAT/pkg/app/server/handler/mock_auth"
 	mock_users "2019_2_IBAT/pkg/app/server/handler/mock_users"
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 func TestHandler_CreateSeeker(t *testing.T) {
@@ -30,7 +32,7 @@ func TestHandler_CreateSeeker(t *testing.T) {
 	mockCtrl2 := gomock.NewController(t)
 	defer mockCtrl2.Finish()
 
-	mockAuthService := mock_auth.NewMockService(mockCtrl2)
+	mockAuthService := mock_auth.NewMockServiceClient(mockCtrl2)
 
 	h := Handler{
 		UserService: mockUserService,
@@ -47,6 +49,8 @@ func TestHandler_CreateSeeker(t *testing.T) {
 		wantInvJSON       bool
 		wantCreateSession bool
 		invJSON           string
+		ctx               context.Context
+		sessionMsg        session.Session
 	}{
 		{
 			name: "Test1",
@@ -57,6 +61,11 @@ func TestHandler_CreateSeeker(t *testing.T) {
 				Password:   "12345",
 			},
 			wantRole: SeekerStr,
+			ctx:      context.Background(),
+			sessionMsg: session.Session{
+				Id:    uuid.New().String(),
+				Class: SeekerStr,
+			},
 		},
 		{
 			name: "Test2",
@@ -95,9 +104,14 @@ func TestHandler_CreateSeeker(t *testing.T) {
 			},
 			wantRole:          SeekerStr,
 			wantFail:          true,
-			wantStatusCode:    http.StatuspkgServerError,
-			wantErrorMessage:  pkgErrorMsg,
+			wantStatusCode:    http.StatusInternalServerError,
+			wantErrorMessage:  InternalErrorMsg,
 			wantCreateSession: true,
+			ctx:               context.Background(),
+			sessionMsg: session.Session{
+				Id:    uuid.New().String(),
+				Class: SeekerStr,
+			},
 		},
 	}
 	for _, tc := range tests {
@@ -118,33 +132,31 @@ func TestHandler_CreateSeeker(t *testing.T) {
 			}
 			req.Header.Set("Content-Type", "application/json")
 
-			id1 := uuid.New()
 			if !tc.wantFail {
 				mockUserService.
 					EXPECT().
 					CreateSeeker(req.Body).
-					Return(id1, nil)
+					Return(uuid.MustParse(tc.sessionMsg.Id), nil)
 				mockAuthService.
 					EXPECT().
-					CreateSession(id1, SeekerStr).
+					CreateSession(gomock.Any(), &tc.sessionMsg).
 					Return(
-						AuthStorageValue{
-							ID:      id1,
-							Role:    SeekerStr,
+						&session.CreateSessionInfo{
+							ID:      tc.sessionMsg.Id,
+							Role:    tc.sessionMsg.Class,
 							Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
-						},
-						"cookie", nil)
+							Cookie:  "cookie",
+						}, nil)
 			} else if tc.wantCreateSession {
 				mockUserService.
 					EXPECT().
 					CreateSeeker(req.Body).
-					Return(id1, nil)
+					Return(uuid.MustParse(tc.sessionMsg.Id), nil)
 				mockAuthService.
 					EXPECT().
-					CreateSession(id1, SeekerStr).
+					CreateSession(gomock.Any(), &tc.sessionMsg).
 					Return(
-						AuthStorageValue{},
-						"", errors.New("Create session error"))
+						&session.CreateSessionInfo{}, errors.New("Create session error"))
 			} else {
 				mockUserService.
 					EXPECT().

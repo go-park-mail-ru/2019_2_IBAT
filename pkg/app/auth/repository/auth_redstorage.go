@@ -11,7 +11,7 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/google/uuid"
 
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 // const TimeFormat = time.RFC3339

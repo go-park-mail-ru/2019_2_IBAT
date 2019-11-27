@@ -1,14 +1,13 @@
 package users
 
 import (
-	"encoding/json"
 	"io"
 	"io/ioutil"
 	"log"
 
 	"github.com/pkg/errors"
 
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 func (h *UserService) CreateRespond(body io.ReadCloser, record AuthStorageValue) error { //should do this part by one r with if?
@@ -25,7 +24,7 @@ func (h *UserService) CreateRespond(body io.ReadCloser, record AuthStorageValue)
 	}
 
 	var respond Respond
-	err = json.Unmarshal(bytes, &respond)
+	err = respond.UnmarshalJSON(bytes)
 	if err != nil {
 		log.Printf("Error while unmarshaling: %s", err)
 		err = errors.Wrap(err, "unmarshaling error")

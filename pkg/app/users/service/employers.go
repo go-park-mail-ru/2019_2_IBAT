@@ -1,7 +1,6 @@
 package users
 
 import (
-	"encoding/json"
 	"io"
 	"io/ioutil"
 	"log"
@@ -9,7 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 func (h *UserService) CreateEmployer(body io.ReadCloser) (uuid.UUID, error) {
@@ -24,7 +23,7 @@ func (h *UserService) CreateEmployer(body io.ReadCloser) (uuid.UUID, error) {
 	var newEmployerReg Employer
 	// id := uuid.New()
 	// newEmployerReg.ID = id
-	err = json.Unmarshal(bytes, &newEmployerReg)
+	err = newEmployerReg.UnmarshalJSON(bytes)
 	if err != nil {
 		log.Printf("Error while unmarshaling: %s", err)
 		return uuid.UUID{}, errors.New(InvalidJSONMsg)
@@ -51,7 +50,7 @@ func (h *UserService) PutEmployer(body io.ReadCloser, id uuid.UUID) error {
 	}
 
 	var newEmployerReg EmployerReg
-	err = json.Unmarshal(bytes, &newEmployerReg)
+	err = newEmployerReg.UnmarshalJSON(bytes)
 	if err != nil {
 		log.Printf("Error while unmarshaling: %s", err)
 		return errors.New(InvalidJSONMsg)

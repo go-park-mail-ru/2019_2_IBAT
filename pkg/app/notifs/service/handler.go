@@ -12,7 +12,7 @@ import (
 
 	"2019_2_IBAT/pkg/app/auth"
 	"2019_2_IBAT/pkg/app/recommends/recomsproto"
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 var upgrader = websocket.Upgrader{
@@ -28,6 +28,7 @@ func (h Service) HandleNotifications(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		log.Println("Notifications Handler: unauthorized")
 		w.WriteHeader(http.StatusUnauthorized)
+
 		return
 	}
 
@@ -120,7 +121,7 @@ func (h Service) Notifications() {
 
 		h.ConnectsPool.ConsMu.Lock()
 		for _, id := range ids {
-			fmt.Println("Notification ready  to be sent to user %s")
+			fmt.Println("Notification ready  to be sent to user")
 			fmt.Println(h.ConnectsPool.Connects[id])
 			if _, ok := h.ConnectsPool.Connects[id]; ok {
 				h.ConnectsPool.Connects[id].Ch <- notif.VacancyId

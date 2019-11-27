@@ -4,7 +4,7 @@
 package mock_users
 
 import (
-	. "2019_2_IBAT/internal/pkg/interfaces"
+	. "2019_2_IBAT/internal/pkg/models"
 
 	gomock "github.com/golang/mock/gomock"
 	uuid "github.com/google/uuid"

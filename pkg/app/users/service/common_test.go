@@ -2,7 +2,7 @@ package users
 
 import (
 	mock_user_repo "2019_2_IBAT/pkg/app/users/service/mock_user_repo"
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 	"testing"
 
 	"github.com/golang/mock/gomock"

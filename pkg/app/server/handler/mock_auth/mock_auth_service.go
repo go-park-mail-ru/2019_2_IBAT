@@ -4,74 +4,77 @@
 package mock_auth
 
 import (
-	http "net/http"
-
+	session "2019_2_IBAT/pkg/app/auth/session"
+	context "context"
 	gomock "github.com/golang/mock/gomock"
-	uuid "github.com/google/uuid"
-
-	. "2019_2_IBAT/internal/pkg/interfaces"
+	grpc "google.golang.org/grpc"
 )
 
-// Mock of Service interface
-type MockService struct {
+// Mock of ServiceClient interface
+type MockServiceClient struct {
 	ctrl     *gomock.Controller
-	recorder *_MockServiceRecorder
+	recorder *_MockServiceClientRecorder
 }
 
-// Recorder for MockService (not exported)
-type _MockServiceRecorder struct {
-	mock *MockService
+// Recorder for MockServiceClient (not exported)
+type _MockServiceClientRecorder struct {
+	mock *MockServiceClient
 }
 
-func NewMockService(ctrl *gomock.Controller) *MockService {
-	mock := &MockService{ctrl: ctrl}
-	mock.recorder = &_MockServiceRecorder{mock}
+func NewMockServiceClient(ctrl *gomock.Controller) *MockServiceClient {
+	mock := &MockServiceClient{ctrl: ctrl}
+	mock.recorder = &_MockServiceClientRecorder{mock}
 	return mock
 }
 
-func (_m *MockService) EXPECT() *_MockServiceRecorder {
+func (_m *MockServiceClient) EXPECT() *_MockServiceClientRecorder {
 	return _m.recorder
 }
 
-func (_m *MockService) CreateSession(id uuid.UUID, class string) (AuthStorageValue, string, error) {
-	ret := _m.ctrl.Call(_m, "CreateSession", id, class)
-	ret0, _ := ret[0].(AuthStorageValue)
-	ret1, _ := ret[1].(string)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
-}
-
-func (_mr *_MockServiceRecorder) CreateSession(arg0, arg1 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "CreateSession", arg0, arg1)
-}
-
-func (_m *MockService) DeleteSession(cookie string) bool {
-	ret := _m.ctrl.Call(_m, "DeleteSession", cookie)
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-func (_mr *_MockServiceRecorder) DeleteSession(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "DeleteSession", arg0)
-}
-
-func (_m *MockService) GetSession(cookie string) (AuthStorageValue, bool) {
-	ret := _m.ctrl.Call(_m, "GetSession", cookie)
-	ret0, _ := ret[0].(AuthStorageValue)
-	ret1, _ := ret[1].(bool)
+func (_m *MockServiceClient) CreateSession(ctx context.Context, in *session.Session, opts ...grpc.CallOption) (*session.CreateSessionInfo, error) {
+	_s := []interface{}{ctx, in}
+	for _, _x := range opts {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "CreateSession", _s...)
+	ret0, _ := ret[0].(*session.CreateSessionInfo)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockServiceRecorder) GetSession(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetSession", arg0)
+func (_mr *_MockServiceClientRecorder) CreateSession(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1}, arg2...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "CreateSession", _s...)
 }
 
-func (_m *MockService) AuthMiddleware(h http.Handler) http.Handler {
-	ret := _m.ctrl.Call(_m, "AuthMiddleware", h)
-	ret0, _ := ret[0].(http.Handler)
-	return ret0
+func (_m *MockServiceClient) DeleteSession(ctx context.Context, in *session.Cookie, opts ...grpc.CallOption) (*session.Bool, error) {
+	_s := []interface{}{ctx, in}
+	for _, _x := range opts {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "DeleteSession", _s...)
+	ret0, _ := ret[0].(*session.Bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
-func (_mr *_MockServiceRecorder) AuthMiddleware(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "AuthMiddleware", arg0)
+func (_mr *_MockServiceClientRecorder) DeleteSession(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1}, arg2...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "DeleteSession", _s...)
+}
+
+func (_m *MockServiceClient) GetSession(ctx context.Context, in *session.Cookie, opts ...grpc.CallOption) (*session.GetSessionInfo, error) {
+	_s := []interface{}{ctx, in}
+	for _, _x := range opts {
+		_s = append(_s, _x)
+	}
+	ret := _m.ctrl.Call(_m, "GetSession", _s...)
+	ret0, _ := ret[0].(*session.GetSessionInfo)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockServiceClientRecorder) GetSession(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	_s := append([]interface{}{arg0, arg1}, arg2...)
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetSession", _s...)
 }

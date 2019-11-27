@@ -1,7 +1,7 @@
 package users
 
 import (
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 	mock_user_repo "2019_2_IBAT/pkg/app/users/service/mock_user_repo"
 	"encoding/json"
 	"io/ioutil"

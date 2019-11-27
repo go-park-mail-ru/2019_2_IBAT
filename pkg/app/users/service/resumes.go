@@ -1,13 +1,11 @@
 package users
 
 import (
-	"encoding/json"
-
 	"io"
 	"io/ioutil"
 	"log"
 
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
@@ -30,7 +28,7 @@ func (h *UserService) CreateResume(body io.ReadCloser, authInfo AuthStorageValue
 	// id := uuid.New()
 	// resumeReg.ID = id
 	// resumeReg.OwnerID = authInfo.ID
-	err = json.Unmarshal(bytes, &resumeReg)
+	err = resumeReg.UnmarshalJSON(bytes)
 	if err != nil {
 		// log.Printf("Error while unmarshaling: %s", err)
 		// err = errors.Wrap(err, "unmarshaling error")
@@ -93,7 +91,7 @@ func (h *UserService) PutResume(resumeId uuid.UUID, body io.ReadCloser, authInfo
 	}
 
 	var resume Resume
-	err = json.Unmarshal(bytes, &resume)
+	err = resume.UnmarshalJSON(bytes)
 	if err != nil {
 		log.Printf("Error while unmarshaling: %s", err)
 		return errors.New(InvalidJSONMsg)

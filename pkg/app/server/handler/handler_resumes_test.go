@@ -18,7 +18,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	mock_users "2019_2_IBAT/pkg/app/server/handler/mock_users"
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 func TestHandler_GetResume(t *testing.T) {
@@ -42,7 +42,6 @@ func TestHandler_GetResume(t *testing.T) {
 			Sex:         "male",
 			Citizenship: "Ukraine",
 			Experience:  "7 years",
-			Profession:  "programmer",
 			Position:    "middle",
 			Wage:        "100500",
 			Education:   "MSU",
@@ -143,7 +142,6 @@ func TestHandler_GetResumes(t *testing.T) {
 			Sex:         "male",
 			Citizenship: "Russia",
 			Experience:  "7 years",
-			Profession:  "programmer",
 			Position:    "middle",
 			Wage:        "100500",
 			Education:   "MSU",
@@ -160,7 +158,6 @@ func TestHandler_GetResumes(t *testing.T) {
 			Sex:         "male",
 			Citizenship: "Ukraine",
 			Experience:  "7 years",
-			Profession:  "programmer",
 			Position:    "middle",
 			Wage:        "100500",
 			Education:   "MSU",
@@ -170,7 +167,7 @@ func TestHandler_GetResumes(t *testing.T) {
 
 	mockUserService.
 		EXPECT().
-		GetResumes().
+		GetResumes(gomock.Any(), gomock.Any()).
 		Return(expected, nil)
 
 	r := httptest.NewRequest("GET", "/resumes/", nil)
@@ -236,7 +233,6 @@ func TestHandler_CreateResume(t *testing.T) {
 				Sex:         "male",
 				Citizenship: "Russia",
 				Experience:  "7 years",
-				Profession:  "programmer",
 				Position:    "middle",
 				Wage:        "100500",
 				Education:   "MSU",
@@ -260,7 +256,6 @@ func TestHandler_CreateResume(t *testing.T) {
 				Sex:         "male",
 				Citizenship: "Russia",
 				Experience:  "7 years",
-				Profession:  "programmer",
 				Position:    "middle",
 				Wage:        "100500",
 				Education:   "MSU",
@@ -282,7 +277,6 @@ func TestHandler_CreateResume(t *testing.T) {
 				Sex:         "male",
 				Citizenship: "Russia",
 				Experience:  "7 years",
-				Profession:  "programmer",
 				Position:    "middle",
 				Wage:        "100500",
 				Education:   "MSU",
@@ -314,7 +308,6 @@ func TestHandler_CreateResume(t *testing.T) {
 				Sex:         "male",
 				Citizenship: "Russia",
 				Experience:  "7 years",
-				Profession:  "programmer",
 				Position:    "middle",
 				Wage:        "100500",
 				Education:   "MSU",
@@ -327,8 +320,8 @@ func TestHandler_CreateResume(t *testing.T) {
 			},
 			wantFail:         true,
 			wantUnauth:       false,
-			wantStatusCode:   http.StatuspkgServerError,
-			wantErrorMessage: pkgErrorMsg,
+			wantStatusCode:   http.StatusInternalServerError,
+			wantErrorMessage: InternalErrorMsg,
 		},
 	}
 
@@ -444,7 +437,6 @@ func TestHandler_DeleteResume(t *testing.T) {
 				Sex:         "male",
 				Citizenship: "Russia",
 				Experience:  "7 years",
-				Profession:  "programmer",
 				Position:    "middle",
 				Wage:        "100500",
 				Education:   "MSU",
@@ -480,7 +472,6 @@ func TestHandler_DeleteResume(t *testing.T) {
 				Sex:         "male",
 				Citizenship: "Russia",
 				Experience:  "7 years",
-				Profession:  "programmer",
 				Position:    "middle",
 				Wage:        "100500",
 				Education:   "MSU",
@@ -510,8 +501,8 @@ func TestHandler_DeleteResume(t *testing.T) {
 			pathArg:          "7aa7b810-9dad-11d1-72b5-04c04fd430c8",
 			wantUnauth:       false,
 			wantFail:         true,
-			wantStatusCode:   http.StatuspkgServerError,
-			wantErrorMessage: pkgErrorMsg,
+			wantStatusCode:   http.StatusInternalServerError,
+			wantErrorMessage: InternalErrorMsg,
 			resume: Resume{
 				ID:          uuid.MustParse("7aa7b810-9dad-11d1-72b5-04c04fd430c8"),
 				OwnerID:     uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
@@ -523,7 +514,6 @@ func TestHandler_DeleteResume(t *testing.T) {
 				Sex:         "male",
 				Citizenship: "Russia",
 				Experience:  "7 years",
-				Profession:  "programmer",
 				Position:    "middle",
 				Wage:        "100500",
 				Education:   "MSU",
@@ -583,7 +573,7 @@ func TestHandler_DeleteResume(t *testing.T) {
 				gotResume, err := h.UserService.GetResume(uuid.MustParse(tc.pathArg))
 
 				var empResume Resume
-				if err != nil && gotResume != empResume {
+				if err != nil {
 					require.Equal(t, gotResume, empResume, "The two values should be the same.")
 				}
 			} else {
@@ -631,7 +621,6 @@ func TestHandler_PutResume(t *testing.T) {
 				Sex:         "male",
 				Citizenship: "Sweeden",
 				Experience:  "15 years",
-				Profession:  "programmer",
 				Position:    "senior",
 				Wage:        "100500",
 				Education:   "MSU",
@@ -657,7 +646,6 @@ func TestHandler_PutResume(t *testing.T) {
 				Sex:         "male",
 				Citizenship: "Sweeden",
 				Experience:  "15 years",
-				Profession:  "programmer",
 				Position:    "senior",
 				Wage:        "100500",
 				Education:   "MSU",
@@ -729,9 +717,8 @@ func TestHandler_PutResume(t *testing.T) {
 				if rr.Code != http.StatusOK {
 					t.Error("status is not ok")
 				}
-				if tc.resume != gotResume {
-					require.Equal(t, tc.resume, gotResume, "The two values should be the same.")
-				}
+
+				require.Equal(t, tc.resume, gotResume, "The two values should be the same.")
 			} else {
 				bytes, _ := ioutil.ReadAll(rr.Body)
 				var gotError Error

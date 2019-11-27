@@ -17,9 +17,10 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"2019_2_IBAT/pkg/app/auth"
+	"2019_2_IBAT/pkg/app/auth/session"
 	mock_auth "2019_2_IBAT/pkg/app/server/handler/mock_auth"
 	mock_users "2019_2_IBAT/pkg/app/server/handler/mock_users"
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 func TestHandler_CreateSession(t *testing.T) {
@@ -32,7 +33,7 @@ func TestHandler_CreateSession(t *testing.T) {
 	mockCtrl2 := gomock.NewController(t)
 	defer mockCtrl2.Finish()
 
-	mockAuthService := mock_auth.NewMockService(mockCtrl2)
+	mockAuthService := mock_auth.NewMockServiceClient(mockCtrl2)
 
 	h := Handler{
 		UserService: mockUserService,
@@ -40,9 +41,10 @@ func TestHandler_CreateSession(t *testing.T) {
 	}
 
 	tests := []struct {
-		name              string
+		name string
+		// authInput         UserAuthInput
+		// wantID            uuid.UUID
 		authInput         UserAuthInput
-		wantID            uuid.UUID
 		invJSON           string
 		wantFail          bool
 		wantRole          string
@@ -50,6 +52,8 @@ func TestHandler_CreateSession(t *testing.T) {
 		wantErrorMessage  string
 		wantInvJSON       bool
 		wantCreateSession bool
+		ctx               context.Context
+		sessionMsg        session.Session
 	}{
 		{
 			name: "Test1",
@@ -57,9 +61,14 @@ func TestHandler_CreateSession(t *testing.T) {
 				Email:    "petushki@mail.com",
 				Password: "1234",
 			},
-			wantID:   uuid.New(),
+			// wantID:   uuid.New(),
+			wantRole: EmployerStr,
 			wantFail: false,
-			wantRole: EmployerStr, //make deep check
+			ctx:      context.Background(),
+			sessionMsg: session.Session{
+				Id:    uuid.New().String(),
+				Class: EmployerStr,
+			},
 		},
 		{
 			name: "Test2",
@@ -67,9 +76,13 @@ func TestHandler_CreateSession(t *testing.T) {
 				Email:    "some_another@mail.com",
 				Password: "12345",
 			},
-			wantID:   uuid.New(),
 			wantFail: false,
-			wantRole: SeekerStr, //make deep check
+			wantRole: SeekerStr,
+			ctx:      context.Background(),
+			sessionMsg: session.Session{
+				Id:    uuid.New().String(),
+				Class: SeekerStr,
+			},
 		},
 		{
 			name: "Test3",
@@ -87,12 +100,16 @@ func TestHandler_CreateSession(t *testing.T) {
 				Email:    "some_another@mail.com",
 				Password: "1234567",
 			},
-			wantID:            uuid.New(),
 			wantFail:          true,
 			wantRole:          SeekerStr,
-			wantStatusCode:    http.StatuspkgServerError,
-			wantErrorMessage:  pkgErrorMsg,
+			wantStatusCode:    http.StatusInternalServerError,
+			wantErrorMessage:  InternalErrorMsg,
 			wantCreateSession: true,
+			ctx:               context.Background(),
+			sessionMsg: session.Session{
+				Id:    uuid.New().String(),
+				Class: SeekerStr,
+			},
 		},
 		{
 			name:             "Test5",
@@ -128,28 +145,27 @@ func TestHandler_CreateSession(t *testing.T) {
 				mockUserService.
 					EXPECT().
 					CheckUser(tc.authInput.Email, tc.authInput.Password).
-					Return(tc.wantID, tc.wantRole, true)
+					Return(uuid.MustParse(tc.sessionMsg.Id), tc.sessionMsg.Class, true)
 				mockAuthService.
 					EXPECT().
-					CreateSession(tc.wantID, tc.wantRole).
+					CreateSession(tc.ctx, &tc.sessionMsg).
 					Return(
-						AuthStorageValue{
-							ID:      tc.wantID,
-							Role:    tc.wantRole,
+						&session.CreateSessionInfo{
+							ID:      tc.sessionMsg.Id,
+							Role:    tc.sessionMsg.Class,
 							Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
-						},
-						"cookie", nil)
+							Cookie:  "cookie",
+						}, nil)
 			} else if tc.wantCreateSession {
 				mockUserService.
 					EXPECT().
 					CheckUser(tc.authInput.Email, tc.authInput.Password).
-					Return(tc.wantID, tc.wantRole, true)
+					Return(uuid.MustParse(tc.sessionMsg.Id), tc.sessionMsg.Class, true)
 				mockAuthService.
 					EXPECT().
-					CreateSession(tc.wantID, tc.wantRole).
+					CreateSession(tc.ctx, &tc.sessionMsg).
 					Return(
-						AuthStorageValue{},
-						"", errors.New("Create session error"))
+						&session.CreateSessionInfo{}, errors.New("Create session error"))
 			} else if !tc.wantInvJSON {
 				mockUserService.
 					EXPECT().
@@ -195,7 +211,7 @@ func TestHandler_GetSession(t *testing.T) {
 	mockCtrl2 := gomock.NewController(t)
 	defer mockCtrl2.Finish()
 
-	mockAuthService := mock_auth.NewMockService(mockCtrl2)
+	mockAuthService := mock_auth.NewMockServiceClient(mockCtrl2)
 
 	h := Handler{
 		UserService: mockUserService,
@@ -275,7 +291,7 @@ func TestHandler_DeleteSession(t *testing.T) {
 	mockCtrl2 := gomock.NewController(t)
 	defer mockCtrl2.Finish()
 
-	mockAuthService := mock_auth.NewMockService(mockCtrl2)
+	mockAuthService := mock_auth.NewMockServiceClient(mockCtrl2)
 
 	h := Handler{
 		AuthService: mockAuthService,
@@ -283,35 +299,42 @@ func TestHandler_DeleteSession(t *testing.T) {
 
 	tests := []struct {
 		name             string
-		cookieValue      string
 		record           AuthStorageValue
 		wantFail         bool
 		wantUnauth       bool
 		wantFailDelete   bool
 		wantStatusCode   int
 		wantErrorMessage string
+		ctx              context.Context
+		cookie           session.Cookie
 	}{
 		{
-			name:        "Test1",
-			cookieValue: "cookie",
-			wantFail:    false,
-			wantUnauth:  false,
+			name:       "Test1",
+			wantFail:   false,
+			wantUnauth: false,
 			record: AuthStorageValue{
 				ID:   uuid.New(),
 				Role: SeekerStr,
 			},
+			ctx: context.Background(),
+			cookie: session.Cookie{
+				Cookie: "cookie",
+			},
 		},
 		{
 			name:             "Test2",
-			cookieValue:      "aaabbbaaaaa",
 			wantFail:         true,
 			wantUnauth:       true,
 			wantStatusCode:   http.StatusUnauthorized,
 			wantErrorMessage: UnauthorizedMsg,
+			ctx:              context.Background(),
+
+			cookie: session.Cookie{
+				Cookie: "aaabbbaaaaa",
+			},
 		},
 		{
-			name:           "Test1",
-			cookieValue:    "cookie",
+			name:           "Test3",
 			wantFail:       true,
 			wantUnauth:     false,
 			wantFailDelete: true,
@@ -321,6 +344,10 @@ func TestHandler_DeleteSession(t *testing.T) {
 			},
 			wantStatusCode:   http.StatusBadRequest,
 			wantErrorMessage: BadRequestMsg,
+			ctx:              context.Background(),
+			cookie: session.Cookie{
+				Cookie: "cookie",
+			},
 		},
 	}
 	for _, tc := range tests {
@@ -336,20 +363,18 @@ func TestHandler_DeleteSession(t *testing.T) {
 			if !tc.wantFail {
 				mockAuthService.
 					EXPECT().
-					DeleteSession(tc.cookieValue).
-					Return(true)
-
+					DeleteSession(tc.ctx, &tc.cookie).
+					Return(&session.Bool{Ok: true}, nil)
 			} else if tc.wantFailDelete {
 				mockAuthService.
 					EXPECT().
-					DeleteSession(tc.cookieValue).
-					Return(false)
+					DeleteSession(tc.ctx, &tc.cookie).
+					Return(&session.Bool{Ok: false}, nil)
 			}
-
 			if !tc.wantUnauth {
 				cookie := http.Cookie{
 					Name:  auth.CookieName,
-					Value: tc.cookieValue,
+					Value: tc.cookie.Cookie,
 				}
 
 				req.AddCookie(&cookie)

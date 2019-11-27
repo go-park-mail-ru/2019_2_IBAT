@@ -9,7 +9,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 func (m *DBUserStorage) CreateEmployer(employerInput Employer) bool {

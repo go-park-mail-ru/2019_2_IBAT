@@ -1,7 +1,6 @@
 package service
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"sync"
@@ -10,8 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 
-	. "2019_2_IBAT/pkg/pkg/interfaces"
-
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 type NotifStruct struct {
@@ -96,7 +94,7 @@ func (c *Connect) WritePump() {
 				ticker.Stop()
 				break
 			}
-			idJSON, _ := json.Marshal(Id{Id: id.String()})
+			idJSON, _ := Id{Id: id.String()}.MarshalJSON()
 			w.Write(idJSON)
 			w.Close()
 			fmt.Printf("id %s was sent user", id.String())

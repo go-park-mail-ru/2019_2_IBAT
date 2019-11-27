@@ -1,7 +1,7 @@
 package handler
 
 import (
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 type UserEmplAnswer struct {

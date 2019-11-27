@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"time"
@@ -12,7 +11,7 @@ import (
 	"2019_2_IBAT/pkg/app/auth"
 	"2019_2_IBAT/pkg/app/auth/session"
 	csrf "2019_2_IBAT/pkg/pkg/csrf"
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
@@ -21,9 +20,7 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
 
 	uuid, err := h.UserService.CreateSeeker(r.Body)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{Message: err.Error()})
-		w.Write(errJSON)
+		SetError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -33,29 +30,21 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
 	})
 
 	if err != nil {
-		// log.Printf("Error while unmarshaling: %s", err)
-		// err = errors.Wrap(err, "error while unmarshaling")
-		w.WriteHeader(http.StatusInternalServerError)
-		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusInternalServerError, InternalErrorMsg)
 		return
 	}
 
 	token, err := csrf.Tokens.Create(sessInfo.ID, sessInfo.Cookie, time.Now().Add(24*time.Hour).Unix())
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("Handle CreateSession:  Create token failed")
-		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusInternalServerError, InternalErrorMsg)
 		return
 	}
 
 	expiresAt, err := time.Parse(TimeFormat, sessInfo.Expires)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("Handle CreateSession:  Time parsing failed")
-		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusInternalServerError, InternalErrorMsg)
 		return
 	}
 
@@ -68,34 +57,29 @@ func (h *Handler) CreateSeeker(w http.ResponseWriter, r *http.Request) { //+
 	w.Header().Set("Access-Control-Expose-Headers", "X-Csrf-Token")
 	w.Header().Set("X-Csrf-Token", token)
 	http.SetCookie(w, &cookie)
-	RoleJSON, _ := json.Marshal(Role{Role: sessInfo.Role})
+	RoleJSON, _ := Role{Role: sessInfo.Role}.MarshalJSON()
 
 	w.Write(RoleJSON)
 }
 
-//should test method
 func (h *Handler) GetSeekerById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	seekId, err := uuid.Parse(mux.Vars(r)["id"])
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusBadRequest, InvalidIdMsg)
 		return
 	}
 
 	seeker, err := h.UserService.GetSeeker(seekId)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusBadRequest, InvalidIdMsg)
 		return
 	}
 
 	seeker.Password = "" //danger
-	seekerJSON, _ := json.Marshal(seeker)
+	seekerJSON, _ := seeker.MarshalJSON()
 
 	w.Write(seekerJSON)
 }

@@ -1,7 +1,7 @@
 package auth
 
 // import (
-// 	. "2019_2_IBAT/internal/pkg/interfaces"
+// 	. "2019_2_IBAT/internal/pkg/models"
 // 	"fmt"
 // 	"math/rand"
 // 	"strings"

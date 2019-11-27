@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,7 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
-	. "2019_2_IBAT/pkg/pkg/interfaces"
+	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 var (
@@ -38,19 +37,16 @@ func (h *Handler) GetVacancies(w http.ResponseWriter, r *http.Request) { //+
 
 	log.Printf("Params map length: %d\n", len(params))
 
+	var vacancies VacancySlice
 	vacancies, err := h.UserService.GetVacancies(authInfo, params, tags) //err handle
 
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		errJSON, _ := json.Marshal(Error{Message: InternalErrorMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusInternalServerError, InternalErrorMsg)
 		return
 	}
 
-	vacanciesJSON, _ := json.Marshal(vacancies)
-
+	vacanciesJSON, _ := vacancies.MarshalJSON()
 	w.Write(vacanciesJSON)
-
 }
 
 func (h *Handler) CreateVacancy(w http.ResponseWriter, r *http.Request) { //+
@@ -59,9 +55,7 @@ func (h *Handler) CreateVacancy(w http.ResponseWriter, r *http.Request) { //+
 
 	authInfo, ok := FromContext(r.Context())
 	if !ok {
-		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusUnauthorized, UnauthorizedMsg)
 		return
 	}
 
@@ -78,58 +72,53 @@ func (h *Handler) CreateVacancy(w http.ResponseWriter, r *http.Request) { //+
 		default:
 			code = http.StatusBadRequest
 		}
-		w.WriteHeader(code)
 
-		errJSON, _ := json.Marshal(Error{Message: err.Error()})
-		w.Write(errJSON)
+		SetError(w, code, err.Error())
+
 		return
 	}
 
-	idJSON, _ := json.Marshal(Id{Id: id.String()})
+	idJSON, _ := Id{Id: id.String()}.MarshalJSON()
 
 	w.Write(idJSON)
 }
 
-func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) { //+
+func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	authInfo, ok := FromContext(r.Context())
 
 	if !ok {
-		authInfo = AuthStorageValue{} //check if nil possible
+		authInfo = AuthStorageValue{}
 	}
 
 	vacId, err := uuid.Parse(mux.Vars(r)["id"])
 
 	if err != nil {
-		var code int
-		switch err.Error() {
-		case ForbiddenMsg:
-			code = http.StatusForbidden
-		case UnauthorizedMsg:
-			code = http.StatusUnauthorized
-		case InternalErrorMsg:
-			code = http.StatusInternalServerError
-		default:
-			code = http.StatusBadRequest
-		}
-		w.WriteHeader(code)
-
-		errJSON, _ := json.Marshal(Error{Message: err.Error()})
-		w.Write(errJSON)
+		SetError(w, http.StatusBadRequest, InvalidIdMsg)
 		return
 	}
 
 	vacancy, err := h.UserService.GetVacancy(vacId, authInfo)
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-		w.Write(errJSON)
+		// var code int
+		// switch err.Error() {
+		// case ForbiddenMsg:
+		// 	code = http.StatusForbidden
+		// case UnauthorizedMsg:
+		// 	code = http.StatusUnauthorized
+		// case InternalErrorMsg:
+		// 	code = http.StatusInternalServerError
+		// default:
+		// 	code = http.StatusBadRequest
+		// }
+		SetError(w, http.StatusBadRequest, InvalidIdMsg)
+
 		return
 	}
 
-	vacancyJSON, _ := json.Marshal(vacancy)
+	vacancyJSON, _ := vacancy.MarshalJSON()
 
 	w.Write(vacancyJSON)
 }
@@ -139,18 +128,14 @@ func (h *Handler) DeleteVacancy(w http.ResponseWriter, r *http.Request) { //+
 
 	authInfo, ok := FromContext(r.Context())
 	if !ok {
-		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusUnauthorized, UnauthorizedMsg)
 		return
 	}
 
 	vacId, err := uuid.Parse(mux.Vars(r)["id"])
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusBadRequest, InvalidIdMsg)
 		return
 	}
 
@@ -168,10 +153,9 @@ func (h *Handler) DeleteVacancy(w http.ResponseWriter, r *http.Request) { //+
 		default:
 			code = http.StatusBadRequest
 		}
-		w.WriteHeader(code)
 
-		errJSON, _ := json.Marshal(Error{Message: err.Error()})
-		w.Write(errJSON)
+		SetError(w, code, err.Error())
+
 		return
 	}
 }
@@ -182,27 +166,21 @@ func (h *Handler) PutVacancy(w http.ResponseWriter, r *http.Request) { //+
 
 	authInfo, ok := FromContext(r.Context())
 	if !ok {
-		w.WriteHeader(http.StatusUnauthorized)
-		errJSON, _ := json.Marshal(Error{Message: UnauthorizedMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusUnauthorized, UnauthorizedMsg)
 		return
 	}
 
 	vacId, err := uuid.Parse(mux.Vars(r)["id"])
 
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		errJSON, _ := json.Marshal(Error{Message: InvalidIdMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusBadRequest, InvalidIdMsg)
 		return
 	}
 
 	err = h.UserService.PutVacancy(vacId, r.Body, authInfo)
 
 	if err != nil {
-		w.WriteHeader(http.StatusForbidden)
-		errJSON, _ := json.Marshal(Error{Message: ForbiddenMsg})
-		w.Write(errJSON)
+		SetError(w, http.StatusForbidden, ForbiddenMsg)
 		return
 	}
 }
