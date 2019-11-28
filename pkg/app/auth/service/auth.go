@@ -18,12 +18,6 @@ type AuthService struct {
 
 const CookieName = "session-id"
 
-// type Service interface {
-// 	CreateSession(ctx context.Context, sessInfo *session.Session) (*session.CreateSessionInfo, error)
-// 	DeleteSession(ctx context.Context, cookie *session.Cookie) (*session.Bool, error)
-// 	GetSession(ctx context.Context, cookie *session.Cookie) (*session.GetSessionInfo, error)
-// }
-
 func (h AuthService) CreateSession(ctx context.Context, sessInfo *session.Session) (*session.CreateSessionInfo, error) {
 
 	authInfo, cookieValue, err := h.Storage.Set(uuid.MustParse(sessInfo.Id), sessInfo.Class)
@@ -31,7 +25,7 @@ func (h AuthService) CreateSession(ctx context.Context, sessInfo *session.Sessio
 	if err != nil {
 		log.Printf("Error while unmarshaling: %s\n", err)
 		err = errors.Wrap(err, "error while unmarshaling")
-		return &session.CreateSessionInfo{}, errors.New("Creating session error")
+		return &session.CreateSessionInfo{}, errors.New(BadRequestMsg)
 	}
 
 	return &session.CreateSessionInfo{
@@ -44,13 +38,7 @@ func (h AuthService) CreateSession(ctx context.Context, sessInfo *session.Sessio
 }
 
 func (h AuthService) DeleteSession(ctx context.Context, cookie *session.Cookie) (*session.Bool, error) {
-	_, ok := h.Storage.Get(cookie.Cookie)
-	if !ok {
-		log.Printf("No such session")
-		return &session.Bool{Ok: false}, nil
-	}
-
-	ok = h.Storage.Delete(cookie.Cookie)
+	ok := h.Storage.Delete(cookie.Cookie)
 	if !ok {
 		return &session.Bool{Ok: false}, nil
 	}

@@ -4,6 +4,7 @@ import (
 	mock_user_repo "2019_2_IBAT/pkg/app/users/service/mock_user_repo"
 	. "2019_2_IBAT/pkg/pkg/models"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"strings"
 	"testing"
@@ -25,9 +26,7 @@ func TestUserService_CreateResume(t *testing.T) {
 	}
 
 	tests := []struct {
-		name string
-		// fields  fields
-		// args    args
+		name             string
 		record           AuthStorageValue
 		wantFail         bool
 		wantInvJSON      bool
@@ -124,12 +123,12 @@ func TestUserService_CreateResume(t *testing.T) {
 			if !tt.wantFail {
 				mockUserRepo.
 					EXPECT().
-					CreateResume(tt.resume).
+					CreateResume(gomock.Any()).
 					Return(true)
 			} else if !tt.wantInvJSON {
 				mockUserRepo.
 					EXPECT().
-					CreateResume(tt.resume).
+					CreateResume(gomock.Any()).
 					Return(false)
 			}
 			_, err := h.CreateResume(r, tt.record)
@@ -370,7 +369,7 @@ func TestUserService_PutResume(t *testing.T) {
 				Expires: time.Now().In(Loc).Add(24 * time.Hour).Format(TimeFormat),
 			},
 			wantFail:         true,
-			wantErrorMessage: pkgErrorMsg,
+			wantErrorMessage: InternalErrorMsg,
 		},
 		{
 			name:             "Test3",
@@ -425,6 +424,109 @@ func TestUserService_PutResume(t *testing.T) {
 
 			if !tt.wantFail {
 				require.Equal(t, err, nil)
+			} else {
+				require.Equal(t, tt.wantErrorMessage, err.Error(), "The two values should be the same.")
+			}
+		})
+	}
+}
+
+func TestUserService_GetResumes(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockUserRepo := mock_user_repo.NewMockRepository(mockCtrl)
+
+	h := UserService{
+		Storage: mockUserRepo,
+	}
+
+	expResumes := []Resume{
+		{
+			ID:          uuid.New(),
+			OwnerID:     uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
+			FirstName:   "Petya",
+			SecondName:  "Zyablikov",
+			Region:      "Moscow",
+			PhoneNumber: "12345678910",
+			BirthDate:   "1994-21-08",
+			Sex:         "male",
+			Citizenship: "Russia",
+			Experience:  "7 years",
+			Position:    "middle",
+			Wage:        "100500",
+			Education:   "MSU",
+			About:       "Hello employer",
+		},
+
+		{
+			ID:          uuid.New(),
+			OwnerID:     uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
+			FirstName:   "Petya",
+			SecondName:  "Zyablikov",
+			Region:      "Moscow",
+			PhoneNumber: "12345678910",
+			BirthDate:   "1994-21-08",
+			Sex:         "male",
+			Citizenship: "Russia",
+			Experience:  "7 years",
+			Position:    "middle",
+			Wage:        "100500",
+			Education:   "MSU",
+			About:       "Hello employer",
+		},
+	}
+
+	tests := []struct {
+		name             string
+		record           AuthStorageValue
+		wantFail         bool
+		wantRecomms      bool
+		wantErrorMessage string
+		seekers          []Seeker
+	}{
+		{
+			name: "Test1",
+			record: AuthStorageValue{
+				ID:   uuid.New(),
+				Role: SeekerStr,
+			},
+		},
+		{
+			name:             "Test2",
+			wantFail:         true,
+			wantErrorMessage: InternalErrorMsg,
+		},
+		{
+			name:             "Test2",
+			wantFail:         true,
+			wantRecomms:      true,
+			wantErrorMessage: InternalErrorMsg,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			if !tt.wantFail {
+				mockUserRepo.
+					EXPECT().
+					GetResumes(tt.record, gomock.Any()).
+					Return(expResumes, nil)
+			} else {
+				mockUserRepo.
+					EXPECT().
+					GetResumes(tt.record, gomock.Any()).
+					Return([]Resume{}, fmt.Errorf(InternalErrorMsg))
+			}
+			paramsDummyMap := map[string]interface{}{}
+			// tagDummyMap := map[string]interface{}{}
+
+			gotSeeks, err := h.GetResumes(tt.record, paramsDummyMap)
+
+			if !tt.wantFail {
+				if err != nil {
+					t.Error("Error is not nil\n")
+				}
+				require.Equal(t, expResumes, gotSeeks, "The two values should be the same.")
 			} else {
 				require.Equal(t, tt.wantErrorMessage, err.Error(), "The two values should be the same.")
 			}

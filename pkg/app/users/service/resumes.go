@@ -11,27 +11,19 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (h *UserService) CreateResume(body io.ReadCloser, authInfo AuthStorageValue) (uuid.UUID, error) { //should do this part by one r with if?
+func (h *UserService) CreateResume(body io.ReadCloser, authInfo AuthStorageValue) (uuid.UUID, error) {
 	if authInfo.Role != SeekerStr {
-		// log.Printf("Invalid action: %s", err)
 		return uuid.UUID{}, errors.New(ForbiddenMsg)
 	}
 
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
-		// log.Printf("error while reading body: %s", err)
-		// err = errors.Wrap(err, "reading body error")
 		return uuid.UUID{}, errors.New(BadRequestMsg)
 	}
 
 	var resumeReg Resume
-	// id := uuid.New()
-	// resumeReg.ID = id
-	// resumeReg.OwnerID = authInfo.ID
 	err = resumeReg.UnmarshalJSON(bytes)
 	if err != nil {
-		// log.Printf("Error while unmarshaling: %s", err)
-		// err = errors.Wrap(err, "unmarshaling error")
 		return uuid.UUID{}, errors.New(InvalidJSONMsg)
 	}
 
@@ -41,7 +33,6 @@ func (h *UserService) CreateResume(body io.ReadCloser, authInfo AuthStorageValue
 	ok := h.Storage.CreateResume(resumeReg)
 
 	if !ok {
-		// log.Printf("Error while creating resume: %s", err)
 		return uuid.UUID{}, errors.New(BadRequestMsg)
 	}
 

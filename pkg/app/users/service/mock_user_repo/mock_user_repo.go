@@ -4,8 +4,7 @@
 package mock_users
 
 import (
-	. "2019_2_IBAT/internal/pkg/models"
-
+	. "2019_2_IBAT/pkg/pkg/models"
 	gomock "github.com/golang/mock/gomock"
 	uuid "github.com/google/uuid"
 )
@@ -121,6 +120,16 @@ func (_mr *_MockRepositoryRecorder) DeleteVacancy(arg0 interface{}) *gomock.Call
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "DeleteVacancy", arg0)
 }
 
+func (_m *MockRepository) DeleteFavoriteVacancy(id uuid.UUID, authInfo AuthStorageValue) error {
+	ret := _m.ctrl.Call(_m, "DeleteFavoriteVacancy", id, authInfo)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+func (_mr *_MockRepositoryRecorder) DeleteFavoriteVacancy(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "DeleteFavoriteVacancy", arg0, arg1)
+}
+
 func (_m *MockRepository) CheckUser(email string, password string) (uuid.UUID, string, bool) {
 	ret := _m.ctrl.Call(_m, "CheckUser", email, password)
 	ret0, _ := ret[0].(uuid.UUID)
@@ -195,26 +204,26 @@ func (_mr *_MockRepositoryRecorder) GetSeekers() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetSeekers")
 }
 
-func (_m *MockRepository) GetResumes(params map[string]interface{}) ([]Resume, error) {
-	ret := _m.ctrl.Call(_m, "GetResumes", params)
+func (_m *MockRepository) GetResumes(authInfo AuthStorageValue, params map[string]interface{}) ([]Resume, error) {
+	ret := _m.ctrl.Call(_m, "GetResumes", authInfo, params)
 	ret0, _ := ret[0].([]Resume)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockRepositoryRecorder) GetResumes(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetResumes", arg0)
+func (_mr *_MockRepositoryRecorder) GetResumes(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetResumes", arg0, arg1)
 }
 
-func (_m *MockRepository) GetVacancies(params map[string]interface{}) ([]Vacancy, error) {
-	ret := _m.ctrl.Call(_m, "GetVacancies", params)
+func (_m *MockRepository) GetVacancies(authInfo AuthStorageValue, params map[string]interface{}) ([]Vacancy, error) {
+	ret := _m.ctrl.Call(_m, "GetVacancies", authInfo, params)
 	ret0, _ := ret[0].([]Vacancy)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockRepositoryRecorder) GetVacancies(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetVacancies", arg0)
+func (_mr *_MockRepositoryRecorder) GetVacancies(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetVacancies", arg0, arg1)
 }
 
 func (_m *MockRepository) GetResponds(record AuthStorageValue, params map[string]string) ([]Respond, error) {
@@ -272,15 +281,15 @@ func (_mr *_MockRepositoryRecorder) GetResume(arg0 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetResume", arg0)
 }
 
-func (_m *MockRepository) GetVacancy(id uuid.UUID) (Vacancy, error) {
-	ret := _m.ctrl.Call(_m, "GetVacancy", id)
+func (_m *MockRepository) GetVacancy(id uuid.UUID, userId uuid.UUID) (Vacancy, error) {
+	ret := _m.ctrl.Call(_m, "GetVacancy", id, userId)
 	ret0, _ := ret[0].(Vacancy)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-func (_mr *_MockRepositoryRecorder) GetVacancy(arg0 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetVacancy", arg0)
+func (_mr *_MockRepositoryRecorder) GetVacancy(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetVacancy", arg0, arg1)
 }
 
 func (_m *MockRepository) SetImage(id uuid.UUID, class string, imageName string) bool {
@@ -291,4 +300,36 @@ func (_m *MockRepository) SetImage(id uuid.UUID, class string, imageName string)
 
 func (_mr *_MockRepositoryRecorder) SetImage(arg0, arg1, arg2 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "SetImage", arg0, arg1, arg2)
+}
+
+func (_m *MockRepository) GetTags() ([]Tag, error) {
+	ret := _m.ctrl.Call(_m, "GetTags")
+	ret0, _ := ret[0].([]Tag)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockRepositoryRecorder) GetTags() *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetTags")
+}
+
+func (_m *MockRepository) GetTagIDs(tags []Pair) []uuid.UUID {
+	ret := _m.ctrl.Call(_m, "GetTagIDs", tags)
+	ret0, _ := ret[0].([]uuid.UUID)
+	return ret0
+}
+
+func (_mr *_MockRepositoryRecorder) GetTagIDs(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetTagIDs", arg0)
+}
+
+func (_m *MockRepository) GetVacancyTagIDs(vacancyId uuid.UUID) ([]uuid.UUID, error) {
+	ret := _m.ctrl.Call(_m, "GetVacancyTagIDs", vacancyId)
+	ret0, _ := ret[0].([]uuid.UUID)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockRepositoryRecorder) GetVacancyTagIDs(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetVacancyTagIDs", arg0)
 }

@@ -13,18 +13,12 @@ import (
 func (h *UserService) CreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
-		// log.Printf("error while reading body: %s", err)
-		// err = errors.Wrap(err, "reading body error")
 		return uuid.UUID{}, errors.New(BadRequestMsg)
 	}
 
 	var newSeekerReg Seeker
-	// id := uuid.New()
-	// newSeekerReg.ID = id
 	err = newSeekerReg.UnmarshalJSON(bytes)
 	if err != nil {
-		// log.Printf("Error while unmarshaling: %s", err)
-		// err = errors.Wrap(err, "unmarshaling error")
 		return uuid.UUID{}, errors.New(InvalidJSONMsg)
 	}
 
@@ -33,8 +27,6 @@ func (h *UserService) CreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
 	newSeekerReg.PathToImg = DefaultImg
 	ok := h.Storage.CreateSeeker(newSeekerReg)
 	if !ok {
-		// log.Println("Here inside users")
-		// log.Printf("Error while creating seeker: %s", err)
 		return uuid.UUID{}, errors.New(EmailExistsMsg)
 	}
 
@@ -44,14 +36,12 @@ func (h *UserService) CreateSeeker(body io.ReadCloser) (uuid.UUID, error) {
 func (h *UserService) PutSeeker(body io.ReadCloser, id uuid.UUID) error {
 	bytes, err := ioutil.ReadAll(body)
 	if err != nil {
-		// log.Printf("error while reading body: %s", err)
 		return errors.New(BadRequestMsg)
 	}
 
 	var newSeekerReg SeekerReg
 	err = newSeekerReg.UnmarshalJSON(bytes)
 	if err != nil {
-		// log.Printf("Error while unmarshaling: %s", err)
 		return errors.New(InvalidJSONMsg)
 	}
 

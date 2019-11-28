@@ -5,3 +5,7 @@ cmd/main/main
 cmd/auth/auth
 cmd/recommends/recommends
 cmd/notifications/notifications
+cover.out
+cover.tmp
+pkg/cover.out
+pkg/cover.tmp

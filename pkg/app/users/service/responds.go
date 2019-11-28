@@ -51,7 +51,7 @@ func (h *UserService) GetResponds(authInfo AuthStorageValue, params map[string]s
 
 	responds, err := h.Storage.GetResponds(authInfo, params)
 	if err != nil {
-		return responds, errors.New("Invalid action") ///
+		return responds, errors.New(BadRequestMsg) ///
 	}
 
 	return responds, nil

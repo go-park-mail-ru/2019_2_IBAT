@@ -21,8 +21,6 @@ func (h *UserService) CreateEmployer(body io.ReadCloser) (uuid.UUID, error) {
 	}
 
 	var newEmployerReg Employer
-	// id := uuid.New()
-	// newEmployerReg.ID = id
 	err = newEmployerReg.UnmarshalJSON(bytes)
 	if err != nil {
 		log.Printf("Error while unmarshaling: %s", err)

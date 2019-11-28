@@ -17,8 +17,6 @@ import (
 // const TimeFormat = time.RFC3339
 const CookieLength = 32
 
-var Loc *time.Location
-
 func init() {
 	Loc, _ = time.LoadLocation("Europe/Moscow")
 }
@@ -50,7 +48,7 @@ func (st *SessionManager) Get(cookie string) (AuthStorageValue, bool) {
 	err = json.Unmarshal(data, &record)
 
 	if err != nil {
-		fmt.Println("AuthStorage: Unmarshalling error") //
+		fmt.Println("AuthStorage: Unmarshalling error")
 		return AuthStorageValue{}, false
 	} //cannot be error
 

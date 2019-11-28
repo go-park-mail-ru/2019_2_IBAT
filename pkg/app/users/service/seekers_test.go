@@ -1,8 +1,8 @@
 package users
 
 import (
-	. "2019_2_IBAT/pkg/pkg/models"
 	mock_user_repo "2019_2_IBAT/pkg/app/users/service/mock_user_repo"
+	. "2019_2_IBAT/pkg/pkg/models"
 	"encoding/json"
 	"io/ioutil"
 	"strings"
@@ -70,12 +70,12 @@ func TestUserService_CreateSeeker(t *testing.T) {
 			if !tt.wantFail {
 				mockUserRepo.
 					EXPECT().
-					CreateSeeker(tt.seekerReg).
+					CreateSeeker(gomock.Any()).
 					Return(true)
 			} else if !tt.wantInvJSON {
 				mockUserRepo.
 					EXPECT().
-					CreateSeeker(tt.seekerReg).
+					CreateSeeker(gomock.Any()).
 					Return(false)
 			}
 			_, err := h.CreateSeeker(r)
@@ -215,7 +215,7 @@ func TestUserService_GetSeeker(t *testing.T) {
 				Role: SeekerStr,
 			},
 			wantFail:         true,
-			wantErrorMessage: pkgErrorMsg,
+			wantErrorMessage: InternalErrorMsg,
 		},
 	}
 	for _, tt := range tests {
@@ -285,7 +285,7 @@ func TestUserService_GetSeekers(t *testing.T) {
 		{
 			name:             "Test2",
 			wantFail:         false,
-			wantErrorMessage: pkgErrorMsg,
+			wantErrorMessage: InternalErrorMsg,
 		},
 	}
 	for _, tt := range tests {

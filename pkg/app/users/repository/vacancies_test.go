@@ -50,7 +50,8 @@ func TestDBUserStorage_GetVacancies_Correct(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT v.id, v.own_id, c.company_name, v.experience," +
-			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
+			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
+			"v.region, v.type_of_employment, v.work_schedule " +
 			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id;").
 		WithArgs().
 		WillReturnRows(rows)
@@ -59,8 +60,11 @@ func TestDBUserStorage_GetVacancies_Correct(t *testing.T) {
 		DbConn: sqlxDB,
 	}
 
-	dummy_map := make(map[string]interface{})
-	vacancies, err := repo.GetVacancies(dummy_map)
+	dummyMap := make(map[string]interface{})
+	AuthRec := AuthStorageValue{
+		ID: uuid.New(),
+	}
+	vacancies, err := repo.GetVacancies(AuthRec, dummyMap)
 
 	if err != nil {
 		t.Errorf("unexpected err: %s", err)
@@ -87,7 +91,8 @@ func TestDBUserStorage_GetVacancies_Fail(t *testing.T) {
 
 	mock.
 		ExpectQuery("SELECT v.id, v.own_id, c.company_name, v.experience," +
-			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
+			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
+			"v.region, v.type_of_employment, v.work_schedule " +
 			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id;").
 		WithArgs().
 		WillReturnError(errors.New("GetVacancies: error while querying"))
@@ -96,8 +101,11 @@ func TestDBUserStorage_GetVacancies_Fail(t *testing.T) {
 		DbConn: sqlxDB,
 	}
 
-	dummy_map := make(map[string]interface{})
-	vacancies, err := repo.GetVacancies(dummy_map)
+	dummyMap := make(map[string]interface{})
+	authRec := AuthStorageValue{
+		ID: uuid.New(),
+	}
+	vacancies, err := repo.GetVacancies(authRec, dummyMap)
 	fmt.Println(vacancies)
 
 	if err == nil {
@@ -161,7 +169,8 @@ func TestDBUserStorage_GetVacancy_Correct(t *testing.T) {
 	}
 
 	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a")
-	item, err := repo.GetVacancy(id)
+	userID := uuid.New()
+	item, err := repo.GetVacancy(id, userID)
 
 	if err != nil {
 		t.Errorf("unexpected err: %s", err)
@@ -199,7 +208,8 @@ func TestDBUserStorage_GetVacancy_Fail(t *testing.T) {
 		DbConn: sqlxDB,
 	}
 
-	vacancy, err := repo.GetVacancy(id)
+	userID := uuid.New()
+	vacancy, err := repo.GetVacancy(id, userID)
 	fmt.Println(vacancy)
 
 	if err == nil {
@@ -254,6 +264,9 @@ func TestDBUserStorage_CreateVacancy_Correct(t *testing.T) {
 	if !ok {
 		t.Error("Failed to create vacancy\n")
 		return
+	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
 	}
 }
 
@@ -339,7 +352,8 @@ func TestDBUserStorage_DeleteVacancy_Correct(t *testing.T) {
 		WithArgs(id).
 		WillReturnError(errors.New("GetVacancy: error while querying"))
 
-	_, err = repo.GetVacancy(id)
+	userID := uuid.New()
+	_, err = repo.GetVacancy(id, userID)
 
 	if err == nil {
 		t.Errorf("Expected err")

@@ -8,6 +8,10 @@ import (
 
 func UuidsToStrings(ids []uuid.UUID) []string {
 	var strIDs []string
+	if ids == nil {
+		return strIDs
+	}
+
 	for _, id := range ids {
 		strIDs = append(strIDs, id.String())
 	}
@@ -16,6 +20,10 @@ func UuidsToStrings(ids []uuid.UUID) []string {
 
 func StringsToUuids(strIDs []string) []uuid.UUID {
 	var ids []uuid.UUID
+	if strIDs == nil {
+		return ids
+	}
+
 	for _, id := range strIDs {
 		ids = append(ids, uuid.MustParse(id))
 	}

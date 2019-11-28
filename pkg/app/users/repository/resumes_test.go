@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
+	"github.com/stretchr/testify/require"
 	sqlmock "gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
@@ -81,8 +82,9 @@ func TestDBUserStorage_GetResumes_Correct(t *testing.T) {
 		DbConn: sqlxDB,
 	}
 
-	dummy_map := make(map[string]interface{})
-	resumes, err := repo.GetResumes(dummy_map)
+	dummyMap := make(map[string]interface{})
+	dummyRec := AuthStorageValue{}
+	resumes, err := repo.GetResumes(dummyRec, dummyMap)
 
 	if err != nil {
 		t.Errorf("unexpected err: %s", err)
@@ -92,10 +94,12 @@ func TestDBUserStorage_GetResumes_Correct(t *testing.T) {
 		t.Errorf("there were unfulfilled expectations: %s", err)
 		return
 	}
-	if !reflect.DeepEqual(resumes, expect) {
-		t.Errorf("results not match,\n want\n%v,\n have\n %v\n", expect, resumes)
-		return
-	}
+	// if !reflect.DeepEqual(resumes, expect) {
+	// 	t.Errorf("results not match,\n want\n%v,\n have\n %v\n", expect, resumes)
+	// 	return
+	// }
+	require.Equal(t, resumes, expect, "The two values should be the same.")
+
 }
 
 func TestDBUserStorage_GetResumes_Fail(t *testing.T) {
@@ -118,8 +122,10 @@ func TestDBUserStorage_GetResumes_Fail(t *testing.T) {
 		DbConn: sqlxDB,
 	}
 
-	dummy_map := make(map[string]interface{})
-	resumes, err := repo.GetResumes(dummy_map)
+	dummyMap := make(map[string]interface{})
+	dummyRec := AuthStorageValue{}
+
+	resumes, err := repo.GetResumes(dummyRec, dummyMap)
 	fmt.Println(resumes)
 
 	if err == nil {

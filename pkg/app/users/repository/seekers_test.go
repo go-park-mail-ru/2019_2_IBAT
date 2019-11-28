@@ -12,15 +12,6 @@ import (
 	sqlmock "gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
-// // func init() {
-// // 	/* load test data */
-// // 	db, mock, err := sqlmock.New()
-// // 	if err != nil {
-// // 		t.Fatalf("cant create mock: %s", err)
-// // 	}
-// // 	defer db.Close()
-// // }
-
 func TestDBUserStorage_GetSeekers_Correct(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	defer db.Close()
@@ -193,327 +184,262 @@ func TestDBUserStorage_GetSeeker_Correct(t *testing.T) {
 	}
 }
 
-// func TestDBUserStorage_GetSeeker_Fail(t *testing.T) {
-// 	db, mock, err := sqlmock.New()
-// 	defer db.Close()
-// 	sqlxDB := sqlx.NewDb(db, "sqlmock")
+func TestDBUserStorage_GetSeeker_Fail(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	defer db.Close()
+	sqlxDB := sqlx.NewDb(db, "sqlmock")
 
-// 	if err != nil {
-// 		t.Fatalf("cant create mock: %s", err)
-// 	}
-// 	defer sqlxDB.Close()
+	if err != nil {
+		t.Fatalf("cant create mock: %s", err)
+	}
+	defer sqlxDB.Close()
 
-// 	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642bbba")
-// 	rows := sqlmock.
-// 		NewRows([]string{"id", "email", "first_name", "second_name", "path_to_image"})
+	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642bbba")
 
-// 	mock.
-// 		ExpectQuery("SELECT id, email, first_name, second_name, " +
-// 			"path_to_image FROM persons WHERE ").
-// 		WithArgs(id).
-// 		WillReturnRows(rows)
+	mock.
+		ExpectQuery("SELECT id, email, first_name, second_name, " +
+			"path_to_image FROM persons WHERE ").
+		WithArgs(id).
+		WillReturnError(errors.New("sql: no rows in result set"))
 
-// 	mock.
-// 		ExpectQuery("SELECT r.id FROM resumes AS r WHERE").
-// 		WithArgs(id).
-// 		WillReturnError(errors.New("GetSeeker: Invalid id"))
-// 	// mock.
-// 	// 	ExpectQuery("SELECT v.id, v.own_id, c.company_name, v.experience," +
-// 	// 		"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
-// 	// 		" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE").
-// 	// 	WithArgs(id).
-// 	// 	WillReturnError(errors.New("GetVacancy: error while querying"))
+	repo := DBUserStorage{
+		DbConn: sqlxDB,
+	}
 
-// 	repo := DBUserStorage{
-// 		DbConn: sqlxDB,
-// 	}
+	seeker, err := repo.GetSeeker(id)
+	fmt.Println(seeker)
 
-// 	seeker, err := repo.GetSeeker(id)
-// 	fmt.Println(seeker)
+	if err == nil {
+		fmt.Println(err)
+		t.Errorf("Expected err")
+		return
+	}
 
-// 	if err == nil {
-// 		fmt.Println(err)
-// 		t.Errorf("Expected err")
-// 		return
-// 	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+		return
+	}
+}
 
-// 	if err := mock.ExpectationsWereMet(); err != nil {
-// 		t.Errorf("there were unfulfilled expectations: %s", err)
-// 		return
-// 	}
-// }
+func TestDBUserStorage_GetSeeker_Fail2(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	defer db.Close()
+	sqlxDB := sqlx.NewDb(db, "sqlmock")
 
-// func TestDBUserStorage_CreateVacancy_Correct(t *testing.T) {
-// 	db, mock, err := sqlmock.New()
-// 	defer db.Close()
-// 	sqlxDB := sqlx.NewDb(db, "sqlmock")
+	if err != nil {
+		t.Fatalf("cant create mock: %s", err)
+	}
+	defer sqlxDB.Close()
 
-// 	if err != nil {
-// 		t.Fatalf("cant create mock: %s", err)
-// 	}
-// 	defer sqlxDB.Close()
+	rows := sqlmock.
+		NewRows([]string{"id", "email", "first_name", "second_name", "path_to_image"})
 
-// 	vacancy := Vacancy{
-// 		ID:           uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
-// 		OwnerID:      uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
-// 		CompanyName:  "MC",
-// 		Experience:   "7 years",
-// 		Profession:   "cleaner",
-// 		Position:     "mid",
-// 		Tasks:        "cleaning rooms",
-// 		Requirements: "work for 24 hours per week",
-// 		WageFrom:     "100 500.00 руб",
-// 		WageTo:       "120 500.00 руб",
-// 		Conditions:   "Nice geolocation",
-// 		About:        "Hello employer",
-// 	}
+	expect := Seeker{
+		ID:         uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642bbba"),
+		Email:      "some@mail.ru",
+		FirstName:  "Victor",
+		SecondName: "Timofeev",
+		PathToImg:  "",
+		Resumes:    []uuid.UUID{uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d")},
+	}
 
-// 	mock.
-// 		ExpectExec(`INSERT INTO vacancies`).
-// 		WithArgs(
-// 			vacancy.ID, vacancy.OwnerID, vacancy.Experience, vacancy.Profession, vacancy.Position, vacancy.Tasks,
-// 			vacancy.Requirements, vacancy.Conditions, vacancy.WageFrom, vacancy.WageTo, vacancy.About,
-// 		).
-// 		WillReturnResult(sqlmock.NewResult(1, 1))
+	rows = rows.AddRow(expect.ID.String(), expect.Email, expect.FirstName,
+		expect.SecondName, expect.PathToImg,
+	)
 
-// 	repo := DBUserStorage{
-// 		DbConn: sqlxDB,
-// 	}
+	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642bbba")
 
-// 	ok := repo.CreateVacancy(vacancy)
+	mock.
+		ExpectQuery("SELECT id, email, first_name, second_name, " +
+			"path_to_image FROM persons WHERE ").
+		WithArgs(id).
+		WillReturnRows(rows)
 
-// 	if !ok {
-// 		t.Error("Failed to create vacancy\n")
-// 		return
-// 	}
-// }
+	mock.
+		ExpectQuery("SELECT r.id FROM resumes AS r WHERE").
+		WithArgs(id).
+		WillReturnError(errors.New("GetSeeker: Invalid id"))
 
-// func TestDBUserStorage_CreateVacancy_False(t *testing.T) {
-// 	db, mock, err := sqlmock.New()
-// 	defer db.Close()
-// 	sqlxDB := sqlx.NewDb(db, "sqlmock")
+	repo := DBUserStorage{
+		DbConn: sqlxDB,
+	}
 
-// 	if err != nil {
-// 		t.Fatalf("cant create mock: %s", err)
-// 	}
-// 	defer sqlxDB.Close()
+	seeker, err := repo.GetSeeker(id)
+	fmt.Println(seeker)
 
-// 	vacancy := Vacancy{
-// 		ID:           uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
-// 		OwnerID:      uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
-// 		CompanyName:  "MC",
-// 		Experience:   "7 years",
-// 		Profession:   "cleaner",
-// 		Position:     "mid",
-// 		Tasks:        "cleaning rooms",
-// 		Requirements: "work for 24 hours per week",
-// 		WageFrom:     "100 500.00 руб",
-// 		WageTo:       "120 500.00 руб",
-// 		Conditions:   "Nice geolocation",
-// 		About:        "Hello employer",
-// 	}
+	if err == nil {
+		fmt.Println(err)
+		t.Errorf("Expected err")
+		return
+	}
 
-// 	mock.
-// 		ExpectExec(`INSERT INTO vacancies`).
-// 		WithArgs(
-// 			vacancy.ID, vacancy.OwnerID, vacancy.Experience, vacancy.Profession, vacancy.Position, vacancy.Tasks,
-// 			vacancy.Requirements, vacancy.Conditions, vacancy.WageFrom, vacancy.WageTo, vacancy.About,
-// 		).
-// 		WillReturnError(fmt.Errorf("bad query"))
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+		return
+	}
+}
 
-// 	repo := DBUserStorage{
-// 		DbConn: sqlxDB,
-// 	}
+func TestDBUserStorage_CreateSeeker_Correct(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	defer db.Close()
+	sqlxDB := sqlx.NewDb(db, "sqlmock")
 
-// 	ok := repo.CreateVacancy(vacancy)
+	if err != nil {
+		t.Fatalf("cant create mock: %s", err)
+	}
+	defer sqlxDB.Close()
 
-// 	if ok {
-// 		t.Errorf("expected false, got true")
-// 		return
-// 	}
-// 	if err := mock.ExpectationsWereMet(); err != nil {
-// 		t.Errorf("there were unfulfilled expectations: %s", err)
-// 	}
-// }
+	seeker := Seeker{
+		ID:         uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642bbba"),
+		Email:      "some@mail.ru",
+		FirstName:  "Victor",
+		SecondName: "Timofeev",
+		PathToImg:  "",
+		Resumes:    []uuid.UUID{uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d")},
+	}
 
-// func TestDBUserStorage_DeleteVacancy_Correct(t *testing.T) {
-// 	db, mock, err := sqlmock.New()
-// 	defer db.Close()
-// 	sqlxDB := sqlx.NewDb(db, "sqlmock")
+	mock.
+		ExpectExec(`INSERT INTO persons`).
+		WithArgs(
+			seeker.ID, seeker.Email, seeker.FirstName,
+			seeker.SecondName, seeker.Password, SeekerStr, seeker.PathToImg,
+		).
+		WillReturnResult(sqlmock.NewResult(1, 1))
 
-// 	if err != nil {
-// 		t.Fatalf("cant create mock: %s", err)
-// 	}
-// 	defer sqlxDB.Close()
+	repo := DBUserStorage{
+		DbConn: sqlxDB,
+	}
 
-// 	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a")
+	ok := repo.CreateSeeker(seeker)
 
-// 	mock.
-// 		ExpectExec(`DELETE FROM vacancies`).
-// 		WithArgs(id).
-// 		WillReturnResult(sqlmock.NewResult(1, 1))
+	if !ok {
+		t.Error("Failed to create vacancy\n")
+		return
+	}
+}
 
-// 	repo := DBUserStorage{
-// 		DbConn: sqlxDB,
-// 	}
+func TestDBUserStorage_CreateSeeker_False(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	defer db.Close()
+	sqlxDB := sqlx.NewDb(db, "sqlmock")
 
-// 	err = repo.DeleteVacancy(id)
-// 	fmt.Println()
+	if err != nil {
+		t.Fatalf("cant create mock: %s", err)
+	}
+	defer sqlxDB.Close()
 
-// 	if err != nil {
-// 		t.Errorf("unexpected err: %s", err)
-// 		return
-// 	}
+	seeker := Seeker{
+		ID:         uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642bbba"),
+		Email:      "some@mail.ru",
+		FirstName:  "Victor",
+		SecondName: "Timofeev",
+		PathToImg:  "",
+		Resumes:    []uuid.UUID{uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d")},
+	}
 
-// 	mock.
-// 		ExpectQuery("SELECT v.id, v.own_id, c.company_name, v.experience," +
-// 			"v.profession, v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about" +
-// 			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE").
-// 		WithArgs(id).
-// 		WillReturnError(errors.New("GetVacancy: error while querying"))
+	mock.
+		ExpectExec(`INSERT INTO persons`).
+		WithArgs(
+			seeker.ID, seeker.Email, seeker.FirstName,
+			seeker.SecondName, seeker.Password, SeekerStr, seeker.PathToImg,
+		).
+		WillReturnError(fmt.Errorf("bad query"))
 
-// 	_, err = repo.GetVacancy(id)
-// 	fmt.Println()
+	repo := DBUserStorage{
+		DbConn: sqlxDB,
+	}
 
-// 	if err == nil {
-// 		fmt.Println(err)
-// 		t.Errorf("Expected err")
-// 		return
-// 	}
+	ok := repo.CreateSeeker(seeker)
 
-// 	if err := mock.ExpectationsWereMet(); err != nil {
-// 		t.Errorf("there were unfulfilled expectations: %s", err)
-// 		return
-// 	}
-// }
+	if ok {
+		t.Errorf("expected false, got true")
+		return
+	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
 
-// func TestDBUserStorage_DeleteVacancy_False(t *testing.T) {
-// 	db, mock, err := sqlmock.New()
-// 	defer db.Close()
-// 	sqlxDB := sqlx.NewDb(db, "sqlmock")
+func TestDBUserStorage_PutSeeker_Correct(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	defer db.Close()
+	sqlxDB := sqlx.NewDb(db, "sqlmock")
 
-// 	if err != nil {
-// 		t.Fatalf("cant create mock: %s", err)
-// 	}
-// 	defer sqlxDB.Close()
+	if err != nil {
+		t.Fatalf("cant create mock: %s", err)
+	}
+	defer sqlxDB.Close()
 
-// 	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a")
+	seeker := SeekerReg{
+		Email:      "some@mail.ru",
+		FirstName:  "Victor",
+		SecondName: "Timofeev",
+		Password:   "sdfsdf",
+	}
 
-// 	mock.
-// 		ExpectExec(`DELETE FROM vacancies`).
-// 		WithArgs(id).
-// 		WillReturnError(errors.Errorf("error"))
+	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642bbba")
 
-// 	repo := DBUserStorage{
-// 		DbConn: sqlxDB,
-// 	}
+	mock.
+		ExpectExec(`UPDATE persons SET`).
+		WithArgs(
+			seeker.Email, seeker.FirstName,
+			seeker.SecondName, seeker.Password, id,
+		).
+		WillReturnResult(sqlmock.NewResult(1, 1))
 
-// 	err = repo.DeleteVacancy(id)
+	repo := DBUserStorage{
+		DbConn: sqlxDB,
+	}
 
-// 	if err == nil {
-// 		fmt.Println(err)
-// 		t.Errorf("Expected err")
-// 		return
-// 	}
+	ok := repo.PutSeeker(seeker, id)
 
-// 	if err := mock.ExpectationsWereMet(); err != nil {
-// 		t.Errorf("there were unfulfilled expectations: %s", err)
-// 		return
-// 	}
-// }
+	if !ok {
+		t.Error("Failed to put seeker\n")
+		return
+	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
 
-// func TestDBUserStorage_PutVacancy_Correct(t *testing.T) {
-// 	db, mock, err := sqlmock.New()
-// 	defer db.Close()
-// 	sqlxDB := sqlx.NewDb(db, "sqlmock")
+func TestDBUserStorage_PutSeeker_False(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	defer db.Close()
+	sqlxDB := sqlx.NewDb(db, "sqlmock")
 
-// 	if err != nil {
-// 		t.Fatalf("cant create mock: %s", err)
-// 	}
-// 	defer sqlxDB.Close()
+	if err != nil {
+		t.Fatalf("cant create mock: %s", err)
+	}
+	defer sqlxDB.Close()
 
-// 	vacancy := Vacancy{
-// 		ID:           uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
-// 		OwnerID:      uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
-// 		CompanyName:  "MC",
-// 		Experience:   "7 years",
-// 		Profession:   "cleaner",
-// 		Position:     "mid",
-// 		Tasks:        "cleaning rooms",
-// 		Requirements: "work for 24 hours per week",
-// 		WageFrom:     "100 500.00 руб",
-// 		WageTo:       "101 500.00 руб",
-// 		Conditions:   "Nice geolocation",
-// 		About:        "Hello employer",
-// 	}
+	seeker := SeekerReg{
+		Email:      "some@mail.ru",
+		FirstName:  "Victor",
+		SecondName: "Timofeev",
+		Password:   "sdfsdf",
+	}
 
-// 	mock.
-// 		ExpectExec(`UPDATE vacancies SET`).
-// 		WithArgs(
-// 			vacancy.Experience, vacancy.Profession, vacancy.Position, vacancy.Tasks, vacancy.Requirements,
-// 			vacancy.Conditions, vacancy.WageFrom, vacancy.WageTo, vacancy.About, vacancy.ID, vacancy.OwnerID,
-// 		).
-// 		WillReturnResult(sqlmock.NewResult(1, 1))
+	id := uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642bbba")
 
-// 	repo := DBUserStorage{
-// 		DbConn: sqlxDB,
-// 	}
+	mock.
+		ExpectExec(`UPDATE persons SET`).
+		WithArgs(
+			seeker.Email, seeker.FirstName,
+			seeker.SecondName, seeker.Password, id,
+		).
+		WillReturnError(fmt.Errorf("bad query"))
 
-// 	ok := repo.PutVacancy(vacancy, vacancy.OwnerID, vacancy.ID)
+	repo := DBUserStorage{
+		DbConn: sqlxDB,
+	}
 
-// 	if !ok {
-// 		t.Error("Failed to put vacancy\n")
-// 		return
-// 	}
-// 	if err := mock.ExpectationsWereMet(); err != nil {
-// 		t.Errorf("there were unfulfilled expectations: %s", err)
-// 	}
-// }
+	ok := repo.PutSeeker(seeker, id)
 
-// func TestDBUserStorage_PutVacancy_False(t *testing.T) {
-// 	db, mock, err := sqlmock.New()
-// 	defer db.Close()
-// 	sqlxDB := sqlx.NewDb(db, "sqlmock")
-
-// 	if err != nil {
-// 		t.Fatalf("cant create mock: %s", err)
-// 	}
-// 	defer sqlxDB.Close()
-
-// 	vacancy := Vacancy{
-// 		ID:           uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"), //invalid id
-// 		OwnerID:      uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
-// 		CompanyName:  "MC",
-// 		Experience:   "7 years",
-// 		Profession:   "cleaner",
-// 		Position:     "mid",
-// 		Tasks:        "cleaning rooms",
-// 		Requirements: "work for 24 hours per week",
-// 		WageFrom:     "100 500.00 руб",
-// 		WageTo:       "101 500.00 руб",
-// 		Conditions:   "Nice geolocation",
-// 		// About:        "Hello employer",
-// 	}
-
-// 	mock.
-// 		ExpectExec(`UPDATE vacancies SET`).
-// 		WithArgs(
-// 			vacancy.Experience, vacancy.Profession, vacancy.Position, vacancy.Tasks, vacancy.Requirements,
-// 			vacancy.Conditions, vacancy.WageFrom, vacancy.WageTo, vacancy.About, vacancy.ID, vacancy.OwnerID,
-// 		).
-// 		WillReturnError(fmt.Errorf("bad query"))
-
-// 	repo := DBUserStorage{
-// 		DbConn: sqlxDB,
-// 	}
-
-// 	ok := repo.PutVacancy(vacancy, vacancy.OwnerID, vacancy.ID)
-
-// 	if ok {
-// 		t.Errorf("expected false, got true")
-// 		return
-// 	}
-// 	if err := mock.ExpectationsWereMet(); err != nil {
-// 		t.Errorf("there were unfulfilled expectations: %s", err)
-// 	}
-// }
+	if ok {
+		t.Errorf("expected false, got true")
+		return
+	}
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}

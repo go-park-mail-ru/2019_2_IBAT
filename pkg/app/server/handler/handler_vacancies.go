@@ -102,17 +102,6 @@ func (h *Handler) GetVacancy(w http.ResponseWriter, r *http.Request) {
 	vacancy, err := h.UserService.GetVacancy(vacId, authInfo)
 
 	if err != nil {
-		// var code int
-		// switch err.Error() {
-		// case ForbiddenMsg:
-		// 	code = http.StatusForbidden
-		// case UnauthorizedMsg:
-		// 	code = http.StatusUnauthorized
-		// case InternalErrorMsg:
-		// 	code = http.StatusInternalServerError
-		// default:
-		// 	code = http.StatusBadRequest
-		// }
 		SetError(w, http.StatusBadRequest, InvalidIdMsg)
 
 		return

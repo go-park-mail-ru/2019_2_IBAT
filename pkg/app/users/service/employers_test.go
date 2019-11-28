@@ -1,8 +1,8 @@
 package users
 
 import (
-	. "2019_2_IBAT/pkg/pkg/models"
 	mock_user_repo "2019_2_IBAT/pkg/app/users/service/mock_user_repo"
+	. "2019_2_IBAT/pkg/pkg/models"
 	"encoding/json"
 	"io/ioutil"
 	"strings"
@@ -24,9 +24,7 @@ func TestUserService_CreateEmployer(t *testing.T) {
 	}
 
 	tests := []struct {
-		name string
-		// fields  fields
-		// args    args
+		name             string
 		record           AuthStorageValue
 		wantFail         bool
 		wantInvJSON      bool
@@ -86,12 +84,12 @@ func TestUserService_CreateEmployer(t *testing.T) {
 			if !tt.wantFail {
 				mockUserRepo.
 					EXPECT().
-					CreateEmployer(tt.emplReg).
+					CreateEmployer(gomock.Any()).
 					Return(true)
 			} else if !tt.wantInvJSON {
 				mockUserRepo.
 					EXPECT().
-					CreateEmployer(tt.emplReg).
+					CreateEmployer(gomock.Any()).
 					Return(false)
 			}
 			_, err := h.CreateEmployer(r)
@@ -249,7 +247,7 @@ func TestUserService_GetEmployer(t *testing.T) {
 				Role: EmployerStr,
 			},
 			wantFail:         true,
-			wantErrorMessage: pkgErrorMsg,
+			wantErrorMessage: InternalErrorMsg,
 		},
 	}
 	for _, tt := range tests {
@@ -331,7 +329,7 @@ func TestUserService_GetEmployers(t *testing.T) {
 		{
 			name:             "Test2",
 			wantFail:         false,
-			wantErrorMessage: pkgErrorMsg,
+			wantErrorMessage: InternalErrorMsg,
 		},
 	}
 

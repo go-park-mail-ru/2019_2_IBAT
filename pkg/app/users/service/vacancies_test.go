@@ -1,7 +1,14 @@
 package users
 
 import (
+	"2019_2_IBAT/pkg/app/notifs/notifsproto"
+	"2019_2_IBAT/pkg/app/recommends/recomsproto"
+	"fmt"
+
+	mock_notifs "2019_2_IBAT/pkg/app/users/service/mock_notifs"
+	"2019_2_IBAT/pkg/app/users/service/mock_recommends"
 	mock_user_repo "2019_2_IBAT/pkg/app/users/service/mock_user_repo"
+
 	. "2019_2_IBAT/pkg/pkg/models"
 	"encoding/json"
 	"io/ioutil"
@@ -20,14 +27,18 @@ func TestUserService_CreateVacancy(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockUserRepo := mock_user_repo.NewMockRepository(mockCtrl)
+
+	mockCtrl2 := gomock.NewController(t)
+	defer mockCtrl2.Finish()
+	mockNotifRepo := mock_notifs.NewMockServiceClient(mockCtrl2)
+
 	h := UserService{
-		Storage: mockUserRepo,
+		Storage:      mockUserRepo,
+		NotifService: mockNotifRepo,
 	}
 
 	tests := []struct {
-		name string
-		// fields  fields
-		// args    args
+		name             string
 		record           AuthStorageValue
 		wantFail         bool
 		wantInvJSON      bool
@@ -47,6 +58,7 @@ func TestUserService_CreateVacancy(t *testing.T) {
 				WageFrom:     "50000 RUB",
 				Conditions:   "nice team",
 				About:        "nice job",
+				Spheres:      []Pair{},
 			},
 			record: AuthStorageValue{
 				ID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
@@ -66,6 +78,7 @@ func TestUserService_CreateVacancy(t *testing.T) {
 				WageFrom:     "50000 RUB",
 				Conditions:   "nice team",
 				About:        "nice job",
+				Spheres:      []Pair{},
 			},
 			record: AuthStorageValue{
 				ID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
@@ -105,23 +118,31 @@ func TestUserService_CreateVacancy(t *testing.T) {
 
 			var str string
 			if !tt.wantInvJSON {
-				wantJSON, _ := json.Marshal(tt.vacancy)
+				wantJSON, _ := tt.vacancy.MarshalJSON()
 				str = string(wantJSON)
 			} else {
 				str = tt.invJSON
 			}
 
 			r := ioutil.NopCloser(strings.NewReader(string(str)))
-
 			if !tt.wantFail {
 				mockUserRepo.
 					EXPECT().
-					CreateVacancy(tt.vacancy).
+					CreateVacancy(gomock.Any()).
 					Return(true)
+				mockUserRepo.
+					EXPECT().
+					GetTagIDs(tt.vacancy.Spheres).
+					Return([]uuid.UUID{})
+				mockNotifRepo.
+					EXPECT().
+					SendNotification(gomock.Any(), gomock.Any()).
+					Return(&notifsproto.Bool{Ok: true}, nil)
+
 			} else if !tt.wantInvJSON {
 				mockUserRepo.
 					EXPECT().
-					CreateVacancy(tt.vacancy).
+					CreateVacancy(gomock.Any()).
 					Return(false)
 			}
 			_, err := h.CreateVacancy(r, tt.record)
@@ -187,7 +208,7 @@ func TestUserService_DeleteVacancy(t *testing.T) {
 			if !tt.wantFail {
 				mockUserRepo.
 					EXPECT().
-					GetVacancy(tt.vacancyId).
+					GetVacancy(tt.vacancyId, tt.record.ID).
 					Return(tt.vacancy, nil)
 				mockUserRepo.
 					EXPECT().
@@ -196,7 +217,7 @@ func TestUserService_DeleteVacancy(t *testing.T) {
 			} else if !tt.wantUnauth {
 				mockUserRepo.
 					EXPECT().
-					GetVacancy(tt.vacancyId).
+					GetVacancy(tt.vacancyId, tt.record.ID).
 					Return(tt.vacancy, nil)
 				mockUserRepo.
 					EXPECT().
@@ -220,10 +241,15 @@ func TestUserService_DeleteVacancy(t *testing.T) {
 func TestUserService_GetVacancy(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
-
 	mockUserRepo := mock_user_repo.NewMockRepository(mockCtrl)
+
+	mockCtrl2 := gomock.NewController(t)
+	defer mockCtrl2.Finish()
+	mockRecomRepo := mock_recommends.NewMockServiceClient(mockCtrl2)
+
 	h := UserService{
-		Storage: mockUserRepo,
+		Storage:      mockUserRepo,
+		RecomService: mockRecomRepo,
 	}
 
 	tests := []struct {
@@ -231,6 +257,7 @@ func TestUserService_GetVacancy(t *testing.T) {
 		vacancy          Vacancy
 		wantFail         bool
 		wantErrorMessage string
+		record           AuthStorageValue
 	}{
 		{
 			name: "Test1",
@@ -245,30 +272,70 @@ func TestUserService_GetVacancy(t *testing.T) {
 				WageFrom:     "50000 RUB",
 				Conditions:   "nice team",
 				About:        "nice job",
+				Spheres:      []Pair{},
+			},
+			record: AuthStorageValue{
+				ID: uuid.New(),
 			},
 		},
 		{
 			name:             "Test2",
 			wantFail:         true,
 			wantErrorMessage: InvalidIdMsg,
+			vacancy: Vacancy{
+				ID:           uuid.MustParse("1ba7b811-9dad-11d1-0000-00004fd430c8"),
+				OwnerID:      uuid.MustParse("6ba7b810-9dad-11d1-0000-00004fd430c8"),
+				CompanyName:  "PETUH",
+				Experience:   "None",
+				Position:     "",
+				Tasks:        "drive",
+				Requirements: "middle school education",
+				WageFrom:     "50000 RUB",
+				Conditions:   "nice team",
+				About:        "nice job",
+				Spheres:      []Pair{},
+			},
+			record: AuthStorageValue{
+				ID: uuid.New(),
+			},
 		},
 	}
+
+	// mockRecomRepo.EXPECT().SetTagIDs()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
 			if !tt.wantFail {
 				mockUserRepo.
 					EXPECT().
-					GetVacancy(tt.vacancy.ID).
+					GetVacancyTagIDs(tt.vacancy.ID).
+					Return([]uuid.UUID{}, nil)
+
+				mockRecomRepo.
+					EXPECT().
+					SetTagIDs(gomock.Any(), gomock.Any()).
+					Return(&recomsproto.Bool{Ok: true}, nil)
+
+				mockUserRepo.
+					EXPECT().
+					GetVacancy(tt.vacancy.ID, tt.record.ID).
 					Return(tt.vacancy, nil)
 			} else {
 				mockUserRepo.
 					EXPECT().
-					GetVacancy(tt.vacancy.ID).
+					GetVacancyTagIDs(tt.vacancy.ID).
+					Return([]uuid.UUID{}, nil)
+				mockRecomRepo.
+					EXPECT().
+					SetTagIDs(gomock.Any(), gomock.Any()).
+					Return(&recomsproto.Bool{Ok: true}, nil)
+				mockUserRepo.
+					EXPECT().
+					GetVacancy(tt.vacancy.ID, tt.record.ID).
 					Return(Vacancy{}, errors.New(tt.wantErrorMessage))
 			}
 
-			gotVacancy, err := h.GetVacancy(tt.vacancy.ID)
+			gotVacancy, err := h.GetVacancy(tt.vacancy.ID, tt.record)
 
 			if !tt.wantFail {
 				if err != nil {
@@ -395,6 +462,131 @@ func TestUserService_PutVacancy(t *testing.T) {
 
 			if !tt.wantFail {
 				require.Equal(t, err, nil)
+			} else {
+				require.Equal(t, tt.wantErrorMessage, err.Error(), "The two values should be the same.")
+			}
+		})
+	}
+}
+
+func TestUserService_GetVacancies(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockUserRepo := mock_user_repo.NewMockRepository(mockCtrl)
+
+	mockCtrl2 := gomock.NewController(t)
+	defer mockCtrl2.Finish()
+	mockRecomRepo := mock_recommends.NewMockServiceClient(mockCtrl2)
+
+	h := UserService{
+		Storage:      mockUserRepo,
+		RecomService: mockRecomRepo,
+	}
+
+	expVacancies := []Vacancy{
+		{
+			ID:           uuid.MustParse("11111111-9dad-11d1-80b1-00c04fd430c8"),
+			OwnerID:      uuid.MustParse("6ba7b810-9dad-11d1-80b1-00c04fd430c8"),
+			CompanyName:  "MCDonalds",
+			Experience:   "None",
+			Position:     "",
+			Tasks:        "bring food to costumers",
+			Requirements: "middle school education",
+			WageFrom:     "1000 USD",
+			Conditions:   "nice team",
+			About:        "nice job",
+		},
+
+		{
+			ID:           uuid.MustParse("11111111-9dad-11d1-1111-00c04fd430c8"),
+			OwnerID:      uuid.MustParse("6ba7b810-9bbb-1111-1111-00c04fd430c8"),
+			CompanyName:  "PETUH",
+			Experience:   "None",
+			Position:     "driver",
+			Tasks:        "drive",
+			Requirements: "middle school education",
+			WageFrom:     "50000 RUB",
+			Conditions:   "nice team",
+			About:        "nice job",
+		},
+	}
+
+	tests := []struct {
+		name             string
+		record           AuthStorageValue
+		wantFail         bool
+		wantRecomms      bool
+		wantErrorMessage string
+		seekers          []Seeker
+	}{
+		{
+			name: "Test1",
+			record: AuthStorageValue{
+				ID:   uuid.New(),
+				Role: SeekerStr,
+			},
+		},
+		{
+			name:             "Test2",
+			wantFail:         true,
+			wantErrorMessage: InternalErrorMsg,
+		},
+		{
+			name:             "Test2",
+			wantFail:         true,
+			wantRecomms:      true,
+			wantErrorMessage: InternalErrorMsg,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			if !tt.wantFail {
+				mockUserRepo.
+					EXPECT().
+					GetTagIDs(gomock.Any()).
+					Return([]uuid.UUID{})
+				mockUserRepo.
+					EXPECT().
+					GetVacancies(tt.record, gomock.Any()).
+					Return(expVacancies, nil)
+				mockRecomRepo.
+					EXPECT().
+					SetTagIDs(gomock.Any(), gomock.Any()).
+					Return(&recomsproto.Bool{Ok: true}, nil)
+			} else if tt.wantRecomms {
+				mockUserRepo.
+					EXPECT().
+					GetTagIDs(gomock.Any()).
+					Return([]uuid.UUID{})
+				mockUserRepo.
+					EXPECT().
+					GetVacancies(tt.record, gomock.Any()).
+					Return(expVacancies, nil)
+				mockRecomRepo.
+					EXPECT().
+					SetTagIDs(gomock.Any(), gomock.Any()).
+					Return(&recomsproto.Bool{Ok: false}, fmt.Errorf(InternalErrorMsg))
+			} else {
+				mockUserRepo.
+					EXPECT().
+					GetTagIDs(gomock.Any()).
+					Return([]uuid.UUID{})
+				mockUserRepo.
+					EXPECT().
+					GetVacancies(tt.record, gomock.Any()).
+					Return([]Vacancy{}, fmt.Errorf(InternalErrorMsg))
+			}
+			paramsDummyMap := map[string]interface{}{}
+			tagDummyMap := map[string]interface{}{}
+
+			gotSeeks, err := h.GetVacancies(tt.record, paramsDummyMap, tagDummyMap)
+
+			if !tt.wantFail {
+				if err != nil {
+					t.Error("Error is not nil\n")
+				}
+				require.Equal(t, expVacancies, gotSeeks, "The two values should be the same.")
 			} else {
 				require.Equal(t, tt.wantErrorMessage, err.Error(), "The two values should be the same.")
 			}

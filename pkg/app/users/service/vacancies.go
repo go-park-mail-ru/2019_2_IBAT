@@ -2,6 +2,7 @@ package users
 
 import (
 	"context"
+	"fmt"
 
 	"io"
 	"io/ioutil"
@@ -18,7 +19,6 @@ import (
 func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValue) (uuid.UUID, error) {
 
 	if authInfo.Role != EmployerStr {
-		// log.Printf("Invalid action: %s", err)
 		return uuid.UUID{}, errors.New(ForbiddenMsg)
 	}
 
@@ -30,10 +30,6 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 	}
 
 	var vacancyReg Vacancy
-	// id := uuid.New()
-	// vacancyReg.ID = id
-	// vacancyReg.OwnerID = authInfo.ID
-
 	err = vacancyReg.UnmarshalJSON(bytes)
 	if err != nil {
 		log.Printf("Error while unmarshaling: %s", err)
@@ -54,6 +50,7 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 
 	tagIDs := h.Storage.GetTagIDs(vacancyReg.Spheres)
 
+	fmt.Println(tagIDs)
 	ctx := context.Background()
 	_, err = h.NotifService.SendNotification(
 		ctx,
@@ -72,6 +69,7 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 func (h *UserService) GetVacancy(vacancyId uuid.UUID, authInfo AuthStorageValue) (Vacancy, error) {
 	tagIDs, err := h.Storage.GetVacancyTagIDs(vacancyId)
 
+	fmt.Println(tagIDs)
 	ctx := context.Background()
 	h.RecomService.SetTagIDs(
 		ctx,
@@ -85,7 +83,7 @@ func (h *UserService) GetVacancy(vacancyId uuid.UUID, authInfo AuthStorageValue)
 
 	vacancy, err := h.Storage.GetVacancy(vacancyId, authInfo.ID)
 
-	if err != nil { //error wrap
+	if err != nil {
 		return vacancy, errors.New(InvalidIdMsg)
 	}
 
@@ -103,7 +101,7 @@ func (h *UserService) DeleteVacancy(vacancyId uuid.UUID, authInfo AuthStorageVal
 		return errors.New(InvalidIdMsg)
 	}
 
-	if vacancy.OwnerID != authInfo.ID { //error wrap
+	if vacancy.OwnerID != authInfo.ID {
 		return errors.New(ForbiddenMsg)
 	}
 
