@@ -27,8 +27,3 @@ func (h Service) SendNotification(ctx context.Context,
 	h.NotifChan <- notif
 	return &notifsproto.Bool{}, nil
 }
-
-// h.NotifChan <- NotifStruct{
-// 	VacancyId: id,
-// 	TagIDs:    tagIDs,
-// }

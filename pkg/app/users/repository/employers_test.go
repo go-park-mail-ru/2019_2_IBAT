@@ -259,7 +259,6 @@ func TestDBUserStorage_GetEmployer_Fail2(t *testing.T) {
 		NewRows([]string{"id", "email", "company_name", "first_name", "second_name",
 			"site", "empl_num", "phone_number", "extra_phone_number", "spheres_of_work", "path_to_image",
 			"region", "description"})
-	// rows_vacancies_id1 := sqlmock.NewRows([]string{"id"})
 
 	expect := Employer{
 		ID:               uuid.MustParse("6ba7b811-9dad-11d1-80b1-00c04fd430c8"),

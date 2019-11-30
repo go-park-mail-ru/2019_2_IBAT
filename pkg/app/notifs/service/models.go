@@ -48,10 +48,10 @@ const (
 
 func (c *Connect) ReadPump() {
 	defer func() {
-		// c.hub.unregister <- c
 		fmt.Println("ReadPump CONNECTION WAS CLOSED")
 		c.Conn.Close()
 	}()
+
 	c.Conn.SetReadLimit(maxMessageSize)
 	c.Conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.Conn.SetPongHandler(func(string) error { c.Conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
@@ -60,31 +60,19 @@ func (c *Connect) ReadPump() {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
 			}
-			// c.Close()
 			break
 		}
 	}
 }
 
-// for {
-// 	_, message, err := c.conn.ReadMessage()
-// 	if err != nil {
-// 		if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-// 			log.Printf("error: %v", err)
-// 		}
-// 		break
-// 	}
-// 	message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-// 	c.hub.broadcast <- message
-// }
-
 func (c *Connect) WritePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
-		fmt.Println("WritePump CONNECTION WAS CLOSED")
 		c.Conn.Close()
+		fmt.Println("WritePump CONNECTION WAS CLOSED")
 	}()
+
 	for {
 		select {
 		case id := <-c.Ch: //ok
@@ -106,10 +94,6 @@ func (c *Connect) WritePump() {
 			// }
 		case <-ticker.C:
 			err := c.Conn.SetWriteDeadline(time.Now().Add(writeWait))
-			// if err != nil {
-			// 	return
-			// }
-
 			if err = c.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 				return
 			}

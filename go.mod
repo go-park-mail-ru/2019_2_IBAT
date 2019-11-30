@@ -3,8 +3,12 @@ module 2019_2_IBAT
 go 1.13
 
 require (
+	github.com/alicebob/gopher-json v0.0.0-20180125190556-5a6b3ba71ee6 // indirect
+	github.com/alicebob/miniredis v2.5.0+incompatible
 	github.com/cweill/gotests v1.5.3 // indirect
+	github.com/elliotchance/redismock v1.5.3
 	github.com/go-delve/delve v1.3.2 // indirect
+	github.com/go-redis/redis v6.15.6+incompatible
 	github.com/gofrs/uuid v3.2.0+incompatible
 	github.com/golang/mock v1.3.1
 	github.com/golang/protobuf v1.3.2
@@ -22,7 +26,9 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/prometheus/client_golang v0.9.2
 	github.com/prometheus/node_exporter v0.18.1 // indirect
+	github.com/rafaeljusto/redigomock v0.0.0-20191117212112-00b2509252a1
 	github.com/stretchr/testify v1.4.0
+	github.com/yuin/gopher-lua v0.0.0-20191128022950-c6266f4fe8d7 // indirect
 	golang.org/x/blog v0.0.0-20191108185507-584205eb2c4d // indirect
 	golang.org/x/crypto v0.0.0-20191117063200-497ca9f6d64f
 	golang.org/x/net v0.0.0-20191119073136-fc4aabc6c914 // indirect

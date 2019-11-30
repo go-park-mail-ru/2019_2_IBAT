@@ -10,6 +10,10 @@ import (
 	. "2019_2_IBAT/pkg/pkg/models"
 )
 
+// go test ./... -coverprofile cover.out; go tool cover -func cover.out
+// cat cover.out | fgrep -v _easyjson.go > cover.tmp
+// go tool cover -func cover.tmp
+
 type DBRecommendsStorage struct {
 	DbConn *sqlx.DB
 }
@@ -70,14 +74,13 @@ func (m DBRecommendsStorage) GetUsersForTags(tagIDs []string) ([]string, error) 
 	}
 
 	query, args, err = sqlx.In(query, args...)
-
 	if err != nil {
 		fmt.Printf("GetUsersForTags: %s\n", err)
 		return ids, errors.New(InternalErrorMsg)
 	}
+
 	query = m.DbConn.Rebind(query)
 	rows, err := m.DbConn.Queryx(query, args...)
-
 	if err != nil {
 		fmt.Printf("GetUsersForTags: %s\n", err)
 		return ids, errors.New(InternalErrorMsg)

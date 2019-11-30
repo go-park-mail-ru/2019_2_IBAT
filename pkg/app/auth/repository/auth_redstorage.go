@@ -22,7 +22,6 @@ func init() {
 }
 
 type SessionManager struct {
-	// redisConn redis.Conn
 	redisPool *redis.Pool
 }
 
@@ -33,7 +32,6 @@ func NewSessionManager(pool *redis.Pool) *SessionManager {
 }
 
 func (st *SessionManager) Get(cookie string) (AuthStorageValue, bool) {
-	// log.Println("AuthStorage: Get started")
 	redisConn := st.redisPool.Get()
 	defer redisConn.Close()
 
@@ -63,7 +61,6 @@ func (st *SessionManager) Get(cookie string) (AuthStorageValue, bool) {
 	diff := expiresAt.Sub(now)
 
 	if diff < 0 {
-		// delete(st.Storage, cookie)
 		_, _ = redis.String(redisConn.Do("DEL", cookie))
 
 		return AuthStorageValue{}, false
@@ -86,26 +83,18 @@ func (st *SessionManager) Set(id uuid.UUID, class string) (AuthStorageValue, str
 
 	redisConn := st.redisPool.Get()
 	defer redisConn.Close()
-	result, err := redis.String(redisConn.Do("SET", cookie, dataSerialized))
+	_, err := redis.String(redisConn.Do("SET", cookie, dataSerialized))
 
-	if err != nil {
-		return AuthStorageValue{}, "", err
-	}
-
-	if result != "OK" {
-		return AuthStorageValue{}, "", fmt.Errorf("result not OK")
-	}
-
-	return record, cookie, nil
+	return record, cookie, err
 }
 
 func (st *SessionManager) Delete(cookie string) bool {
 	redisConn := st.redisPool.Get()
 	defer redisConn.Close()
 
-	_, err := redis.Int(redisConn.Do("DEL", cookie))
+	num, err := redis.Int(redisConn.Do("DEL", cookie))
 
-	if err != nil {
+	if err != nil || num == 0 {
 		return false
 	}
 

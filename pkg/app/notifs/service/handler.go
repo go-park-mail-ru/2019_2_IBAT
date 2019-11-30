@@ -71,18 +71,16 @@ func (h Service) HandleNotifications(w http.ResponseWriter, r *http.Request) {
 		node.Mu.Unlock()
 		fmt.Printf("Connection pool for user %s was updated\n", authInfo.ID)
 	}
-	h.ConnectsPool.ConsMu.Unlock() //careful
+	h.ConnectsPool.ConsMu.Unlock()
 
 	go conn.ReadPump()
 	go conn.WritePump()
 
 	go sendNewMsgNotifications(node)
-	// fmt.Println(h.WsConnects)
 }
 
 func sendNewMsgNotifications(clientConn *ConnectsPerUser) {
 	for {
-		// select {
 		id := <-clientConn.Ch
 		fmt.Printf("id %s got from channel for user", id.String())
 		clientConn.Mu.Lock()
@@ -92,12 +90,10 @@ func sendNewMsgNotifications(clientConn *ConnectsPerUser) {
 			fmt.Printf("id %s sent to user\n", id.String())
 		}
 		clientConn.Mu.Unlock()
-		// }_
 	}
 }
 
 func (h Service) Notifications() {
-	// var notif NotifStruct
 	for {
 		notif := <-h.NotifChan
 		fmt.Println("Notification accepted")
@@ -116,7 +112,6 @@ func (h Service) Notifications() {
 		if err != nil {
 			log.Printf("Notifications %s", err)
 		}
-		// connects.Mu.Lock()
 		fmt.Println("connects.ConsMu.Lock()")
 
 		h.ConnectsPool.ConsMu.Lock()

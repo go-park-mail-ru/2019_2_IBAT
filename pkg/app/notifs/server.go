@@ -31,8 +31,6 @@ func RunServer() error {
 		return err
 	}
 
-	// defer grcpConn.Close()
-
 	sessManager := session.NewServiceClient(authGrcpConn)
 
 	recomsGrcpConn, err := grpc.Dial(
@@ -79,13 +77,10 @@ func RunServer() error {
 	router.Use(authMiddleware)
 	// router.Use(middleware.CSRFMiddleware)
 
-	// router = router.PathPrefix("/api/").Subrouter()
-
 	router.Use(loger.AccessLogMiddleware)
 	router.Use(middleware.CorsMiddleware)
 	router.Use(authMiddleware)
 
-	// fmt.Println(notifService.HandleNotifications)
 	router.HandleFunc("/api/notifications", notifService.HandleNotifications)
 
 	go notifService.Notifications()
