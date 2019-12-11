@@ -3,7 +3,6 @@ package repository
 import (
 	. "2019_2_IBAT/pkg/pkg/models"
 	"log"
-	"strconv"
 	"strings"
 
 	"github.com/google/uuid"
@@ -215,64 +214,6 @@ func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[strin
 	}
 
 	return vacancies, nil
-}
-
-func buildSpheresQuery(spheres []Pair) (string, map[string]interface{}) {
-
-	sphMap := make(map[string]interface{})
-	var sphQueryArr []string
-
-	for i, item := range spheres {
-		parent_tag := "parent_tag" + strconv.Itoa(i)
-		child_tag := "child_tag" + strconv.Itoa(i)
-		sphMap[parent_tag] = item.First
-		sphMap[child_tag] = item.Second
-		sphQueryArr = append(sphQueryArr, "(parent_tag = :"+parent_tag+" AND child_tag = :"+child_tag+" )")
-
-	}
-
-	sphQuery := strings.Join(sphQueryArr, " OR ")
-
-	return sphQuery, sphMap
-}
-
-func (m *DBUserStorage) GetTagIDs(spheres []Pair) []uuid.UUID {
-	var tagIds []uuid.UUID
-
-	if !(len(spheres) > 0) {
-		return tagIds
-	}
-
-	var nmstTags *sqlx.NamedStmt
-	var err error
-
-	sphQuery, sphMap := buildSpheresQuery(spheres)
-
-	nmstTags, err = m.DbConn.PrepareNamed("SELECT id FROM tags WHERE " + sphQuery)
-	if err != nil {
-		return tagIds
-	} //real error message
-
-	tagRows, err := nmstTags.Queryx(sphMap)
-	if err != nil {
-		return tagIds
-	} //real error message
-
-	if err == nil && sphQuery != "" {
-		defer tagRows.Close()
-		for tagRows.Next() {
-			var tagId uuid.UUID
-
-			err = tagRows.Scan(&tagId)
-			if err != nil {
-				log.Printf("GetVacancies: %s\n", err)
-			}
-
-			tagIds = append(tagIds, tagId)
-		}
-	}
-
-	return tagIds
 }
 
 func paramsToQuery(params map[string]interface{}) string {

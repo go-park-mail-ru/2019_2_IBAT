@@ -48,7 +48,7 @@ func (h *UserService) CreateVacancy(body io.ReadCloser, authInfo AuthStorageValu
 		return uuid.UUID{}, errors.New(BadRequestMsg)
 	}
 
-	tagIDs := h.Storage.GetTagIDs(vacancyReg.Spheres)
+	tagIDs, err := h.Storage.GetTagIDs(vacancyReg.Spheres)
 
 	fmt.Println(tagIDs)
 	ctx := context.Background()
@@ -172,7 +172,7 @@ func (h *UserService) GetVacancies(authInfo AuthStorageValue, params map[string]
 				})
 			}
 		}
-		tagIDs = h.Storage.GetTagIDs(tags)
+		tagIDs, _ = h.Storage.GetTagIDs(tags)
 	}
 
 	params["tag_ids"] = tagIDs

@@ -3269,3 +3269,9 @@ created by net/http.(*Server).Serve
 2019/11/27 00:27:47 LOG END [GET] [::1]:39756, /api/vacancies 21.585477ms
 
 
+2019/12/11 15:24:18 LOG START [GET] [::1]:41332, /api/tags 
+2019/12/11 15:24:18 AuthMiddleware: started
+2019/12/11 15:24:18 AuthMiddleware: No cookie detected
+2019/12/11 15:24:18 LOG END [GET] [::1]:41332, /api/tags 6.736576ms
+
+

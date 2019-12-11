@@ -43,6 +43,6 @@ type Repository interface {
 	SetImage(id uuid.UUID, class string, imageName string) bool
 
 	GetTags() ([]Tag, error)
-	GetTagIDs(tags []Pair) []uuid.UUID
+	GetTagIDs(tags []Pair) ([]uuid.UUID, error)
 	GetVacancyTagIDs(vacancyId uuid.UUID) ([]uuid.UUID, error)
 }

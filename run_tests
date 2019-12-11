@@ -1,0 +1,3 @@
+go test ./... -coverprofile cover.out; go tool cover -func cover.out
+cat cover.out | fgrep -v _easyjson.go > cover.tmp
+go tool cover -func cover.tmp

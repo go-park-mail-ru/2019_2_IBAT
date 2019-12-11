@@ -133,7 +133,7 @@ func TestUserService_CreateVacancy(t *testing.T) {
 				mockUserRepo.
 					EXPECT().
 					GetTagIDs(tt.vacancy.Spheres).
-					Return([]uuid.UUID{})
+					Return([]uuid.UUID{}, nil)
 				mockNotifRepo.
 					EXPECT().
 					SendNotification(gomock.Any(), gomock.Any()).
@@ -545,7 +545,7 @@ func TestUserService_GetVacancies(t *testing.T) {
 				mockUserRepo.
 					EXPECT().
 					GetTagIDs(gomock.Any()).
-					Return([]uuid.UUID{})
+					Return([]uuid.UUID{}, nil)
 				mockUserRepo.
 					EXPECT().
 					GetVacancies(tt.record, gomock.Any()).
@@ -558,7 +558,7 @@ func TestUserService_GetVacancies(t *testing.T) {
 				mockUserRepo.
 					EXPECT().
 					GetTagIDs(gomock.Any()).
-					Return([]uuid.UUID{})
+					Return([]uuid.UUID{}, nil)
 				mockUserRepo.
 					EXPECT().
 					GetVacancies(tt.record, gomock.Any()).
@@ -571,7 +571,7 @@ func TestUserService_GetVacancies(t *testing.T) {
 				mockUserRepo.
 					EXPECT().
 					GetTagIDs(gomock.Any()).
-					Return([]uuid.UUID{})
+					Return([]uuid.UUID{}, nil)
 				mockUserRepo.
 					EXPECT().
 					GetVacancies(tt.record, gomock.Any()).

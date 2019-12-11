@@ -313,10 +313,11 @@ func (_mr *_MockRepositoryRecorder) GetTags() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetTags")
 }
 
-func (_m *MockRepository) GetTagIDs(tags []Pair) []uuid.UUID {
+func (_m *MockRepository) GetTagIDs(tags []Pair) ([]uuid.UUID, error) {
 	ret := _m.ctrl.Call(_m, "GetTagIDs", tags)
 	ret0, _ := ret[0].([]uuid.UUID)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 func (_mr *_MockRepositoryRecorder) GetTagIDs(arg0 interface{}) *gomock.Call {

@@ -11,7 +11,8 @@ var (
 	corsData = CorsData{
 		AllowOrigins: []string{
 			// "localhost:8080",
-			"20192ibat-cyb91y0rs.now.sh",
+			// "20192ibat-cyb91y0rs.now.sh",
+			"*",
 		},
 		AllowMethods:     []string{"GET", "DELETE", "POST", "PUT"},
 		AllowHeaders:     []string{"Content-Type", "X-Content-Type-Options", "X-Csrf-Token"},

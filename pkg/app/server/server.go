@@ -189,51 +189,10 @@ func NewRouter() (*mux.Router, error) {
 	return router, nil
 }
 
-// func RunServer() {
-// 	router, _ := NewRouter()
-// 	httpsSrv := &http.Server{
-// 		Handler: router,
-// 		// Good practice: enforce timeouts for servers you create!
-// 		WriteTimeout: 15 * time.Second,
-// 		ReadTimeout:  15 * time.Second,
-// 	}
-// 	inProduction := true
-
-// 	if inProduction {
-// 		// Note: use a sensible value for data directory
-// 		// this is where cached certificates are stored
-// 		dataDir := "."
-// 		hostPolicy := func(ctx context.Context, host string) error {
-// 			allowedHost := "tko.vladimir.fvds.ru"
-// 			if host == allowedHost {
-// 				return nil
-// 			}
-// 			return fmt.Errorf("acme/autocert: only %s host is allowed", allowedHost)
-// 		}
-
-// 		m := &autocert.Manager{
-// 			Prompt:     autocert.AcceptTOS,
-// 			HostPolicy: hostPolicy,
-// 			Cache:      autocert.DirCache(dataDir),
-// 		}
-
-// 		httpsSrv.Addr = ":443"
-// 		httpsSrv.TLSConfig = &tls.Config{GetCertificate: m.GetCertificate}
-
-// 		log.Fatal(httpsSrv.ListenAndServeTLS("", ""))
-// 	} else {
-
-// 		httpsSrv.Addr = ":8080"
-
-// 		log.Fatal(httpsSrv.ListenAndServe())
-// 	}
-// }
-
 func RunServer() {
 	router, err := NewRouter()
 	if err != nil {
 		log.Fatal("Failed to create router")
 	}
-	// log.Fatal(http.ListenAndServeTLS(":8080", "cert.pem", "key.pem", router))
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(config.MainAppPort), router))
 }
