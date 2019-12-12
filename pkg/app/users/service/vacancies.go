@@ -174,16 +174,20 @@ func (h *UserService) GetVacancies(authInfo AuthStorageValue, params map[string]
 		}
 		tagIDs, _ = h.Storage.GetTagIDs(tags)
 	}
-
 	params["tag_ids"] = tagIDs
 
-	vacancies, err := h.Storage.GetVacancies(authInfo, params)
+	var vacancies []Vacancy
+	if params["id"] != nil {
+		vacancies, err = h.Storage.GetVacanciesByIDs(authInfo, params)
+	} else {
+		vacancies, err = h.Storage.GetVacancies(authInfo, params)
+	}
 
 	if err != nil {
 		return vacancies, err
 	}
 
-	if params["recommended"] == nil {
+	if params["recommended"] == nil || params["id"] != nil {
 		ctx := context.Background()
 		_, err = h.RecomService.SetTagIDs(
 			ctx,

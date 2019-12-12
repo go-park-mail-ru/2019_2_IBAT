@@ -73,7 +73,7 @@ func RunServer() error {
 	authMiddleware := middleware.AuthMiddlewareGenerator(sessManager)
 
 	router.Use(loger.AccessLogMiddleware)
-	// router.Use(middleware.CorsMiddleware)
+	router.Use(middleware.CorsMiddleware)
 	router.Use(authMiddleware)
 	// router.Use(middleware.CSRFMiddleware)
 

@@ -2,6 +2,7 @@ package repository
 
 import (
 	. "2019_2_IBAT/pkg/pkg/models"
+	"fmt"
 	"log"
 	"strings"
 
@@ -202,6 +203,61 @@ func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[strin
 		err = rows.StructScan(&vacancy)
 		if err != nil {
 			log.Printf("GetVacancies: %s\n", err)
+			return vacancies, errors.New(InternalErrorMsg)
+		}
+
+		_, ok := favVacMap[vacancy.ID]
+		if ok {
+			vacancy.Favorite = true
+		}
+
+		vacancies = append(vacancies, vacancy)
+	}
+
+	return vacancies, nil
+}
+
+func (m *DBUserStorage) GetVacanciesByIDs(authInfo AuthStorageValue, params map[string]interface{}) ([]Vacancy, error) {
+	vacancies := []Vacancy{}
+	log.Printf("Params: %s\n\n", params)
+
+	arr := params["id"].([]string)
+	fmt.Println(arr)
+	params["id"] = arr
+
+	query, args, err := sqlx.Named("SELECT v.id, v.own_id, c.company_name, v.experience,"+
+		"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
+		"v.region, v.type_of_employment, v.work_schedule "+
+		" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id WHERE v.id IN (:id);", params)
+	if err != nil {
+		log.Printf("GetVacanciesByIDs: %s\n", err)
+
+		return vacancies, errors.New(InternalErrorMsg)
+	}
+
+	query, args, err = sqlx.In(query, args...)
+	if err != nil {
+		log.Printf("GetVacanciesByIDs: %s\n", err)
+		return vacancies, errors.New(InternalErrorMsg)
+	}
+	query = m.DbConn.Rebind(query)
+
+	rows, err := m.DbConn.Queryx(query, args...)
+	if err != nil {
+		log.Printf("GetVacanciesByIDs: %s\n", err)
+		return vacancies, errors.New(InternalErrorMsg)
+	}
+
+	defer rows.Close()
+
+	favVacMap := m.queryFavVacIDs(authInfo.ID)
+
+	for rows.Next() {
+		var vacancy Vacancy
+
+		err = rows.StructScan(&vacancy)
+		if err != nil {
+			log.Printf("GetVacanciesByIDs: %s\n", err)
 			return vacancies, errors.New(InternalErrorMsg)
 		}
 

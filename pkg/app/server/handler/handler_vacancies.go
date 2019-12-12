@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -179,6 +180,26 @@ func (h *Handler) ParseVacanciesQuery(query url.Values) map[string]interface{} {
 
 	if query.Get("recommended") != "" {
 		params["recommended"] = query.Get("recommended")
+		return params //no sense to continue
+	}
+
+	if query.Get("id0") != "" {
+		var ids []string
+		params["id0"] = query.Get("id0")
+		ids = append(ids, query.Get("id0"))
+
+		i := 1
+		for {
+			iStr := strconv.Itoa(i)
+			if query.Get("id"+iStr) != "" {
+				ids = append(ids, query.Get("id"+iStr))
+			} else {
+				break
+			}
+			i++
+		}
+
+		params["id"] = ids
 		return params //no sense to continue
 	}
 

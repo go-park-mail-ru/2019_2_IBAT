@@ -3275,3 +3275,382 @@ created by net/http.(*Server).Serve
 2019/12/11 15:24:18 LOG END [GET] [::1]:41332, /api/tags 6.736576ms
 
 
+2019/12/12 02:24:31 LOG START [GET] [::1]:44062, /api/vacancies 
+2019/12/12 02:24:31 AuthMiddleware: started
+2019/12/12 02:24:31 AuthMiddleware: No cookie detected
+2019/12/12 02:24:31 Tag array
+2019/12/12 02:24:31 map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a ae5c66ed-be4f-4781-ab67-b4f7b901ac97 3ba58cec-1a28-4600-a763-0c83b28a1b07]]
+2019/12/12 02:24:31 Params map length: 1
+2019/12/12 02:24:31 Params: map[id:8b6c60a1-124e-499c-ad55-b7d12ef96f3a tag_ids:[]]
+
+2019/12/12 02:24:31 GetVacanciesByIDs: Prepared statement "" requires 1 parameters, but 0 were provided
+2019/12/12 02:24:31 LOG END [GET] [::1]:44062, /api/vacancies 2.112336ms
+
+
+2019/12/12 02:25:19 listen tcp :8080: bind: address already in use
+2019/12/12 02:25:33 LOG START [GET] [::1]:44120, /api/vacancies 
+2019/12/12 02:25:33 AuthMiddleware: started
+2019/12/12 02:25:33 AuthMiddleware: No cookie detected
+2019/12/12 02:25:33 Tag array
+2019/12/12 02:25:33 map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a ae5c66ed-be4f-4781-ab67-b4f7b901ac97 3ba58cec-1a28-4600-a763-0c83b28a1b07]]
+2019/12/12 02:25:33 Params map length: 1
+2019/12/12 02:26:36 LOG START [GET] [::1]:44156, /api/vacancies 
+2019/12/12 02:26:36 AuthMiddleware: started
+2019/12/12 02:26:36 AuthMiddleware: No cookie detected
+2019/12/12 02:26:36 Tag array
+2019/12/12 02:26:36 map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a ae5c66ed-be4f-4781-ab67-b4f7b901ac97 3ba58cec-1a28-4600-a763-0c83b28a1b07]]
+2019/12/12 02:26:36 Params map length: 1
+2019/12/12 02:26:36 Params: map[id:8b6c60a1-124e-499c-ad55-b7d12ef96f3a tag_ids:[]]
+
+2019/12/12 02:26:36 LOG END [GET] [::1]:44156, /api/vacancies 5.679445ms
+
+
+2019/12/12 02:26:54 LOG START [GET] [::1]:44176, /api/vacancies 
+2019/12/12 02:26:54 AuthMiddleware: started
+2019/12/12 02:26:54 AuthMiddleware: No cookie detected
+2019/12/12 02:26:54 Tag array
+2019/12/12 02:26:54 map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a ae5c66ed-be4f-4781-ab67-b4f7b901ac97 3ba58cec-1a28-4600-a763-0c83b28a1b07]]
+2019/12/12 02:26:54 Params map length: 1
+2019/12/12 02:27:01 Params: map[id:8b6c60a1-124e-499c-ad55-b7d12ef96f3a tag_ids:[]]
+
+2019/12/12 02:28:29 LOG START [GET] [::1]:44212, /api/vacancies 
+2019/12/12 02:28:29 AuthMiddleware: started
+2019/12/12 02:28:29 AuthMiddleware: No cookie detected
+2019/12/12 02:28:29 Tag array
+2019/12/12 02:28:29 map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a ae5c66ed-be4f-4781-ab67-b4f7b901ac97 3ba58cec-1a28-4600-a763-0c83b28a1b07]]
+2019/12/12 02:28:29 Params map length: 1
+2019/12/12 02:28:29 Params: map[id:8b6c60a1-124e-499c-ad55-b7d12ef96f3a tag_ids:[]]
+
+2019/12/12 02:28:29 LOG END [GET] [::1]:44212, /api/vacancies 6.39849ms
+
+
+2019/12/12 02:30:27 LOG START [GET] [::1]:44242, /api/vacancies 
+2019/12/12 02:30:27 AuthMiddleware: started
+2019/12/12 02:30:27 AuthMiddleware: No cookie detected
+2019/12/12 02:30:27 Tag array
+2019/12/12 02:30:27 map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a ae5c66ed-be4f-4781-ab67-b4f7b901ac97 3ba58cec-1a28-4600-a763-0c83b28a1b07]]
+2019/12/12 02:30:27 Params map length: 1
+2019/12/12 02:30:37 Params: map[id:8b6c60a1-124e-499c-ad55-b7d12ef96f3a tag_ids:[]]
+
+2019/12/12 02:32:45 LOG START [GET] [::1]:44282, /api/vacancies 
+2019/12/12 02:32:45 AuthMiddleware: started
+2019/12/12 02:32:45 AuthMiddleware: No cookie detected
+2019/12/12 02:32:45 Tag array
+2019/12/12 02:32:45 map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a ae5c66ed-be4f-4781-ab67-b4f7b901ac97 3ba58cec-1a28-4600-a763-0c83b28a1b07]]
+2019/12/12 02:32:45 Params map length: 1
+2019/12/12 02:32:45 Params: map[id:8b6c60a1-124e-499c-ad55-b7d12ef96f3a tag_ids:[]]
+
+2019/12/12 02:32:45 http: panic serving [::1]:44282: interface conversion: interface {} is string, not []string
+goroutine 69 [running]:
+net/http.(*conn).serve.func1(0xc0002400a0)
+	/usr/local/go/src/net/http/server.go:1767 +0x139
+panic(0xa3bd80, 0xc0002afcb0)
+	/usr/local/go/src/runtime/panic.go:679 +0x1b2
+2019_2_IBAT/pkg/app/users/repository.(*DBUserStorage).GetVacanciesByIDs(0xc0000ba2d8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xc0002af9e0, 0x0, 0x0, ...)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/app/users/repository/vacancies.go:223 +0x8fa
+2019_2_IBAT/pkg/app/users/service.(*UserService).GetVacancies(0xc000128a20, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xc0002af9e0, 0xc0002afa40, 0xc0002755e8, ...)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/app/users/service/vacancies.go:181 +0x40d
+2019_2_IBAT/pkg/app/server/handler.(*Handler).GetVacancies(0xc00029d290, 0xbd8260, 0xc0002d80e0, 0xc0002ba400)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/app/server/handler/handler_vacancies.go:41 +0x350
+net/http.HandlerFunc.ServeHTTP(0xc0002a69e0, 0xbd8260, 0xc0002d80e0, 0xc0002ba400)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/pkg/pkg/middleware.AuthMiddlewareGenerator.func1.1(0xbd8260, 0xc0002d80e0, 0xc0002ba300)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/pkg/middleware/auth.go:44 +0x24a
+net/http.HandlerFunc.ServeHTTP(0xc0002af920, 0xbd8260, 0xc0002d80e0, 0xc0002ba300)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/pkg/pkg/middleware.CorsMiddleware.func1(0xbd8260, 0xc0002d80e0, 0xc0002ba300)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/pkg/middleware/cors.go:59 +0xef
+net/http.HandlerFunc.ServeHTTP(0xc0002beb60, 0xbd8260, 0xc0002d80e0, 0xc0002ba300)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/pkg/pkg/middleware.Logger.AccessLogMiddleware.func1(0xbd8260, 0xc0002d80e0, 0xc0002ba300)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/pkg/middleware/logger.go:22 +0x1a2
+net/http.HandlerFunc.ServeHTTP(0xc0002beb80, 0xbd8260, 0xc0002d80e0, 0xc0002ba300)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+github.com/gorilla/mux.(*Router).ServeHTTP(0xc000134240, 0xbd8260, 0xc0002d80e0, 0xc0002fa000)
+	/home/vltim/go_workspace/pkg/mod/github.com/gorilla/mux@v1.7.3/mux.go:212 +0xe2
+net/http.serverHandler.ServeHTTP(0xc0002d8000, 0xbd8260, 0xc0002d80e0, 0xc0002fa000)
+	/usr/local/go/src/net/http/server.go:2802 +0xa4
+net/http.(*conn).serve(0xc0002400a0, 0xbdb660, 0xc00027e040)
+	/usr/local/go/src/net/http/server.go:1890 +0x875
+created by net/http.(*Server).Serve
+	/usr/local/go/src/net/http/server.go:2927 +0x38e
+2019/12/12 02:32:47 LOG START [GET] [::1]:44288, /api/vacancies 
+2019/12/12 02:32:47 AuthMiddleware: started
+2019/12/12 02:32:47 AuthMiddleware: No cookie detected
+2019/12/12 02:32:47 Tag array
+2019/12/12 02:32:47 map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a ae5c66ed-be4f-4781-ab67-b4f7b901ac97 3ba58cec-1a28-4600-a763-0c83b28a1b07]]
+2019/12/12 02:32:47 Params map length: 1
+2019/12/12 02:32:47 Params: map[id:8b6c60a1-124e-499c-ad55-b7d12ef96f3a tag_ids:[]]
+
+2019/12/12 02:32:47 http: panic serving [::1]:44288: interface conversion: interface {} is string, not []string
+goroutine 30 [running]:
+net/http.(*conn).serve.func1(0xc0002d6780)
+	/usr/local/go/src/net/http/server.go:1767 +0x139
+panic(0xa3bd80, 0xc0001804b0)
+	/usr/local/go/src/runtime/panic.go:679 +0x1b2
+2019_2_IBAT/pkg/app/users/repository.(*DBUserStorage).GetVacanciesByIDs(0xc0000ba2d8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xc000180270, 0x0, 0x0, ...)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/app/users/repository/vacancies.go:223 +0x8fa
+2019_2_IBAT/pkg/app/users/service.(*UserService).GetVacancies(0xc000128a20, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xc000180270, 0xc0001802d0, 0xc0000645e8, ...)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/app/users/service/vacancies.go:181 +0x40d
+2019_2_IBAT/pkg/app/server/handler.(*Handler).GetVacancies(0xc00029d290, 0xbd8260, 0xc000332000, 0xc0001ba300)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/app/server/handler/handler_vacancies.go:41 +0x350
+net/http.HandlerFunc.ServeHTTP(0xc0002a69e0, 0xbd8260, 0xc000332000, 0xc0001ba300)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/pkg/pkg/middleware.AuthMiddlewareGenerator.func1.1(0xbd8260, 0xc000332000, 0xc0001ba200)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/pkg/middleware/auth.go:44 +0x24a
+net/http.HandlerFunc.ServeHTTP(0xc0001801b0, 0xbd8260, 0xc000332000, 0xc0001ba200)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/pkg/pkg/middleware.CorsMiddleware.func1(0xbd8260, 0xc000332000, 0xc0001ba200)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/pkg/middleware/cors.go:59 +0xef
+net/http.HandlerFunc.ServeHTTP(0xc0001520a0, 0xbd8260, 0xc000332000, 0xc0001ba200)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/pkg/pkg/middleware.Logger.AccessLogMiddleware.func1(0xbd8260, 0xc000332000, 0xc0001ba200)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/pkg/middleware/logger.go:22 +0x1a2
+net/http.HandlerFunc.ServeHTTP(0xc0001520c0, 0xbd8260, 0xc000332000, 0xc0001ba200)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+github.com/gorilla/mux.(*Router).ServeHTTP(0xc000134240, 0xbd8260, 0xc000332000, 0xc0002ba600)
+	/home/vltim/go_workspace/pkg/mod/github.com/gorilla/mux@v1.7.3/mux.go:212 +0xe2
+net/http.serverHandler.ServeHTTP(0xc0002d8000, 0xbd8260, 0xc000332000, 0xc0002ba600)
+	/usr/local/go/src/net/http/server.go:2802 +0xa4
+net/http.(*conn).serve(0xc0002d6780, 0xbdb660, 0xc0002c4680)
+	/usr/local/go/src/net/http/server.go:1890 +0x875
+created by net/http.(*Server).Serve
+	/usr/local/go/src/net/http/server.go:2927 +0x38e
+2019/12/12 02:32:57 LOG START [GET] [::1]:44294, /api/vacancies 
+2019/12/12 02:32:57 AuthMiddleware: started
+2019/12/12 02:32:57 AuthMiddleware: No cookie detected
+2019/12/12 02:32:57 Tag array
+2019/12/12 02:32:57 map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a ae5c66ed-be4f-4781-ab67-b4f7b901ac97 3ba58cec-1a28-4600-a763-0c83b28a1b07]]
+2019/12/12 02:32:57 Params map length: 1
+2019/12/12 02:32:57 Params: map[id:8b6c60a1-124e-499c-ad55-b7d12ef96f3a tag_ids:[]]
+
+2019/12/12 02:32:57 http: panic serving [::1]:44294: interface conversion: interface {} is string, not []string
+goroutine 73 [running]:
+net/http.(*conn).serve.func1(0xc000240280)
+	/usr/local/go/src/net/http/server.go:1767 +0x139
+panic(0xa3bd80, 0xc000180960)
+	/usr/local/go/src/runtime/panic.go:679 +0x1b2
+2019_2_IBAT/pkg/app/users/repository.(*DBUserStorage).GetVacanciesByIDs(0xc0000ba2d8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xc000180720, 0x0, 0x0, ...)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/app/users/repository/vacancies.go:223 +0x8fa
+2019_2_IBAT/pkg/app/users/service.(*UserService).GetVacancies(0xc000128a20, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xc000180720, 0xc000180780, 0xc0002775e8, ...)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/app/users/service/vacancies.go:181 +0x40d
+2019_2_IBAT/pkg/app/server/handler.(*Handler).GetVacancies(0xc00029d290, 0xbd8260, 0xc0003320e0, 0xc0001ba600)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/app/server/handler/handler_vacancies.go:41 +0x350
+net/http.HandlerFunc.ServeHTTP(0xc0002a69e0, 0xbd8260, 0xc0003320e0, 0xc0001ba600)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/pkg/pkg/middleware.AuthMiddlewareGenerator.func1.1(0xbd8260, 0xc0003320e0, 0xc0001ba500)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/pkg/middleware/auth.go:44 +0x24a
+net/http.HandlerFunc.ServeHTTP(0xc000180660, 0xbd8260, 0xc0003320e0, 0xc0001ba500)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/pkg/pkg/middleware.CorsMiddleware.func1(0xbd8260, 0xc0003320e0, 0xc0001ba500)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/pkg/middleware/cors.go:59 +0xef
+net/http.HandlerFunc.ServeHTTP(0xc0001522a0, 0xbd8260, 0xc0003320e0, 0xc0001ba500)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/pkg/pkg/middleware.Logger.AccessLogMiddleware.func1(0xbd8260, 0xc0003320e0, 0xc0001ba500)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/pkg/middleware/logger.go:22 +0x1a2
+net/http.HandlerFunc.ServeHTTP(0xc0001522c0, 0xbd8260, 0xc0003320e0, 0xc0001ba500)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+github.com/gorilla/mux.(*Router).ServeHTTP(0xc000134240, 0xbd8260, 0xc0003320e0, 0xc0002fa400)
+	/home/vltim/go_workspace/pkg/mod/github.com/gorilla/mux@v1.7.3/mux.go:212 +0xe2
+net/http.serverHandler.ServeHTTP(0xc0002d8000, 0xbd8260, 0xc0003320e0, 0xc0002fa400)
+	/usr/local/go/src/net/http/server.go:2802 +0xa4
+net/http.(*conn).serve(0xc000240280, 0xbdb660, 0xc00027e2c0)
+	/usr/local/go/src/net/http/server.go:1890 +0x875
+created by net/http.(*Server).Serve
+	/usr/local/go/src/net/http/server.go:2927 +0x38e
+2019/12/12 02:33:33 LOG START [GET] [::1]:44312, /api/vacancies 
+2019/12/12 02:33:33 AuthMiddleware: started
+2019/12/12 02:33:33 AuthMiddleware: No cookie detected
+2019/12/12 02:33:33 Tag array
+2019/12/12 02:33:33 map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a ae5c66ed-be4f-4781-ab67-b4f7b901ac97 3ba58cec-1a28-4600-a763-0c83b28a1b07]]
+2019/12/12 02:33:33 Params map length: 1
+2019/12/12 02:33:33 Params: map[id:8b6c60a1-124e-499c-ad55-b7d12ef96f3a tag_ids:[]]
+
+2019/12/12 02:33:33 http: panic serving [::1]:44312: interface conversion: interface {} is string, not []string
+goroutine 12 [running]:
+net/http.(*conn).serve.func1(0xc0002e8820)
+	/usr/local/go/src/net/http/server.go:1767 +0x139
+panic(0xa3bd80, 0xc0002684e0)
+	/usr/local/go/src/runtime/panic.go:679 +0x1b2
+2019_2_IBAT/pkg/app/users/repository.(*DBUserStorage).GetVacanciesByIDs(0xc000010020, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xc000268210, 0x0, 0x0, ...)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/app/users/repository/vacancies.go:223 +0x8fa
+2019_2_IBAT/pkg/app/users/service.(*UserService).GetVacancies(0xc000128a20, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xc000268210, 0xc000268270, 0xc00006a5e8, ...)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/app/users/service/vacancies.go:181 +0x40d
+2019_2_IBAT/pkg/app/server/handler.(*Handler).GetVacancies(0xc0002ac5a0, 0xbd8260, 0xc000316000, 0xc00032a200)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/app/server/handler/handler_vacancies.go:41 +0x350
+net/http.HandlerFunc.ServeHTTP(0xc000020d10, 0xbd8260, 0xc000316000, 0xc00032a200)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/pkg/pkg/middleware.AuthMiddlewareGenerator.func1.1(0xbd8260, 0xc000316000, 0xc00032a100)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/pkg/middleware/auth.go:44 +0x24a
+net/http.HandlerFunc.ServeHTTP(0xc000268150, 0xbd8260, 0xc000316000, 0xc00032a100)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/pkg/pkg/middleware.CorsMiddleware.func1(0xbd8260, 0xc000316000, 0xc00032a100)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/pkg/middleware/cors.go:59 +0xef
+net/http.HandlerFunc.ServeHTTP(0xc00026c0a0, 0xbd8260, 0xc000316000, 0xc00032a100)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/pkg/pkg/middleware.Logger.AccessLogMiddleware.func1(0xbd8260, 0xc000316000, 0xc00032a100)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/pkg/middleware/logger.go:22 +0x1a2
+net/http.HandlerFunc.ServeHTTP(0xc00026c0c0, 0xbd8260, 0xc000316000, 0xc00032a100)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+github.com/gorilla/mux.(*Router).ServeHTTP(0xc0002b00c0, 0xbd8260, 0xc000316000, 0xc000186400)
+	/home/vltim/go_workspace/pkg/mod/github.com/gorilla/mux@v1.7.3/mux.go:212 +0xe2
+net/http.serverHandler.ServeHTTP(0xc0001fa0e0, 0xbd8260, 0xc000316000, 0xc000186400)
+	/usr/local/go/src/net/http/server.go:2802 +0xa4
+net/http.(*conn).serve(0xc0002e8820, 0xbdb660, 0xc000035400)
+	/usr/local/go/src/net/http/server.go:1890 +0x875
+created by net/http.(*Server).Serve
+	/usr/local/go/src/net/http/server.go:2927 +0x38e
+2019/12/12 02:33:56 LOG START [GET] [::1]:44332, /api/vacancies 
+2019/12/12 02:33:56 AuthMiddleware: started
+2019/12/12 02:33:56 AuthMiddleware: No cookie detected
+2019/12/12 02:33:56 Tag array
+2019/12/12 02:33:56 map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a ae5c66ed-be4f-4781-ab67-b4f7b901ac97 3ba58cec-1a28-4600-a763-0c83b28a1b07]]
+2019/12/12 02:33:56 Params map length: 1
+2019/12/12 02:33:56 Params: map[id:8b6c60a1-124e-499c-ad55-b7d12ef96f3a tag_ids:[]]
+
+2019/12/12 02:33:56 http: panic serving [::1]:44332: interface conversion: interface {} is string, not []string
+goroutine 69 [running]:
+net/http.(*conn).serve.func1(0xc000330780)
+	/usr/local/go/src/net/http/server.go:1767 +0x139
+panic(0xa3bd80, 0xc00035e480)
+	/usr/local/go/src/runtime/panic.go:679 +0x1b2
+2019_2_IBAT/pkg/app/users/repository.(*DBUserStorage).GetVacanciesByIDs(0xc0002ec000, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xc00035e1b0, 0x0, 0x0, ...)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/app/users/repository/vacancies.go:224 +0x9ab
+2019_2_IBAT/pkg/app/users/service.(*UserService).GetVacancies(0xc000110a20, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xc00035e1b0, 0xc00035e210, 0xc0001d05e8, ...)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/app/users/service/vacancies.go:181 +0x40d
+2019_2_IBAT/pkg/app/server/handler.(*Handler).GetVacancies(0xc0002da2a0, 0xbd82c0, 0xc00036a000, 0xc000386200)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/app/server/handler/handler_vacancies.go:41 +0x350
+net/http.HandlerFunc.ServeHTTP(0xc0002c0c10, 0xbd82c0, 0xc00036a000, 0xc000386200)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/pkg/pkg/middleware.AuthMiddlewareGenerator.func1.1(0xbd82c0, 0xc00036a000, 0xc000386100)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/pkg/middleware/auth.go:44 +0x24a
+net/http.HandlerFunc.ServeHTTP(0xc00035e0f0, 0xbd82c0, 0xc00036a000, 0xc000386100)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/pkg/pkg/middleware.CorsMiddleware.func1(0xbd82c0, 0xc00036a000, 0xc000386100)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/pkg/middleware/cors.go:59 +0xef
+net/http.HandlerFunc.ServeHTTP(0xc00029c040, 0xbd82c0, 0xc00036a000, 0xc000386100)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+2019_2_IBAT/pkg/pkg/middleware.Logger.AccessLogMiddleware.func1(0xbd82c0, 0xc00036a000, 0xc000386100)
+	/home/vltim/go_workspace/src/2019_2_IBAT/pkg/pkg/middleware/logger.go:22 +0x1a2
+net/http.HandlerFunc.ServeHTTP(0xc00029c060, 0xbd82c0, 0xc00036a000, 0xc000386100)
+	/usr/local/go/src/net/http/server.go:2007 +0x44
+github.com/gorilla/mux.(*Router).ServeHTTP(0xc0002e20c0, 0xbd82c0, 0xc00036a000, 0xc000312200)
+	/home/vltim/go_workspace/pkg/mod/github.com/gorilla/mux@v1.7.3/mux.go:212 +0xe2
+net/http.serverHandler.ServeHTTP(0xc000334000, 0xbd82c0, 0xc00036a000, 0xc000312200)
+	/usr/local/go/src/net/http/server.go:2802 +0xa4
+net/http.(*conn).serve(0xc000330780, 0xbdb6c0, 0xc0002c3240)
+	/usr/local/go/src/net/http/server.go:1890 +0x875
+created by net/http.(*Server).Serve
+	/usr/local/go/src/net/http/server.go:2927 +0x38e
+2019/12/12 02:34:06 LOG START [GET] [::1]:44348, /api/vacancies 
+2019/12/12 02:34:06 AuthMiddleware: started
+2019/12/12 02:34:06 AuthMiddleware: No cookie detected
+2019/12/12 02:34:06 Tag array
+2019/12/12 02:34:06 map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a ae5c66ed-be4f-4781-ab67-b4f7b901ac97 3ba58cec-1a28-4600-a763-0c83b28a1b07]]
+2019/12/12 02:34:06 Params map length: 1
+2019/12/12 02:34:13 Params: map[id:8b6c60a1-124e-499c-ad55-b7d12ef96f3a tag_ids:[]]
+
+2019/12/12 02:34:40 LOG START [GET] [::1]:44374, /api/vacancies 
+2019/12/12 02:34:40 AuthMiddleware: started
+2019/12/12 02:34:40 AuthMiddleware: No cookie detected
+2019/12/12 02:34:40 Tag array
+2019/12/12 02:34:40 map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a ae5c66ed-be4f-4781-ab67-b4f7b901ac97 3ba58cec-1a28-4600-a763-0c83b28a1b07]]
+2019/12/12 02:34:40 Params map length: 1
+2019/12/12 02:34:50 Params: map[id:8b6c60a1-124e-499c-ad55-b7d12ef96f3a tag_ids:[]]
+
+2019/12/12 02:37:03 LOG START [GET] [::1]:44426, /api/vacancies 
+2019/12/12 02:37:03 AuthMiddleware: started
+2019/12/12 02:37:03 AuthMiddleware: No cookie detected
+2019/12/12 02:44:11 LOG START [GET] [::1]:44554, /api/vacancies 
+2019/12/12 02:44:11 AuthMiddleware: started
+2019/12/12 02:44:11 AuthMiddleware: No cookie detected
+2019/12/12 02:44:11 Tag array
+2019/12/12 02:44:11 map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a ae5c66ed-be4f-4781-ab67-b4f7b901ac97 3ba58cec-1a28-4600-a763-0c83b28a1b07]]
+2019/12/12 02:44:11 Params map length: 0
+2019/12/12 02:44:11 Params: map[tag_ids:[]]
+
+2019/12/12 02:44:11 Query: 
+2019/12/12 02:44:11 LOG END [GET] [::1]:44554, /api/vacancies 8.513296ms
+
+
+2019/12/12 02:44:25 LOG START [GET] [::1]:44574, /api/vacancies 
+2019/12/12 02:44:25 AuthMiddleware: started
+2019/12/12 02:44:25 AuthMiddleware: No cookie detected
+2019/12/12 02:45:02 LOG START [GET] [::1]:44602, /api/vacancies 
+2019/12/12 02:45:02 AuthMiddleware: started
+2019/12/12 02:45:02 AuthMiddleware: No cookie detected
+2019/12/12 02:45:33 LOG START [GET] [::1]:44620, /api/vacancies 
+2019/12/12 02:45:33 AuthMiddleware: started
+2019/12/12 02:45:33 AuthMiddleware: No cookie detected
+2019/12/12 02:45:33 Tag array
+2019/12/12 02:45:33 map[id0:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a] id1:[ae5c66ed-be4f-4781-ab67-b4f7b901ac97] id2:[3ba58cec-1a28-4600-a763-0c83b28a1b07]]
+2019/12/12 02:45:33 Params map length: 2
+2019/12/12 02:45:33 Params: map[id:[ae5c66ed-be4f-4781-ab67-b4f7b901ac97 3ba58cec-1a28-4600-a763-0c83b28a1b07] id0:8b6c60a1-124e-499c-ad55-b7d12ef96f3a tag_ids:[]]
+
+2019/12/12 02:45:33 LOG END [GET] [::1]:44620, /api/vacancies 8.927347ms
+
+
+2019/12/12 02:50:12 LOG START [GET] [::1]:44658, /api/vacancies 
+2019/12/12 02:50:12 AuthMiddleware: started
+2019/12/12 02:50:12 AuthMiddleware: No cookie detected
+2019/12/12 02:50:12 Tag array
+2019/12/12 02:50:12 map[id0:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a] id1:[ae5c66ed-be4f-4781-ab67-b4f7b901ac97] id2:[3ba58cec-1a28-4600-a763-0c83b28a1b07]]
+2019/12/12 02:50:12 Params map length: 2
+2019/12/12 02:50:12 Params: map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a ae5c66ed-be4f-4781-ab67-b4f7b901ac97 3ba58cec-1a28-4600-a763-0c83b28a1b07] id0:8b6c60a1-124e-499c-ad55-b7d12ef96f3a tag_ids:[]]
+
+2019/12/12 02:50:12 LOG END [GET] [::1]:44658, /api/vacancies 5.904466ms
+
+
+2019/12/12 02:50:32 LOG START [GET] [::1]:44658, /api/vacancies 
+2019/12/12 02:50:32 AuthMiddleware: started
+2019/12/12 02:50:32 AuthMiddleware: No cookie detected
+2019/12/12 02:50:32 Tag array
+2019/12/12 02:50:32 map[id0:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a]]
+2019/12/12 02:50:32 Params map length: 2
+2019/12/12 02:50:32 Params: map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3a] id0:8b6c60a1-124e-499c-ad55-b7d12ef96f3a tag_ids:[]]
+
+2019/12/12 02:50:32 LOG END [GET] [::1]:44658, /api/vacancies 2.801332ms
+
+
+2019/12/12 02:50:38 LOG START [GET] [::1]:44658, /api/vacancies 
+2019/12/12 02:50:38 AuthMiddleware: started
+2019/12/12 02:50:38 AuthMiddleware: No cookie detected
+2019/12/12 02:50:38 Tag array
+2019/12/12 02:50:38 map[id0:[8b6c60a1-124e-499c-ad55-b7d12ef96f3]]
+2019/12/12 02:50:38 Params map length: 2
+2019/12/12 02:50:38 Params: map[id:[8b6c60a1-124e-499c-ad55-b7d12ef96f3] id0:8b6c60a1-124e-499c-ad55-b7d12ef96f3 tag_ids:[]]
+
+2019/12/12 02:50:38 LOG END [GET] [::1]:44658, /api/vacancies 2.937358ms
+
+
+2019/12/12 02:50:51 LOG START [GET] [::1]:44658, /api/vacancies 
+2019/12/12 02:50:51 AuthMiddleware: started
+2019/12/12 02:50:51 AuthMiddleware: No cookie detected
+2019/12/12 02:50:51 Tag array
+2019/12/12 02:50:51 map[id0:[dsfsdfsdf]]
+2019/12/12 02:50:51 Params map length: 2
+2019/12/12 02:50:51 Params: map[id:[dsfsdfsdf] id0:dsfsdfsdf tag_ids:[]]
+
+2019/12/12 02:50:51 LOG END [GET] [::1]:44658, /api/vacancies 1.519323ms
+
+
+2019/12/12 02:51:07 LOG START [GET] [::1]:44732, /api/vacancies 
+2019/12/12 02:51:07 AuthMiddleware: started
+2019/12/12 02:51:07 AuthMiddleware: No cookie detected
+2019/12/12 02:51:13 Tag array
+2019/12/12 02:51:13 map[id0:[dsfsdfsdf]]
+2019/12/12 02:51:13 Params map length: 2
+2019/12/12 02:51:33 LOG START [GET] [::1]:44754, /api/vacancies 
+2019/12/12 02:51:33 AuthMiddleware: started
+2019/12/12 02:51:33 AuthMiddleware: No cookie detected
+2019/12/12 02:51:57 Tag array
+2019/12/12 02:51:57 map[id0:[dsfsdfsdf]]
+2019/12/12 02:51:58 Params map length: 2
+2019/12/12 02:52:21 LOG START [GET] [::1]:44782, /api/vacancies 
+2019/12/12 02:52:21 AuthMiddleware: started
+2019/12/12 02:52:21 AuthMiddleware: No cookie detected
+2019/12/12 02:52:49 Tag array
+2019/12/12 02:52:49 map[id0:[dsfsdfsdf]]
+2019/12/12 02:52:50 Params map length: 2
+2019/12/12 02:53:23 Params: map[id:[dsfsdfsdf] id0:dsfsdfsdf tag_ids:[]]
+

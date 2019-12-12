@@ -31,6 +31,7 @@ type Repository interface {
 	GetSeekers() ([]Seeker, error)
 	GetResumes(authInfo AuthStorageValue, params map[string]interface{}) ([]Resume, error)
 	GetVacancies(authInfo AuthStorageValue, params map[string]interface{}) ([]Vacancy, error)
+	GetVacanciesByIDs(authInfo AuthStorageValue, params map[string]interface{}) ([]Vacancy, error)
 
 	GetResponds(record AuthStorageValue, params map[string]string) ([]Respond, error)
 	GetFavoriteVacancies(record AuthStorageValue) ([]Vacancy, error)
