@@ -1,9 +1,9 @@
 package main
 
 import (
-	"2019_2_IBAT/pkg/app/notifs"
+	"2019_2_IBAT/pkg/app/notifs/server"
 )
 
 func main() {
-	_ = notifs.RunServer()
+	_ = server.RunServer()
 }

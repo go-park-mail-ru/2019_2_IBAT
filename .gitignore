@@ -5,6 +5,8 @@ cmd/main/main
 cmd/auth/auth
 cmd/recommends/recommends
 cmd/notifications/notifications
+cmd/chat/chat
+cmd/chat/testlogfile
 cover.out
 cover.tmp
 pkg/cover.out

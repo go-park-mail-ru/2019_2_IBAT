@@ -12,6 +12,7 @@ import (
 
 	"2019_2_IBAT/pkg/app/auth"
 	"2019_2_IBAT/pkg/app/recommends/recomsproto"
+
 	. "2019_2_IBAT/pkg/pkg/models"
 )
 

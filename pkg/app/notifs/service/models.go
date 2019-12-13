@@ -48,7 +48,7 @@ const (
 
 func (c *Connect) ReadPump() {
 	defer func() {
-		fmt.Println("ReadPump CONNECTION WAS CLOSED")
+		fmt.Println("ReadPump CONNECTION WAS CLOSED") //close connection.channel //rm channel from array
 		c.Conn.Close()
 	}()
 
