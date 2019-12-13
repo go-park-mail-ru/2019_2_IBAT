@@ -58,10 +58,10 @@ func RunServer() error {
 
 	router.HandleFunc("/api/chat/{companion_id}", s.HandleCreateChat).Methods(http.MethodPost, http.MethodOptions)
 	router.HandleFunc("/api/chat/history/{id}", s.HandlerGetChatHistory).Methods(http.MethodGet, http.MethodOptions)
-	router.HandleFunc("/api/chat", s.HandleChat)
+	router.HandleFunc("/api/chat/ws", s.HandleChat)
 	router.HandleFunc("/api/chat/list", s.HandlerGetChats).Methods(http.MethodGet, http.MethodOptions)
 
-	router.HandleFunc("/", serveHome)
+	router.HandleFunc("/api/room", serveHome)
 
 	for i := 0; i < config.ChatWorkers; i++ {
 		go s.ProcessMessage()
