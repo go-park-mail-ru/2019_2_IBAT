@@ -14,15 +14,16 @@ type InChatMessage struct {
 }
 
 type OutChatMessage struct {
-	ChatID uuid.UUID `json:"chat_id"              db:"chat_id"`
-	// OwnerInfo AuthStorageValue `json:"-"                 db:"-"`
-	OwnerId   uuid.UUID `json:"owner_id"          db:"owner_id"`
-	Timestamp string    `json:"created_at"         db:"created_at"`
-	Text      string    `json:"content"              db:"content"`
+	ChatID     uuid.UUID `json:"chat_id"`
+	OwnerId    uuid.UUID `json:"owner_id"`
+	OwnerName  string    `json:"owner_name"`
+	Timestamp  string    `json:"created_at"`
+	Text       string    `json:"content"`
+	IsNotYours bool      `json:"is_not_yours"`
 }
 
 type Chat struct {
-	ChatID   uuid.UUID `json:"chat_id"         db:"chat_id"`
-	SeekerID uuid.UUID `json:"seeker_id"       db:"seeker_id"`
-	Employer uuid.UUID `json:"employer_id"     db:"employer_id"`
+	ChatID        uuid.UUID `json:"chat_id"`
+	CompanionName string    `json:"companion_name"`
+	CompanionID   uuid.UUID `json:"companion_id"`
 }

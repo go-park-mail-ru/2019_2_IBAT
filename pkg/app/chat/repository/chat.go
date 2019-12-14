@@ -64,7 +64,13 @@ func (m DBStorage) GetChats(authInfo AuthStorageValue) ([]Chat, error) {
 	for rows.Next() {
 		var chat Chat
 
-		err = rows.StructScan(&chat)
+		if authInfo.Role == EmployerStr {
+			var firstName, secondName string
+			err = rows.Scan(&chat.ChatID, &chat.CompanionID, &firstName, &secondName)
+			chat.CompanionName = firstName + " " + secondName
+		} else {
+			err = rows.Scan(&chat.ChatID, &chat.CompanionID, &chat.CompanionName)
+		}
 
 		if err != nil {
 			fmt.Printf("GetChats: %s\n", err)
@@ -85,33 +91,77 @@ func (m DBStorage) CreateMessage(msg InChatMessage) error {
 	return nil
 }
 
-func (m DBStorage) GetChatHistory(authInfo AuthStorageValue, chatId uuid.UUID) ([]OutChatMessage, error) {
-	var rows *sqlx.Rows
-	var err error
-
-	if authInfo.Role == EmployerStr {
-		rows, err = m.DbConn.Queryx(SelectChatHistoryForEmpl, chatId, authInfo.ID)
-	} else {
-		rows, err = m.DbConn.Queryx(SelectChatHistoryForSeek, chatId, authInfo.ID)
+func (m DBStorage) GetChatHistoryForEmployer(authInfo AuthStorageValue, chatId uuid.UUID) ([]OutChatMessage, error) {
+	var firstName, secondName string
+	err := m.DbConn.QueryRowx(SelectSeekerName, chatId).Scan(&firstName, &secondName)
+	if err != nil {
+		fmt.Printf("GetChatHistoryForEmployer: %s\n", err)
+		return []OutChatMessage{}, errors.New(BadRequestMsg)
 	}
 
+	rows, err := m.DbConn.Queryx(SelectChatHistoryForEmpl, chatId, authInfo.ID)
+
 	if err != nil {
-		fmt.Printf("GetChatHistory: %s\n", err)
+		fmt.Printf("GetChatHistoryForEmployer: %s\n", err)
 		return []OutChatMessage{}, errors.New(BadRequestMsg)
 	}
 	defer rows.Close()
 
 	var messages []OutChatMessage
 	for rows.Next() {
-		var message OutChatMessage
+		var msg OutChatMessage
 
-		err = rows.StructScan(&message)
+		err = rows.Scan(&msg.ChatID, &msg.OwnerId, &msg.Timestamp, &msg.Text)
 
+		if err != nil {
+			fmt.Printf("GetChatHistoryForEmployer: %s\n", err)
+			return messages, errors.New(InternalErrorMsg)
+		}
+
+		if msg.OwnerId != authInfo.ID {
+			msg.OwnerName = firstName + " " + secondName
+			msg.IsNotYours = true
+		}
+
+		messages = append(messages, msg)
+	}
+
+	return messages, nil
+}
+
+func (m DBStorage) GetChatHistoryForSeeker(authInfo AuthStorageValue, chatId uuid.UUID) ([]OutChatMessage, error) {
+	var companyName string
+
+	err := m.DbConn.QueryRowx(SelectCompanyName, chatId).Scan(&companyName)
+	if err != nil {
+		fmt.Printf("GetChatHistoryForSeeker: %s\n", err)
+		return []OutChatMessage{}, errors.New(BadRequestMsg)
+	}
+
+	rows, err := m.DbConn.Queryx(SelectChatHistoryForSeek, chatId, authInfo.ID)
+
+	if err != nil {
+		fmt.Printf("GetChatHistoryForSeeker: %s\n", err)
+		return []OutChatMessage{}, errors.New(BadRequestMsg)
+	}
+	defer rows.Close()
+
+	var messages []OutChatMessage
+	for rows.Next() {
+		var msg OutChatMessage
+
+		err = rows.Scan(&msg.ChatID, &msg.OwnerId, &msg.Timestamp, &msg.Text)
 		if err != nil {
 			fmt.Printf("GetChatHistoryForSeeker: %s\n", err)
 			return messages, errors.New(InternalErrorMsg)
 		}
-		messages = append(messages, message)
+
+		if msg.OwnerId != authInfo.ID {
+			msg.OwnerName = companyName
+			msg.IsNotYours = true
+		}
+
+		messages = append(messages, msg)
 	}
 
 	return messages, nil

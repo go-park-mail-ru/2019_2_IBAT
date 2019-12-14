@@ -18,6 +18,8 @@ CREATE TABLE persons(
     path_to_image VARCHAR (50) DEFAULT ''
 );
 
+
+
 CREATE TABLE companies(
     company_name VARCHAR (70) PRIMARY KEY,
     own_id uuid REFERENCES persons (id) ON DELETE CASCADE UNIQUE NOT NULL,

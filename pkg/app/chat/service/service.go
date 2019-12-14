@@ -58,5 +58,10 @@ func (s Service) ProcessMessage() {
 }
 
 func (s Service) GetChatHistory(authInfo AuthStorageValue, chatId uuid.UUID) ([]OutChatMessage, error) {
-	return s.Storage.GetChatHistory(authInfo, chatId)
+	if authInfo.Role == EmployerStr {
+		return s.Storage.GetChatHistoryForEmployer(authInfo, chatId)
+
+	} else {
+		return s.Storage.GetChatHistoryForSeeker(authInfo, chatId)
+	}
 }
