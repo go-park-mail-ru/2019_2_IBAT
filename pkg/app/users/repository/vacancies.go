@@ -99,8 +99,8 @@ func (m *DBUserStorage) PutVacancy(vacancy Vacancy, userId uuid.UUID, vacancyId 
 		"UPDATE vacancies SET experience = $1, position = $2, tasks = $3, "+
 			"requirements = $4, wage_from = $5, wage_to = $6, conditions = $7, about = $8 "+
 			"WHERE id = $9 AND own_id = $10;", vacancy.Experience,
-		vacancy.Position, vacancy.Tasks, vacancy.Requirements, vacancy.Conditions, vacancy.WageFrom,
-		vacancy.WageTo, vacancy.About, vacancyId, userId,
+		vacancy.Position, vacancy.Tasks, vacancy.Requirements, vacancy.WageFrom,
+		vacancy.WageTo, vacancy.Conditions, vacancy.About, vacancyId, userId,
 	)
 
 	if err != nil {

@@ -73,7 +73,7 @@ func (m *DBUserStorage) PutResume(resume Resume, userId uuid.UUID, resumeId uuid
 		"first_name = $1, second_name = $2, email = $3, "+
 		"region = $4, phone_number = $5, birth_date = $6, sex = $7, citizenship = $8, "+
 		"experience = $9, position = $10, wage = $11, education = $12, about = $13 "+
-		"WHERE id = $15 AND own_id = $16;",
+		"WHERE id = $14 AND own_id = $15;",
 		resume.FirstName, resume.SecondName, resume.Email, resume.Region, resume.PhoneNumber,
 		resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience,
 		resume.Position, resume.Wage, resume.Education, resume.About, resumeId, userId,
