@@ -1,7 +1,6 @@
 package service
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"sync"
@@ -10,14 +9,13 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 
-	. "2019_2_IBAT/pkg/app/chat/models"
 	"2019_2_IBAT/pkg/pkg/config"
 	. "2019_2_IBAT/pkg/pkg/models"
 )
 
 type Connect struct {
 	Conn      *websocket.Conn
-	Ch        chan OutChatMessage
+	Ch        chan uuid.UUID
 	UserId    uuid.UUID
 	ConnIndex int
 }
@@ -35,35 +33,20 @@ func (s Service) ReadPump(c *Connect, authInfo AuthStorageValue, stopCh chan boo
 		}
 		mu.Unlock()
 
-		fmt.Println("ReadPump CONNECTION WAS CLOSED")
+		fmt.Println("Notif ReadPump CONNECTION WAS CLOSED")
 	}()
 
 	c.Conn.SetReadLimit(config.MaxMessageSize)
 	c.Conn.SetReadDeadline(time.Now().Add(config.PongWait))
 	c.Conn.SetPongHandler(func(string) error { c.Conn.SetReadDeadline(time.Now().Add(config.PongWait)); return nil })
 	for {
-		_, bytes, err := c.Conn.ReadMessage()
-		if err != nil {
+		if _, _, err := c.Conn.NextReader(); err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
 			}
 			break
 		}
-
-		var msg InChatMessage
-		err = json.Unmarshal(bytes, &msg)
-		if err == nil {
-			msg.OwnerInfo = authInfo
-			fmt.Printf("ReadPump msg %s was read\n", msg.Text)
-
-			s.MainChan <- msg
-			fmt.Printf("ReadPump msg %s was send to main channel\n", msg.Text)
-		} else {
-			fmt.Printf("ReadPump invalid message\n")
-		}
 	}
-	fmt.Printf("ReadPump CYCLE FOR USER %s WAS STOPPED\n", authInfo.ID)
-	return //useless
 }
 
 func (s Service) WritePump(c *Connect, stopCh chan bool, mu *sync.Mutex) {
@@ -82,44 +65,86 @@ func (s Service) WritePump(c *Connect, stopCh chan bool, mu *sync.Mutex) {
 		}
 		mu.Unlock()
 
-		fmt.Println("WritePump CONNECTION WAS CLOSED")
+		fmt.Println("Notif WritePump CONNECTION WAS CLOSED")
 	}()
 
 	for {
 		select {
-		case msg := <-c.Ch:
+		case id := <-c.Ch: //ok
 			c.Conn.SetWriteDeadline(time.Now().Add(config.WriteWait))
 
 			w, err := c.Conn.NextWriter(websocket.TextMessage)
 			if err != nil {
 				ticker.Stop()
-				// break
-				return
+				break
 			}
-
-			// finalMsg := OutChatMessage{
-			// 	ChatID:    msg.ChatID,
-			// 	Timestamp: msg.Timestamp,
-			// 	Text:      msg.Text,
-			// }
-
-			messageJSON, _ := json.Marshal(msg)
-			w.Write(messageJSON)
-
-			if err := w.Close(); err != nil {
-				return
-			}
-			// fmt.Printf("WritePump msg %s was sent to user\n", msg)
+			idJSON, _ := Id{Id: id.String()}.MarshalJSON()
+			w.Write(idJSON)
+			w.Close()
+			fmt.Printf("id %s was sent user", id.String())
 		case <-ticker.C:
 			err := c.Conn.SetWriteDeadline(time.Now().Add(config.WriteWait))
 			if err = c.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 				return
-				// break
 			}
 		}
 	}
-	// fmt.Println("WritePump CYCLE FOR USER %s WAS STOPPED")
 }
+
+// func (s Service) WritePump(c *Connect, stopCh chan bool, mu *sync.Mutex) {
+// 	ticker := time.NewTicker(config.PingPeriod)
+// 	defer func() {
+// 		ticker.Stop()
+
+// 		mu.Lock()
+// 		select {
+// 		case <-stopCh:
+// 			close(stopCh)
+// 			return
+// 		default:
+// 			stopCh <- true
+// 			s.RemoveConnect(c)
+// 		}
+// 		mu.Unlock()
+
+// 		fmt.Println("WritePump CONNECTION WAS CLOSED")
+// 	}()
+
+// 	for {
+// 		select {
+// 		case msg := <-c.Ch:
+// 			c.Conn.SetWriteDeadline(time.Now().Add(config.WriteWait))
+
+// 			w, err := c.Conn.NextWriter(websocket.TextMessage)
+// 			if err != nil {
+// 				ticker.Stop()
+// 				// break
+// 				return
+// 			}
+
+// 			// finalMsg := OutChatMessage{
+// 			// 	ChatID:    msg.ChatID,
+// 			// 	Timestamp: msg.Timestamp,
+// 			// 	Text:      msg.Text,
+// 			// }
+
+// 			messageJSON, _ := json.Marshal(msg)
+// 			w.Write(messageJSON)
+
+// 			if err := w.Close(); err != nil {
+// 				return
+// 			}
+// 			fmt.Printf("WritePump msg %s was sent to user\n", msg)
+// 		case <-ticker.C:
+// 			err := c.Conn.SetWriteDeadline(time.Now().Add(config.WriteWait))
+// 			if err = c.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+// 				return
+// 				// break
+// 			}
+// 		}
+// 	}
+// 	// fmt.Println("WritePump CYCLE FOR USER %s WAS STOPPED")
+// }
 
 func (s Service) RemoveConnect(c *Connect) {
 	s.ConnectsPool.ConsMu.Lock()

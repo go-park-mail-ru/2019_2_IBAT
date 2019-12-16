@@ -1,7 +1,6 @@
 package service
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,7 +10,6 @@ import (
 	"github.com/gorilla/websocket"
 
 	"2019_2_IBAT/pkg/app/auth"
-	"2019_2_IBAT/pkg/app/recommends/recomsproto"
 
 	. "2019_2_IBAT/pkg/pkg/models"
 )
@@ -24,7 +22,7 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func (h Service) HandleNotifications(w http.ResponseWriter, r *http.Request) {
+func (s Service) HandleNotifications(w http.ResponseWriter, r *http.Request) {
 	authInfo, ok := FromContext(r.Context())
 	if !ok {
 		log.Println("Notifications Handler: unauthorized")
@@ -49,88 +47,38 @@ func (h Service) HandleNotifications(w http.ResponseWriter, r *http.Request) {
 	}
 
 	conn := Connect{
-		Conn: ws,
-		Ch:   make(chan uuid.UUID, 1),
+		Conn:   ws,
+		Ch:     make(chan uuid.UUID, 1),
+		UserId: authInfo.ID,
 	}
 
-	h.ConnectsPool.ConsMu.Lock()
-	node, ok := h.ConnectsPool.Connects[authInfo.ID]
+	s.ConnectsPool.ConsMu.Lock()
+	node, ok := s.ConnectsPool.Connects[authInfo.ID]
 
 	if !ok {
 		node = &ConnectsPerUser{
-			Channels: make([]chan uuid.UUID, 0),
+			Connects: make([]*Connect, 0),
 			Mu:       &sync.Mutex{},
-			Ch:       make(chan uuid.UUID, 5),
+			// Ch:       make(chan uuid.UUID, 5),
 		}
-		node.Channels = append(node.Channels, conn.Ch)
-		h.ConnectsPool.Connects[authInfo.ID] = node
+		node.Connects = append(node.Connects, &conn)
+		conn.ConnIndex = 0
+		s.ConnectsPool.Connects[authInfo.ID] = node
 		fmt.Printf("Connection pool for user %s was created\n", authInfo.ID)
 	} else {
-		node.Mu.Lock()
-		node.Channels = append(node.Channels, conn.Ch) //careful with mu
-		h.ConnectsPool.Connects[authInfo.ID] = node
-		node.Mu.Unlock()
+		node.Mu.Lock()                               //?
+		node.Connects = append(node.Connects, &conn) //careful with mu
+		s.ConnectsPool.Connects[authInfo.ID] = node
+		conn.ConnIndex = len(node.Connects) - 1
+		node.Mu.Unlock() //?
+
 		fmt.Printf("Connection pool for user %s was updated\n", authInfo.ID)
 	}
-	h.ConnectsPool.ConsMu.Unlock()
+	s.ConnectsPool.ConsMu.Unlock()
 
-	go conn.ReadPump()
-	go conn.WritePump()
+	mu := sync.Mutex{}
+	stopCh := make(chan bool, 1)
 
-	go sendNewMsgNotifications(node)
-}
-
-func sendNewMsgNotifications(clientConn *ConnectsPerUser) {
-	for {
-		id := <-clientConn.Ch
-		fmt.Printf("id %s got from channel for user", id.String())
-		clientConn.Mu.Lock()
-
-		for _, ch := range clientConn.Channels {
-			ch <- id
-			fmt.Printf("id %s sent to user\n", id.String())
-		}
-		clientConn.Mu.Unlock()
-	}
-}
-
-func (h Service) Notifications() {
-	for {
-		notif := <-h.NotifChan
-		fmt.Println("Notification accepted")
-		fmt.Println(notif)
-
-		ctx := context.Background()
-		idsMsg, err := h.RecomService.GetUsersForTags(ctx,
-			&recomsproto.IDsMessage{IDs: UuidsToStrings(notif.TagIDs)},
-		)
-
-		ids := StringsToUuids(idsMsg.IDs)
-
-		fmt.Println("Users ids intrested in new vacancy")
-		fmt.Println(ids)
-
-		if err != nil {
-			log.Printf("Notifications %s", err)
-		}
-		fmt.Println("connects.ConsMu.Lock()")
-
-		h.ConnectsPool.ConsMu.Lock()
-		for _, id := range ids {
-			fmt.Println("Notification ready  to be sent to user")
-			fmt.Println(h.ConnectsPool.Connects[id])
-			if _, ok := h.ConnectsPool.Connects[id]; ok {
-				h.ConnectsPool.Connects[id].Ch <- notif.VacancyId
-				fmt.Printf("Notification was sent to user %s\n", id.String())
-			} else {
-				fmt.Printf("Notification can not be sent to user %s\n", id.String())
-				delete(h.ConnectsPool.Connects, id)
-				fmt.Printf("Connections to user were removed\nd")
-			}
-		}
-		h.ConnectsPool.ConsMu.Unlock()
-		fmt.Println("connects.ConsMu.Unlock()")
-
-		fmt.Println(ids)
-	}
+	go s.ReadPump(&conn, authInfo, stopCh, &mu)
+	go s.WritePump(&conn, stopCh, &mu)
 }

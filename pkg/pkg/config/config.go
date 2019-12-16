@@ -1,5 +1,7 @@
 package config
 
+import "time"
+
 const ReddisPort = 6379
 
 const MainAppPort = 8080
@@ -16,3 +18,17 @@ const Hostname = "localhost"
 const Database = "hh"
 const User = "postgres"
 const Password = "newPassword"
+
+// const (
+// Time allowed to write a message to the peer.
+const WriteWait = 10 * time.Second
+
+// Time allowed to read the next pong message from the peer.
+const PongWait = 50 * time.Second
+
+// Send pings to peer with this period. Must be less than pongWait.
+const PingPeriod = (PongWait * 9) / 10
+
+const MaxMessageSize = 512
+
+// )
