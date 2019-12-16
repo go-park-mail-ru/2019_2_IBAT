@@ -171,3 +171,23 @@ func (m DBStorage) GetChatHistoryForSeeker(authInfo AuthStorageValue, chatId uui
 
 	return messages, nil
 }
+
+func (m DBStorage) GetUserName(authInfo AuthStorageValue) (string, error) {
+	var name string
+	if authInfo.Role == SeekerStr {
+		var firstName, secondName string
+		err := m.DbConn.QueryRowx("SELECT first_name, second_name FROM "+
+			"persons WHERE id = $1;", authInfo.ID).Scan(&firstName, &secondName)
+		name = firstName + " " + secondName
+		if err != nil {
+			return name, err
+		}
+	} else {
+		err := m.DbConn.QueryRowx("SELECT company_name FROM "+
+			"companies WHERE own_id = $1;", authInfo.ID).Scan(&name)
+		if err != nil {
+			return name, err
+		}
+	}
+	return name, nil
+}

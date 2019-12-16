@@ -14,4 +14,6 @@ type Repository interface {
 	GetCompanionIdAndName(msg InChatMessage) (uuid.UUID, string, error)
 	GetChatHistoryForSeeker(authInfo AuthStorageValue, chatId uuid.UUID) ([]OutChatMessage, error)
 	GetChatHistoryForEmployer(authInfo AuthStorageValue, chatId uuid.UUID) ([]OutChatMessage, error)
+
+	GetUserName(authInfo AuthStorageValue) (string, error)
 }

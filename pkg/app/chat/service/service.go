@@ -37,17 +37,20 @@ func (s Service) ProcessMessage() {
 	for {
 		msg := <-s.MainChan
 		fmt.Printf("ProcessMessage msg %s was read from main channel\n", msg.Text)
-		id, name, err := s.Storage.GetCompanionIdAndName(msg)
+		id, _, err := s.Storage.GetCompanionIdAndName(msg)
+		//error handler
 		fmt.Printf("ProcessMessage companion id %s was accepted\n", id.String())
 		fmt.Println(id)
 		fmt.Println(err)
 
-		// msg.ChatID =
+		name, err := s.Storage.GetUserName(msg.OwnerInfo)
+		//error handler
+
 		msg.Timestamp = time.Now().In(Loc).Format(TimeFormat)
 
 		outMsg := OutChatMessage{
 			ChatID:     msg.ChatID,
-			OwnerId:    id,
+			OwnerId:    msg.OwnerInfo.ID,
 			OwnerName:  name,
 			Text:       msg.Text,
 			IsNotYours: true,
