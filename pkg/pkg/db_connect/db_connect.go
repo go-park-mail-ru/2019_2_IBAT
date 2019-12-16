@@ -1,21 +1,23 @@
 package db_connect
 
 import (
+	"fmt"
 	"log"
 	"time"
 
 	"github.com/jackc/pgx"
-
 	"github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
+
+	"2019_2_IBAT/pkg/pkg/config"
 )
 
 func OpenSqlxViaPgxConnPool() *sqlx.DB {
 	connConfig := pgx.ConnConfig{
-		Host:     "localhost",
-		Database: "hh",
-		User:     "postgres",
-		Password: "newPassword",
+		Host:     config.Hostname,
+		Database: config.Database,
+		User:     config.User,
+		Password: config.Password,
 	}
 	connPool, err := pgx.NewConnPool(pgx.ConnPoolConfig{
 		ConnConfig:     connConfig,
@@ -24,7 +26,8 @@ func OpenSqlxViaPgxConnPool() *sqlx.DB {
 		AcquireTimeout: 30 * time.Second,
 	})
 	if err != nil {
-		log.Fatal("Failed to create connections pool")
+		fmt.Printf("FFFFFFFFFailed to create connections pool: error - %s", err.Error())
+		log.Fatalf("FFFFFFFFFailed to create connections pool: error - %s", err.Error())
 	}
 
 	nativeDB := stdlib.OpenDBFromPool(connPool)

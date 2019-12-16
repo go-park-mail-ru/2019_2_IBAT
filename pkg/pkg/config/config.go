@@ -11,3 +11,8 @@ const RecommendsServicePort = 8083
 const NotifsServicePort = 8084
 
 const ChatWorkers = 3
+
+const Hostname = "localhost"
+const Database = "hh"
+const User = "postgres"
+const Password = "newPassword"

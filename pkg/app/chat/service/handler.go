@@ -86,7 +86,7 @@ func (s Service) HandleChat(w http.ResponseWriter, r *http.Request) {
 
 	conn := Connect{
 		Conn:   ws,
-		Ch:     make(chan InChatMessage, 5),
+		Ch:     make(chan OutChatMessage, 5),
 		UserId: authInfo.ID,
 	}
 

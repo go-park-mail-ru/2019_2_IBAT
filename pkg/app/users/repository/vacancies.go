@@ -14,12 +14,14 @@ import (
 const DoesNotMatterString = "Не имеет значения"
 
 func (m *DBUserStorage) CreateVacancy(vacancyReg Vacancy) bool {
-	_, err := m.DbConn.Exec("INSERT INTO vacancies(id, own_id, experience,"+
-		"position, tasks, requirements, conditions, wage_from, wage_to, about)"+
-		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);",
+	_, err := m.DbConn.Exec("INSERT INTO vacancies(id, own_id, experience, "+
+		"position, tasks, requirements, conditions, wage_from, wage_to, "+
+		"about, region, type_of_employment, work_schedule)"+
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);",
 		vacancyReg.ID, vacancyReg.OwnerID, vacancyReg.Experience, vacancyReg.Position,
 		vacancyReg.Tasks, vacancyReg.Requirements, vacancyReg.Conditions, vacancyReg.WageFrom,
-		vacancyReg.WageTo, vacancyReg.About,
+		vacancyReg.WageTo, vacancyReg.About, vacancyReg.Region, vacancyReg.TypeOfEmployment,
+		vacancyReg.WorkSchedule,
 	)
 
 	if err != nil {
@@ -97,10 +99,12 @@ func (m *DBUserStorage) PutVacancy(vacancy Vacancy, userId uuid.UUID, vacancyId 
 
 	_, err := m.DbConn.Exec(
 		"UPDATE vacancies SET experience = $1, position = $2, tasks = $3, "+
-			"requirements = $4, wage_from = $5, wage_to = $6, conditions = $7, about = $8 "+
-			"WHERE id = $9 AND own_id = $10;", vacancy.Experience,
+			"requirements = $4, wage_from = $5, wage_to = $6, conditions = $7, about = $8, "+
+			"region = $9, type_of_employment = $10, work_schedule = $11 "+
+			"WHERE id = $12 AND own_id = $13;", vacancy.Experience,
 		vacancy.Position, vacancy.Tasks, vacancy.Requirements, vacancy.WageFrom,
-		vacancy.WageTo, vacancy.Conditions, vacancy.About, vacancyId, userId,
+		vacancy.WageTo, vacancy.Conditions, vacancy.About, vacancy.Region,
+		vacancy.TypeOfEmployment, vacancy.WorkSchedule, vacancyId, userId,
 	)
 
 	if err != nil {

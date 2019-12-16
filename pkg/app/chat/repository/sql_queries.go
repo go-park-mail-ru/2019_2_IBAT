@@ -3,8 +3,8 @@ package repository
 const (
 	InsertChat = "INSERT INTO chats(chat_id, seeker_id, employer_id)VALUES" +
 		"($1, $2, $3);"
-	InsertMessage = "INSERT INTO messages(chat_id, owner_id, content)VALUES" +
-		"($1, $2, $3);"
+	InsertMessage = "INSERT INTO messages(chat_id, owner_id, content, created_at)VALUES" +
+		"($1, $2, $3, $4);"
 	SelectChatsForEmpl = "SELECT C.chat_id, C.seeker_id, P.first_name, P.second_name FROM chats AS C " +
 		"JOIN persons AS P ON (C.seeker_id = P.id) WHERE C.employer_id = $1;"
 	SelectChatsForSeek = "SELECT C.chat_id, C.employer_id, COMP.company_name FROM chats AS C " +

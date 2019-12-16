@@ -14,11 +14,12 @@ import (
 func (m *DBUserStorage) CreateResume(resumeReg Resume) bool {
 	_, err := m.DbConn.Exec("INSERT INTO resumes(id, own_id, first_name, second_name, email, "+
 		"region, phone_number, birth_date, sex, citizenship, experience, "+
-		"position, wage, education, about)"+
-		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);",
+		"position, wage, education, about, type_of_employment, work_schedule)"+
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17);",
 		resumeReg.ID, resumeReg.OwnerID, resumeReg.FirstName, resumeReg.SecondName, resumeReg.Email, resumeReg.Region,
 		resumeReg.PhoneNumber, resumeReg.BirthDate, resumeReg.Sex, resumeReg.Citizenship, resumeReg.Experience,
-		resumeReg.Position, resumeReg.Wage, resumeReg.Education, resumeReg.About,
+		resumeReg.Position, resumeReg.Wage, resumeReg.Education, resumeReg.About, resumeReg.TypeOfEmployment,
+		resumeReg.WorkSchedule,
 	)
 
 	if err != nil {
@@ -72,11 +73,13 @@ func (m *DBUserStorage) PutResume(resume Resume, userId uuid.UUID, resumeId uuid
 	_, err := m.DbConn.Exec("UPDATE resumes SET "+
 		"first_name = $1, second_name = $2, email = $3, "+
 		"region = $4, phone_number = $5, birth_date = $6, sex = $7, citizenship = $8, "+
-		"experience = $9, position = $10, wage = $11, education = $12, about = $13 "+
-		"WHERE id = $14 AND own_id = $15;",
+		"experience = $9, position = $10, wage = $11, education = $12, about = $13, "+
+		"type_of_employment = $14, work_schedule = $15 "+
+		"WHERE id = $16 AND own_id = $17;",
 		resume.FirstName, resume.SecondName, resume.Email, resume.Region, resume.PhoneNumber,
-		resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience,
-		resume.Position, resume.Wage, resume.Education, resume.About, resumeId, userId,
+		resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience, resume.Position,
+		resume.Wage, resume.Education, resume.About, resume.TypeOfEmployment, resume.WorkSchedule,
+		resumeId, userId,
 	)
 
 	if err != nil {

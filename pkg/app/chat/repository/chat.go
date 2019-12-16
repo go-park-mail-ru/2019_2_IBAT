@@ -24,24 +24,29 @@ func (m DBStorage) CreateChat(seekerId uuid.UUID, employerId uuid.UUID) (uuid.UU
 	return id, nil
 }
 
-func (m DBStorage) GetCompanionId(msg InChatMessage) (uuid.UUID, error) {
+func (m DBStorage) GetCompanionIdAndName(msg InChatMessage) (uuid.UUID, string, error) {
 	var id uuid.UUID
 	var err error
+	var name string
 
 	if msg.OwnerInfo.Role == SeekerStr {
-		err = m.DbConn.QueryRowx("SELECT employer_id FROM chats WHERE chat_id = $1 AND "+
-			"seeker_id = $2;", msg.ChatID, msg.OwnerInfo.ID).Scan(&id)
+		err = m.DbConn.QueryRowx("SELECT C.employer_id, COMP.company_name FROM chats AS C "+
+			"JOIN companies AS COMP ON (COMP.own_id = C.employer_id) WHERE C.chat_id = $1 AND "+
+			"C.seeker_id = $2;", msg.ChatID, msg.OwnerInfo.ID).Scan(&id, &name)
 	} else if msg.OwnerInfo.Role == EmployerStr {
-		err = m.DbConn.QueryRowx("SELECT seeker_id FROM chats WHERE chat_id = $1 AND "+
-			"employer_id = $2;", msg.ChatID, msg.OwnerInfo.ID).Scan(&id)
+		var firstName, secondName string
+		err = m.DbConn.QueryRowx("SELECT C.seeker_id, P.first_name, P.second_name FROM chats AS C "+
+			"JOIN persons AS P ON (P.id = C.seeker_id) WHERE C.chat_id = $1 AND "+
+			"C.employer_id = $2;", msg.ChatID, msg.OwnerInfo.ID).Scan(&id, &firstName, &secondName)
+		name = firstName + " " + secondName
 	}
 
 	if err != nil {
 		fmt.Printf("GetCompanionId: %s\n", err)
-		return id, errors.New(InvalidIdMsg)
+		return id, name, errors.New(InvalidIdMsg)
 	}
 
-	return id, nil
+	return id, name, nil
 }
 
 func (m DBStorage) GetChats(authInfo AuthStorageValue) ([]Chat, error) {
@@ -83,7 +88,7 @@ func (m DBStorage) GetChats(authInfo AuthStorageValue) ([]Chat, error) {
 }
 
 func (m DBStorage) CreateMessage(msg InChatMessage) error {
-	_, err := m.DbConn.Exec(InsertMessage, msg.ChatID, msg.OwnerInfo.ID, msg.Text)
+	_, err := m.DbConn.Exec(InsertMessage, msg.ChatID, msg.OwnerInfo.ID, msg.Text, msg.Timestamp)
 	if err != nil {
 		fmt.Printf("CreateMessage: %s\n", err)
 		return errors.New(BadRequestMsg)

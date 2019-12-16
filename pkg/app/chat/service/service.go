@@ -6,6 +6,8 @@ import (
 	. "2019_2_IBAT/pkg/pkg/models"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/google/uuid"
 )
 
@@ -35,18 +37,30 @@ func (s Service) ProcessMessage() {
 	for {
 		msg := <-s.MainChan
 		fmt.Printf("ProcessMessage msg %s was read from main channel\n", msg.Text)
-		id, err := s.Storage.GetCompanionId(msg)
+		id, name, err := s.Storage.GetCompanionIdAndName(msg)
 		fmt.Printf("ProcessMessage companion id %s was accepted\n", id.String())
-
 		fmt.Println(id)
 		fmt.Println(err)
+
+		// msg.ChatID =
+		msg.Timestamp = time.Now().In(Loc).Format(TimeFormat)
+
+		outMsg := OutChatMessage{
+			ChatID:     msg.ChatID,
+			OwnerId:    id,
+			OwnerName:  name,
+			Text:       msg.Text,
+			IsNotYours: true,
+			Timestamp:  msg.Timestamp,
+		}
+
 		s.ConnectsPool.ConsMu.Lock()
 		if cons, ok := s.ConnectsPool.Connects[id]; ok {
 			s.ConnectsPool.Connects[id].Mu.Lock()
 			// cons := s.ConnectsPool.Connects[id]
 			for _, con := range cons.Connects {
 				fmt.Printf("ProcessMessage msg %s was sent to output channel\n", msg.Text)
-				con.Ch <- msg
+				con.Ch <- outMsg
 			}
 			s.ConnectsPool.Connects[id].Mu.Unlock()
 		}
