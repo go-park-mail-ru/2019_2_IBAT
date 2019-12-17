@@ -10,7 +10,7 @@ type InChatMessage struct {
 	ChatID    uuid.UUID        `json:"chat_id"                 db:"id"`
 	OwnerInfo AuthStorageValue `json:"-"                 db:"-"`
 	Timestamp string           `json:"timestamp"                 db:"id"`
-	Text      string           `json:"text"                 db:"id"`
+	Text      string           `json:"content"                 db:"id"`
 }
 
 type OutChatMessage struct {
