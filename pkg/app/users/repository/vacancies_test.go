@@ -234,17 +234,20 @@ func TestDBUserStorage_CreateVacancy_Correct(t *testing.T) {
 	defer sqlxDB.Close()
 
 	vacancy := Vacancy{
-		ID:           uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
-		OwnerID:      uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
-		CompanyName:  "MC",
-		Experience:   "7 years",
-		Position:     "mid",
-		Tasks:        "cleaning rooms",
-		Requirements: "work for 24 hours per week",
-		WageFrom:     "100 500.00 руб",
-		WageTo:       "120 500.00 руб",
-		Conditions:   "Nice geolocation",
-		About:        "Hello employer",
+		ID:               uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
+		OwnerID:          uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
+		CompanyName:      "MC",
+		Experience:       "7 years",
+		Position:         "mid",
+		Tasks:            "cleaning rooms",
+		Requirements:     "work for 24 hours per week",
+		WageFrom:         "100 500.00 руб",
+		WageTo:           "120 500.00 руб",
+		Conditions:       "Nice geolocation",
+		About:            "Hello employer",
+		TypeOfEmployment: "someType",
+		WorkSchedule:     "WorkSchedule",
+		Region:           "Moscow",
 	}
 
 	mock.
@@ -252,6 +255,7 @@ func TestDBUserStorage_CreateVacancy_Correct(t *testing.T) {
 		WithArgs(
 			vacancy.ID, vacancy.OwnerID, vacancy.Experience, vacancy.Position, vacancy.Tasks,
 			vacancy.Requirements, vacancy.Conditions, vacancy.WageFrom, vacancy.WageTo, vacancy.About,
+			vacancy.Region, vacancy.TypeOfEmployment, vacancy.WorkSchedule,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -281,17 +285,20 @@ func TestDBUserStorage_CreateVacancy_False(t *testing.T) {
 	defer sqlxDB.Close()
 
 	vacancy := Vacancy{
-		ID:           uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
-		OwnerID:      uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
-		CompanyName:  "MC",
-		Experience:   "7 years",
-		Position:     "mid",
-		Tasks:        "cleaning rooms",
-		Requirements: "work for 24 hours per week",
-		WageFrom:     "100 500.00 руб",
-		WageTo:       "120 500.00 руб",
-		Conditions:   "Nice geolocation",
-		About:        "Hello employer",
+		ID:               uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
+		OwnerID:          uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
+		CompanyName:      "MC",
+		Experience:       "7 years",
+		Position:         "mid",
+		Tasks:            "cleaning rooms",
+		Requirements:     "work for 24 hours per week",
+		WageFrom:         "100 500.00 руб",
+		WageTo:           "120 500.00 руб",
+		Conditions:       "Nice geolocation",
+		About:            "Hello employer",
+		TypeOfEmployment: "someType",
+		WorkSchedule:     "WorkSchedule",
+		Region:           "Moscow",
 	}
 
 	mock.
@@ -299,6 +306,7 @@ func TestDBUserStorage_CreateVacancy_False(t *testing.T) {
 		WithArgs(
 			vacancy.ID, vacancy.OwnerID, vacancy.Experience, vacancy.Position, vacancy.Tasks,
 			vacancy.Requirements, vacancy.Conditions, vacancy.WageFrom, vacancy.WageTo, vacancy.About,
+			vacancy.Region, vacancy.TypeOfEmployment, vacancy.WorkSchedule,
 		).
 		WillReturnError(fmt.Errorf("bad query"))
 
@@ -411,24 +419,29 @@ func TestDBUserStorage_PutVacancy_Correct(t *testing.T) {
 	defer sqlxDB.Close()
 
 	vacancy := Vacancy{
-		ID:           uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
-		OwnerID:      uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
-		CompanyName:  "MC",
-		Experience:   "7 years",
-		Position:     "mid",
-		Tasks:        "cleaning rooms",
-		Requirements: "work for 24 hours per week",
-		WageFrom:     "100 500.00 руб",
-		WageTo:       "101 500.00 руб",
-		Conditions:   "Nice geolocation",
-		About:        "Hello employer",
+		ID:               uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"),
+		OwnerID:          uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
+		CompanyName:      "MC",
+		Experience:       "7 years",
+		Position:         "mid",
+		Tasks:            "cleaning rooms",
+		Requirements:     "work for 24 hours per week",
+		WageFrom:         "100 500.00 руб",
+		WageTo:           "101 500.00 руб",
+		Conditions:       "Nice geolocation",
+		About:            "Hello employer",
+		TypeOfEmployment: "someType",
+		WorkSchedule:     "WorkSchedule",
+		Region:           "Moscow",
 	}
 
 	mock.
 		ExpectExec(`UPDATE vacancies SET`).
 		WithArgs(
 			vacancy.Experience, vacancy.Position, vacancy.Tasks, vacancy.Requirements,
-			vacancy.Conditions, vacancy.WageFrom, vacancy.WageTo, vacancy.About, vacancy.ID, vacancy.OwnerID,
+			vacancy.WageFrom, vacancy.WageTo, vacancy.Conditions, vacancy.About,
+			vacancy.Region, vacancy.TypeOfEmployment, vacancy.WorkSchedule,
+			vacancy.ID, vacancy.OwnerID,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -458,24 +471,29 @@ func TestDBUserStorage_PutVacancy_False(t *testing.T) {
 	defer sqlxDB.Close()
 
 	vacancy := Vacancy{
-		ID:           uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"), //invalid id
-		OwnerID:      uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
-		CompanyName:  "MC",
-		Experience:   "7 years",
-		Position:     "cleaner",
-		Tasks:        "cleaning rooms",
-		Requirements: "work for 24 hours per week",
-		WageFrom:     "100 500.00 руб",
-		WageTo:       "101 500.00 руб",
-		Conditions:   "Nice geolocation",
-		// About:        "Hello employer",
+		ID:               uuid.MustParse("f14c6104-3430-413b-ab4e-e31c8642ad8a"), //invalid id
+		OwnerID:          uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
+		CompanyName:      "MC",
+		Experience:       "7 years",
+		Position:         "cleaner",
+		Tasks:            "cleaning rooms",
+		Requirements:     "work for 24 hours per week",
+		WageFrom:         "100 500.00 руб",
+		WageTo:           "101 500.00 руб",
+		Conditions:       "Nice geolocation",
+		About:            "Hello employer",
+		TypeOfEmployment: "someType",
+		WorkSchedule:     "WorkSchedule",
+		Region:           "Moscow",
 	}
 
 	mock.
 		ExpectExec(`UPDATE vacancies SET`).
 		WithArgs(
 			vacancy.Experience, vacancy.Position, vacancy.Tasks, vacancy.Requirements,
-			vacancy.Conditions, vacancy.WageFrom, vacancy.WageTo, vacancy.About, vacancy.ID, vacancy.OwnerID,
+			vacancy.WageFrom, vacancy.WageTo, vacancy.Conditions, vacancy.About,
+			vacancy.Region, vacancy.TypeOfEmployment, vacancy.WorkSchedule,
+			vacancy.ID, vacancy.OwnerID,
 		).
 		WillReturnError(fmt.Errorf("bad query"))
 

@@ -1,0 +1,140 @@
+version: '3'
+# version: '3.5'
+
+networks:
+    uniting_net:
+
+services:
+  base:
+    image: base
+    build:
+      context: .
+      dockerfile: ./build/docker/images/base/Dockerfile
+    environment:
+      - DEPLOYAPI
+
+  auth:
+      build:
+        context: .
+        dockerfile: ./build/docker/images/auth/Dockerfile
+        args:
+          - VER=1.0
+      ports:
+        - "8082:8082"
+      depends_on:
+        - base
+        - redis
+
+      environment:
+        - DEPLOYAPI
+      networks:
+        - uniting_net
+      tty: true
+      stdin_open: true
+
+  chat:
+    build:
+      context: .
+      dockerfile: ./build/docker/images/chat/Dockerfile
+      args:
+        - VER=1.0
+    ports:
+      - "8090:8090"
+    depends_on:
+      - postgres
+      - auth
+      - base
+    networks:
+      - uniting_net
+    environment:
+      - DEPLOYAPI
+    tty: true
+    stdin_open: true
+
+  recommends:
+    build:
+      context: .
+      dockerfile: ./build/docker/images/recommends/Dockerfile
+      args:
+        - VER=1.0
+    ports:
+      - "8083:8083"
+    depends_on:
+      - postgres
+      - base
+    networks:
+      - uniting_net
+    environment:
+      - DEPLOYAPI
+    tty: true
+    stdin_open: true
+  
+  notifications:
+    build:
+      context: .
+      dockerfile: ./build/docker/images/notifications/Dockerfile
+      args:
+        - VER=1.0
+    ports:
+      - "8081:8081"
+      - "8084:8084"
+    depends_on:
+      - auth
+      - postgres
+    networks:
+      - uniting_net
+    environment:
+      - DEPLOYAPI
+    tty: true
+    stdin_open: true
+
+  main:
+    build:
+      context: .
+      dockerfile: ./build/docker/images/main/Dockerfile
+      args:
+        - VER=1.0
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - auth
+      - recommends
+      - base
+      # - notifications
+    networks:
+      - uniting_net
+    environment:
+      - DEPLOYAPI
+    tty: true
+    stdin_open: true
+    
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: hh
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: newPassword
+      # LANG: ru_RU.UTF-8
+      # LANG: ja_JP.eucJP
+      # LANGUAGE: ja_JP.eucJP
+      # LC_ALL: ja_JP.eucJP
+      # POSTGRES_INITDB_ARGS: '-E UTF8 -T template0 --lc-collate=ru_RU.utf8 --lc-ctype=ru_RU.utf8'
+      # POSTGRES_INITDB_ARGS: '-E UTF8 -T template0 --lc-collate=ja_JP.UTF-8 --lc-ctype=ja_JP.UTF-8'
+    volumes:
+       - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - uniting_net
+    restart: always
+
+  redis:
+      image: redis:alpine
+      ports:
+        - "6379:6379"
+      environment:
+        - ALLOW_EMPTY_PASSWORD=yes
+
+volumes:
+    postgres:

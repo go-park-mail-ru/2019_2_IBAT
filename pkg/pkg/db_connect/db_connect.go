@@ -25,9 +25,13 @@ func OpenSqlxViaPgxConnPool() *sqlx.DB {
 		MaxConnections: 20,
 		AcquireTimeout: 30 * time.Second,
 	})
+
+	fmt.Println("OpenSqlxViaPgxConnPool: test db")
+	fmt.Println("OpenSqlxViaPgxConnPool: test base #2")
+	fmt.Printf("OpenSqlxViaPgxConnPool: Hostname %s\n", config.Hostname)
 	if err != nil {
-		fmt.Printf("FFFFFFFFFailed to create connections pool: error - %s", err.Error())
-		log.Fatalf("FFFFFFFFFailed to create connections pool: error - %s", err.Error())
+		fmt.Printf("OpenSqlxViaPgxConnPool: Failed to create connections pool: error - %s\n", err.Error())
+		log.Fatalf("OpenSqlxViaPgxConnPool: Failed to create connections pool: error - %s\n", err.Error())
 	}
 
 	nativeDB := stdlib.OpenDBFromPool(connPool)

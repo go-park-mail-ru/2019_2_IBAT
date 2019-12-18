@@ -226,6 +226,17 @@ func (_mr *_MockRepositoryRecorder) GetVacancies(arg0, arg1 interface{}) *gomock
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetVacancies", arg0, arg1)
 }
 
+func (_m *MockRepository) GetVacanciesByIDs(authInfo AuthStorageValue, params map[string]interface{}) ([]Vacancy, error) {
+	ret := _m.ctrl.Call(_m, "GetVacanciesByIDs", authInfo, params)
+	ret0, _ := ret[0].([]Vacancy)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+func (_mr *_MockRepositoryRecorder) GetVacanciesByIDs(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetVacanciesByIDs", arg0, arg1)
+}
+
 func (_m *MockRepository) GetResponds(record AuthStorageValue, params map[string]string) ([]Respond, error) {
 	ret := _m.ctrl.Call(_m, "GetResponds", record, params)
 	ret0, _ := ret[0].([]Respond)

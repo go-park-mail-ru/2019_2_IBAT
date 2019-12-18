@@ -90,8 +90,6 @@ func NewRouter() (*mux.Router, error) {
 		return router, err
 	}
 
-	// defer grcpConn.Close()
-
 	sessManager := session.NewServiceClient(authGrcpConn)
 
 	recomsGrcpConn, err := grpc.Dial(

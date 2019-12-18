@@ -13,12 +13,9 @@ import (
 	"2019_2_IBAT/pkg/app/auth"
 	"2019_2_IBAT/pkg/app/auth/session"
 	"2019_2_IBAT/pkg/app/users"
+	"2019_2_IBAT/pkg/pkg/config"
 	. "2019_2_IBAT/pkg/pkg/models"
 )
-
-const publicDir = "/static"
-
-const maxUploadSize = 2 * 1024 * 1024 // 2 mb
 
 type Handler struct {
 	InternalDir string
@@ -143,8 +140,8 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 			return
 		}
 
-		r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
-		if err := r.ParseMultipartForm(maxUploadSize); err != nil {
+		r.Body = http.MaxBytesReader(w, r.Body, config.MaxUploadSize)
+		if err := r.ParseMultipartForm(config.MaxUploadSize); err != nil {
 			SetError(w, http.StatusBadRequest, "Invalid size")
 			return
 		}
@@ -194,7 +191,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 			return
 		}
 
-		publicPath := filepath.Join(publicDir, fileName+fileEndings[0])
+		publicPath := filepath.Join(config.PublicDir, fileName+fileEndings[0])
 		h.UserService.SetImage(authInfo.ID, authInfo.Role, publicPath)
 	})
 }

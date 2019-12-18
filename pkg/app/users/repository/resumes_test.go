@@ -256,21 +256,23 @@ func TestDBUserStorage_CreateResume_Correct(t *testing.T) {
 	defer sqlxDB.Close()
 
 	resume := Resume{
-		ID:          uuid.MustParse("11b77a73-bac7-4597-ab71-7b5fbe53052d"),
-		OwnerID:     uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
-		Email:       "email@mail.ru",
-		Region:      "Moscow",
-		PhoneNumber: "12345678910",
-		FirstName:   "Vova",
-		SecondName:  "Zyablikov",
-		BirthDate:   "1999-01-08",
-		Sex:         "male",
-		Citizenship: "Russia",
-		Position:    "programmer",
-		Experience:  "7 years",
-		Education:   "MSU",
-		Wage:        "100 500.00 руб",
-		About:       "Hello employer",
+		ID:               uuid.MustParse("11b77a73-bac7-4597-ab71-7b5fbe53052d"),
+		OwnerID:          uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
+		Email:            "email@mail.ru",
+		Region:           "Moscow",
+		PhoneNumber:      "12345678910",
+		FirstName:        "Vova",
+		SecondName:       "Zyablikov",
+		BirthDate:        "1999-01-08",
+		Sex:              "male",
+		Citizenship:      "Russia",
+		Position:         "programmer",
+		Experience:       "7 years",
+		Education:        "MSU",
+		Wage:             "100 500.00 руб",
+		About:            "Hello employer",
+		TypeOfEmployment: "someType",
+		WorkSchedule:     "WorkSchedule",
 	}
 
 	mock.
@@ -278,7 +280,8 @@ func TestDBUserStorage_CreateResume_Correct(t *testing.T) {
 		WithArgs(
 			resume.ID, resume.OwnerID, resume.FirstName, resume.SecondName, resume.Email, resume.Region,
 			resume.PhoneNumber, resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience,
-			resume.Position, resume.Wage, resume.Education, resume.About,
+			resume.Position, resume.Wage, resume.Education, resume.About, resume.TypeOfEmployment,
+			resume.WorkSchedule,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -305,18 +308,20 @@ func TestDBUserStorage_CreateResume_False(t *testing.T) {
 	defer sqlxDB.Close()
 
 	resume := Resume{
-		ID:          uuid.MustParse("11b77a73-bac7-4597-ab71-7b5fbe53052d"),
-		OwnerID:     uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
-		Email:       "email@mail.ru",
-		Region:      "Moscow",
-		PhoneNumber: "12345678910",
-		BirthDate:   "1999-112-100",
-		Citizenship: "Russia",
-		Position:    "programmer",
-		Experience:  "7 years",
-		Education:   "MSU",
-		Wage:        "100 500.00 руб",
-		About:       "Hello employer",
+		ID:               uuid.MustParse("11b77a73-bac7-4597-ab71-7b5fbe53052d"),
+		OwnerID:          uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
+		Email:            "email@mail.ru",
+		Region:           "Moscow",
+		PhoneNumber:      "12345678910",
+		BirthDate:        "1999-112-100",
+		Citizenship:      "Russia",
+		Position:         "programmer",
+		Experience:       "7 years",
+		Education:        "MSU",
+		Wage:             "100 500.00 руб",
+		About:            "Hello employer",
+		TypeOfEmployment: "someType",
+		WorkSchedule:     "WorkSchedule",
 	}
 
 	mock.
@@ -324,7 +329,8 @@ func TestDBUserStorage_CreateResume_False(t *testing.T) {
 		WithArgs(
 			resume.ID, resume.OwnerID, resume.FirstName, resume.SecondName, resume.Email, resume.Region,
 			resume.PhoneNumber, resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience,
-			resume.Position, resume.Wage, resume.Education, resume.About,
+			resume.Position, resume.Wage, resume.Education, resume.About, resume.TypeOfEmployment,
+			resume.WorkSchedule,
 		).
 		WillReturnError(fmt.Errorf("bad query"))
 
@@ -439,21 +445,23 @@ func TestDBUserStorage_PutResume_Correct(t *testing.T) {
 	defer sqlxDB.Close()
 
 	resume := Resume{
-		ID:          uuid.MustParse("11b77a73-bac7-4597-ab71-7b5fbe53052d"),
-		OwnerID:     uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
-		Email:       "ema@mail.ru",
-		Region:      "Moscow",
-		PhoneNumber: "12345678910",
-		FirstName:   "Vova",
-		SecondName:  "Zyablikov",
-		BirthDate:   "1999-01-08",
-		Sex:         "male",
-		Citizenship: "Russia",
-		Position:    "programmer",
-		Experience:  "7 years",
-		Education:   "MSU",
-		Wage:        "100 500.00 руб",
-		About:       "Hello employer",
+		ID:               uuid.MustParse("11b77a73-bac7-4597-ab71-7b5fbe53052d"),
+		OwnerID:          uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
+		Email:            "ema@mail.ru",
+		Region:           "Moscow",
+		PhoneNumber:      "12345678910",
+		FirstName:        "Vova",
+		SecondName:       "Zyablikov",
+		BirthDate:        "1999-01-08",
+		Sex:              "male",
+		Citizenship:      "Russia",
+		Position:         "programmer",
+		Experience:       "7 years",
+		Education:        "MSU",
+		Wage:             "100 500.00 руб",
+		About:            "Hello employer",
+		TypeOfEmployment: "someType",
+		WorkSchedule:     "WorkSchedule",
 	}
 
 	mock.
@@ -461,7 +469,8 @@ func TestDBUserStorage_PutResume_Correct(t *testing.T) {
 		WithArgs(
 			resume.FirstName, resume.SecondName, resume.Email, resume.Region, resume.PhoneNumber,
 			resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience,
-			resume.Position, resume.Wage, resume.Education, resume.About, resume.ID, resume.OwnerID,
+			resume.Position, resume.Wage, resume.Education, resume.About, resume.TypeOfEmployment, resume.WorkSchedule,
+			resume.ID, resume.OwnerID,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -491,18 +500,20 @@ func TestDBUserStorage_PutResume_False(t *testing.T) {
 	defer sqlxDB.Close()
 
 	resume := Resume{
-		ID:          uuid.MustParse("11b77a73-bac7-4597-ab71-7b5fbe53052d"),
-		OwnerID:     uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
-		Email:       "email@mail.ru",
-		Region:      "Moscow",
-		PhoneNumber: "12345678910",
-		BirthDate:   "1999-112-100",
-		Citizenship: "Russia",
-		Position:    "programmer",
-		Experience:  "7 years",
-		Education:   "MSU",
-		Wage:        "100 500.00 руб",
-		About:       "Hello employer",
+		ID:               uuid.MustParse("11b77a73-bac7-4597-ab71-7b5fbe53052d"),
+		OwnerID:          uuid.MustParse("92b77a73-bac7-4597-ab71-7b5fbe53052d"),
+		Email:            "email@mail.ru",
+		Region:           "Moscow",
+		PhoneNumber:      "12345678910",
+		BirthDate:        "1999-112-100",
+		Citizenship:      "Russia",
+		Position:         "programmer",
+		Experience:       "7 years",
+		Education:        "MSU",
+		Wage:             "100 500.00 руб",
+		About:            "Hello employer",
+		TypeOfEmployment: "someType",
+		WorkSchedule:     "WorkSchedule",
 	}
 
 	mock.
@@ -510,7 +521,8 @@ func TestDBUserStorage_PutResume_False(t *testing.T) {
 		WithArgs(
 			resume.FirstName, resume.SecondName, resume.Email, resume.Region, resume.PhoneNumber,
 			resume.BirthDate, resume.Sex, resume.Citizenship, resume.Experience,
-			resume.Position, resume.Wage, resume.Education, resume.About, resume.ID, resume.OwnerID,
+			resume.Position, resume.Wage, resume.Education, resume.About, resume.TypeOfEmployment, resume.WorkSchedule,
+			resume.ID, resume.OwnerID,
 		).
 		WillReturnError(fmt.Errorf("bad query"))
 

@@ -14,12 +14,15 @@ const NotifsServicePort = 8084
 
 const ChatWorkers = 3
 
-const Hostname = "localhost"
+// const Hostname = "localhost"
+
+const Hostname = "postgres"
+
+// const Hostname = "postgresql://postgres:newPassword@clair_postgres:5432?sslmode=disable"
 const Database = "hh"
 const User = "postgres"
 const Password = "newPassword"
 
-// const (
 // Time allowed to write a message to the peer.
 const WriteWait = 10 * time.Second
 
@@ -28,7 +31,8 @@ const PongWait = 50 * time.Second
 
 // Send pings to peer with this period. Must be less than pongWait.
 const PingPeriod = (PongWait * 9) / 10
-
 const MaxMessageSize = 512
 
-// )
+const PublicDir = "/static"
+
+const MaxUploadSize = 10 * 1024 * 1024 // 10 mb

@@ -12,3 +12,4 @@ cover.tmp
 pkg/cover.out
 pkg/cover.tmp
 db/rk3.sql
+cmd/notifications/testlogfile

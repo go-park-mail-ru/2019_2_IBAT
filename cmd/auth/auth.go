@@ -21,6 +21,8 @@ func main() {
 		log.Fatalln("cant listet port", err)
 	}
 
+	fmt.Println("auth base test")
+
 	redisAddr := flag.String("redisServer", ":"+strconv.Itoa(config.ReddisPort), "")
 
 	// aS := auth_serv.AuthService{
