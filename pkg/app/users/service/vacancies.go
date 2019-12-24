@@ -147,6 +147,10 @@ func (h *UserService) GetVacancies(authInfo AuthStorageValue, params map[string]
 	var tagIDs []uuid.UUID
 	var err error
 
+	if params["own"] != nil {
+		return h.Storage.GetOwnVacancies(authInfo, params)
+	}
+
 	if params["recommended"] != nil {
 		ctx := context.Background()
 		tagIDsMsg, err := h.RecomService.GetTagIDs(

@@ -135,6 +135,10 @@ services:
         - "6379:6379"
       environment:
         - ALLOW_EMPTY_PASSWORD=yes
+  # redis:
+  #   build: ./build/docker/images/redis/Dockerfile
+  #   ports:
+  # #       - "6379:6379"
 
 volumes:
     postgres:

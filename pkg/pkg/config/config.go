@@ -14,7 +14,7 @@ const NotifsServicePort = 8084
 
 const ChatWorkers = 3
 
-// const Hostname = "localhost"
+//const Hostname = "localhost"
 
 const Hostname = "postgres"
 

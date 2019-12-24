@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"log"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
@@ -23,7 +23,7 @@ func (h AuthService) CreateSession(ctx context.Context, sessInfo *session.Sessio
 	authInfo, cookieValue, err := h.Storage.Set(uuid.MustParse(sessInfo.Id), sessInfo.Class)
 
 	if err != nil {
-		log.Printf("Error while unmarshaling: %s\n", err)
+		fmt.Printf("Error while unmarshaling: %s\n", err)
 		err = errors.Wrap(err, "error while unmarshaling")
 		return &session.CreateSessionInfo{}, errors.New(BadRequestMsg)
 	}

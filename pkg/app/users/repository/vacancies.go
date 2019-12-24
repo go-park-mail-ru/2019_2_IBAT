@@ -276,6 +276,35 @@ func (m *DBUserStorage) GetVacanciesByIDs(authInfo AuthStorageValue, params map[
 	return vacancies, nil
 }
 
+func (m *DBUserStorage) GetOwnVacancies(authInfo AuthStorageValue, params map[string]interface{}) ([]Vacancy, error) {
+	if params["own"] == nil {
+		return []Vacancy{}, nil
+	}
+
+	rows, err := m.DbConn.Queryx("SELECT v.id, v.own_id, c.company_name, v.experience,"+
+		"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
+		"v.region, v.type_of_employment, v.work_schedule "+
+		" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id "+
+		"AND v.own_id = $1;", authInfo.ID,
+	)
+
+	var vacancies []Vacancy
+	for rows.Next() {
+		var vacancy Vacancy
+
+		err = rows.StructScan(&vacancy)
+		if err != nil {
+			log.Printf("GetOwnVacancies: %s\n", err)
+			return vacancies, errors.New(InternalErrorMsg)
+		}
+
+		vacancies = append(vacancies, vacancy)
+	}
+
+	return vacancies, nil
+
+}
+
 func paramsToQuery(params map[string]interface{}) string {
 	var query []string
 

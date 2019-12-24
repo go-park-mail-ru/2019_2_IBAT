@@ -183,6 +183,11 @@ func (h *Handler) ParseVacanciesQuery(query url.Values) map[string]interface{} {
 		return params //no sense to continue
 	}
 
+	if query.Get("own") != "" {
+		params["own"] = query.Get("own")
+		return params
+	}
+
 	if query.Get("id0") != "" {
 		var ids []string
 		params["id0"] = query.Get("id0")

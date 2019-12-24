@@ -99,5 +99,9 @@ func (h *UserService) PutResume(resumeId uuid.UUID, body io.ReadCloser, authInfo
 }
 
 func (h *UserService) GetResumes(authInfo AuthStorageValue, params map[string]interface{}) ([]Resume, error) {
-	return h.Storage.GetResumes(authInfo, params)
+	if params["id"] != nil {
+		return h.Storage.GetResumesByIDs(authInfo, params)
+	} else {
+		return h.Storage.GetResumes(authInfo, params)
+	}
 }

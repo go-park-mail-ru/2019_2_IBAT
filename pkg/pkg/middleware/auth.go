@@ -4,6 +4,7 @@ import (
 	"2019_2_IBAT/pkg/app/auth"
 	"2019_2_IBAT/pkg/app/auth/session"
 	. "2019_2_IBAT/pkg/pkg/models"
+	"fmt"
 
 	"log"
 	"net/http"
@@ -28,6 +29,7 @@ func AuthMiddlewareGenerator(authServ session.ServiceClient) (mw func(http.Handl
 				})
 				if err != nil {
 					log.Printf("sessionInfo fetch error: %s\n", err)
+					fmt.Printf("sessionInfo fetch error: %s\n", err)
 				} else {
 					if sessionInfo.Ok {
 						ctx = NewContext(req.Context(), AuthStorageValue{

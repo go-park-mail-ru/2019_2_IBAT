@@ -148,6 +148,55 @@ func (m *DBUserStorage) GetResumes(authInfo AuthStorageValue, params map[string]
 	return resumes, nil
 }
 
+func (m *DBUserStorage) GetResumesByIDs(authInfo AuthStorageValue, params map[string]interface{}) ([]Resume, error) {
+	resumes := []Resume{}
+	log.Printf("Params: %s\n\n", params)
+
+	arr := params["id"].([]string)
+	fmt.Println(arr)
+	params["id"] = arr
+
+	query, args, err := sqlx.Named("SELECT id, own_id, first_name, second_name, email, "+
+		"region, phone_number, birth_date, sex, citizenship, experience,"+
+		"position, wage, education, about, work_schedule, type_of_employment "+
+		"FROM resumes WHERE id IN (:id);", params)
+
+	if err != nil {
+		log.Printf("GetResumesByIDs: %s\n", err)
+
+		return resumes, errors.New(InternalErrorMsg)
+	}
+
+	query, args, err = sqlx.In(query, args...)
+	if err != nil {
+		log.Printf("GetResumesByIDs: %s\n", err)
+		return resumes, errors.New(InternalErrorMsg)
+	}
+	query = m.DbConn.Rebind(query)
+
+	rows, err := m.DbConn.Queryx(query, args...)
+	if err != nil {
+		log.Printf("GetResumesByIDs: %s\n", err)
+		return resumes, errors.New(InternalErrorMsg)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var resume Resume
+
+		err = rows.StructScan(&resume)
+		if err != nil {
+			log.Printf("GetVacanciesByIDs: %s\n", err)
+			return resumes, errors.New(InternalErrorMsg)
+		}
+
+		resumes = append(resumes, resume)
+	}
+
+	return resumes, nil
+}
+
 func paramsToResumesQuery(params map[string]interface{}) string {
 	var query []string
 

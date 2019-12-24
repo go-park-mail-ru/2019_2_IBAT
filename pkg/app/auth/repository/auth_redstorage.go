@@ -3,7 +3,6 @@ package repository
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"math/rand"
 	"strings"
 	"time"
@@ -38,7 +37,7 @@ func (st *SessionManager) Get(cookie string) (AuthStorageValue, bool) {
 	data, err := redis.Bytes(redisConn.Do("GET", cookie))
 	// defer redisConn.Close()
 	if err != nil {
-		log.Println("AuthStorage: Can not get auth info:", err)
+		fmt.Println("AuthStorage: Can not get auth info:", err)
 		return AuthStorageValue{}, false
 	}
 
@@ -85,6 +84,10 @@ func (st *SessionManager) Set(id uuid.UUID, class string) (AuthStorageValue, str
 	defer redisConn.Close()
 	_, err := redis.String(redisConn.Do("SET", cookie, dataSerialized))
 
+	if err != nil {
+		fmt.Printf("Set: %s\n", err)
+
+	}
 	return record, cookie, err
 }
 
