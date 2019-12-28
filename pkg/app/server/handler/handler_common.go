@@ -17,7 +17,7 @@ import (
 	. "2019_2_IBAT/pkg/pkg/models"
 )
 
-const MAXUPLOADSIZE = 5 * 1024 * 1024 // 1 mb
+const MAXUPLOADSIZE = 32 * 1024 * 1024 // 1 mb
 
 type Handler struct {
 	InternalDir string
@@ -142,7 +142,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 			return
 		}
 
-		r.Body = http.MaxBytesReader(w, r.Body, MAXUPLOADSIZE)
+		// r.Body = http.MaxBytesReader(w, r.Body, MAXUPLOADSIZE)
 		if err := r.ParseMultipartForm(MAXUPLOADSIZE); err != nil {
 			log.Printf("Invalid size: %s", err.Error())
 			SetError(w, http.StatusBadRequest, "Invalid size")
