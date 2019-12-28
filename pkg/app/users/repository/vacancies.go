@@ -157,13 +157,13 @@ func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[strin
 	var args []interface{}
 	var err error
 	if tagIDsLength > 0 {
-		query, args, err = sqlx.Named("SELECT v.id, v.own_id, c.company_name, v.experience,"+
+		query, args, err = sqlx.Named("SELECT DISTINCT v.id, v.own_id, c.company_name, v.experience,"+
 			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
 			"v.region, v.type_of_employment, v.work_schedule "+
 			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id "+
 			" INNER JOIN vac_tag_relations AS vt ON v.id = vt.vacancy_id WHERE vt.tag_id IN (:tag_ids)"+paramsStr, params)
 	} else if paramsStr != "" {
-		query, args, err = sqlx.Named("SELECT v.id, v.own_id, c.company_name, v.experience,"+
+		query, args, err = sqlx.Named("SELECT DISTINCT v.id, v.own_id, c.company_name, v.experience,"+
 			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, "+
 			"v.region, v.type_of_employment, v.work_schedule "+
 			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id "+
@@ -186,7 +186,7 @@ func (m *DBUserStorage) GetVacancies(authInfo AuthStorageValue, params map[strin
 
 		rows, err = m.DbConn.Queryx(query, args...)
 	} else {
-		rows, err = m.DbConn.Queryx("SELECT v.id, v.own_id, c.company_name, v.experience," +
+		rows, err = m.DbConn.Queryx("SELECT DISTINCT v.id, v.own_id, c.company_name, v.experience," +
 			"v.position, v.tasks, v.requirements, v.wage_from, v.wage_to, v.conditions, v.about, " +
 			"v.region, v.type_of_employment, v.work_schedule " +
 			" FROM vacancies AS v JOIN companies AS c ON v.own_id = c.own_id;")
