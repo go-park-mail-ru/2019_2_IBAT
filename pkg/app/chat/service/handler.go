@@ -74,14 +74,16 @@ func (s Service) HandleChat(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie(auth.CookieName)
 	if err != nil {
 		fmt.Println("Failed to fetch cookie")
-		w.WriteHeader(http.StatusUnauthorized)
+		SetError(w, http.StatusUnauthorized, UnauthorizedMsg)
 		return
 	}
 	fmt.Printf("Cookie: %s\n", cookie.Value)
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Printf("Failed to upgrade %s", err.Error())
+		SetError(w, http.StatusBadRequest, BadRequestMsg)
+		return
 	}
 
 	conn := Connect{
@@ -119,14 +121,6 @@ func (s Service) HandleChat(w http.ResponseWriter, r *http.Request) {
 
 	go s.ReadPump(&conn, authInfo, stopCh, &mu)
 	go s.WritePump(&conn, stopCh, &mu)
-}
-
-func (s Service) DummyHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
-	answer, _ := json.Marshal("dummy answer")
-
-	w.Write(answer)
 }
 
 func (s Service) HandlerGetChats(w http.ResponseWriter, r *http.Request) {
