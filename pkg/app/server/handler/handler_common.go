@@ -140,8 +140,8 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 			return
 		}
 
-		r.Body = http.MaxBytesReader(w, r.Body, config.MaxUploadSize)
-		if err := r.ParseMultipartForm(config.MaxUploadSize); err != nil {
+		r.Body = http.MaxBytesReader(w, r.Body, config.MAXUPLOADSIZE)
+		if err := r.ParseMultipartForm(config.MAXUPLOADSIZE); err != nil {
 			SetError(w, http.StatusBadRequest, "Invalid size")
 			return
 		}

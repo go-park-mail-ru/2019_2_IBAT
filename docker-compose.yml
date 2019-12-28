@@ -81,6 +81,7 @@ services:
     depends_on:
       - auth
       - postgres
+      - recommends
     networks:
       - uniting_net
     environment:
