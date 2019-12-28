@@ -142,12 +142,14 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 
 		r.Body = http.MaxBytesReader(w, r.Body, config.MAXUPLOADSIZE)
 		if err := r.ParseMultipartForm(config.MAXUPLOADSIZE); err != nil {
+			log.Println("Invalid size")
 			SetError(w, http.StatusBadRequest, "Invalid size")
 			return
 		}
 
 		file, _, err := r.FormFile("my_file")
 		if err != nil {
+			log.Println("my_file")
 			SetError(w, http.StatusBadRequest, "Invalid form key")
 			return
 		}
@@ -155,6 +157,7 @@ func (h *Handler) UploadFile() http.HandlerFunc {
 
 		fileBytes, err := ioutil.ReadAll(file)
 		if err != nil {
+			log.Println("Bad file")
 			SetError(w, http.StatusBadRequest, "Bad file")
 			return
 		}
