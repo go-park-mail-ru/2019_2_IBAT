@@ -35,4 +35,4 @@ const MaxMessageSize = 512
 
 const PublicDir = "/static"
 
-const MAXUPLOADSIZE = 80 * 1024 * 1024 // 1 mb
+// const MAXUPLOADSIZE = 5 * 1024 * 1024 // 1 mb
