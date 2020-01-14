@@ -23,11 +23,12 @@ func main() {
 
 	fmt.Println("auth base test")
 
-	redisAddr := flag.String("redisServer", ":"+strconv.Itoa(config.ReddisPort), "")
+	redisAddr := flag.String(config.RedisHostname, config.RedisHostname+":"+strconv.Itoa(config.ReddisPort), "")
 
 	// aS := auth_serv.AuthService{
 	// 	Storage: auth_rep.NewSessionManager(auth_rep.RedNewPool(*redisAddr)),
 	// }
+	fmt.Printf("redisAddr: %s", *redisAddr)
 
 	server := grpc.NewServer()
 
