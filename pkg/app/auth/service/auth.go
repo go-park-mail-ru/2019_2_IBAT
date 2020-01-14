@@ -25,7 +25,7 @@ func (h AuthService) CreateSession(ctx context.Context, sessInfo *session.Sessio
 	if err != nil {
 		fmt.Printf("Error while unmarshaling: %s\n", err)
 		err = errors.Wrap(err, "error while unmarshaling")
-		return &session.CreateSessionInfo{}, errors.New(BadRequestMsg)
+		return &session.CreateSessionInfo{}, err //errors.New(BadRequestMsg)
 	}
 
 	return &session.CreateSessionInfo{

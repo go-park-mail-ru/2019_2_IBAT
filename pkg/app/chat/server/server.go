@@ -61,8 +61,6 @@ func RunServer() error {
 	router.HandleFunc("/api/chat/ws", s.HandleChat)
 	router.HandleFunc("/api/chat/list", s.HandlerGetChats).Methods(http.MethodGet, http.MethodOptions)
 
-	// router.HandleFunc("/api/chat/room", serveHome)
-
 	for i := 0; i < config.ChatWorkers; i++ {
 		go s.ProcessMessage()
 	}

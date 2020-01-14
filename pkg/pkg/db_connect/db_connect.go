@@ -14,7 +14,7 @@ import (
 
 func OpenSqlxViaPgxConnPool() *sqlx.DB {
 	connConfig := pgx.ConnConfig{
-		Host:     config.Hostname,
+		Host:     config.DBHostname,
 		Database: config.Database,
 		User:     config.User,
 		Password: config.Password,
@@ -28,7 +28,7 @@ func OpenSqlxViaPgxConnPool() *sqlx.DB {
 
 	fmt.Println("OpenSqlxViaPgxConnPool: test db")
 	fmt.Println("OpenSqlxViaPgxConnPool: test base #2")
-	fmt.Printf("OpenSqlxViaPgxConnPool: Hostname %s\n", config.Hostname)
+	fmt.Printf("OpenSqlxViaPgxConnPool: Hostname %s\n", config.DBHostname)
 	if err != nil {
 		fmt.Printf("OpenSqlxViaPgxConnPool: Failed to create connections pool: error - %s\n", err.Error())
 		log.Fatalf("OpenSqlxViaPgxConnPool: Failed to create connections pool: error - %s\n", err.Error())

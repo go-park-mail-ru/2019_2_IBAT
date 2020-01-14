@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
@@ -35,7 +36,9 @@ func (h *Handler) CreateEmployer(w http.ResponseWriter, r *http.Request) { //+
 	})
 
 	if err != nil {
-		SetError(w, http.StatusInternalServerError, InternalErrorMsg)
+		log.Printf("Handle CreateEmployer:  Create session failed: %s", err.Error())
+		fmt.Printf("Handle CreateEmployer:  Create session failed: %s", err.Error())
+		SetError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 

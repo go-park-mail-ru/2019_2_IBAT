@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -82,13 +83,14 @@ func NewRouter() (*mux.Router, error) {
 	router := mux.NewRouter()
 
 	authGrcpConn, err := grpc.Dial(
-		"127.0.0.1:"+strconv.Itoa(config.AuthServicePort),
+		config.AuthHostname+":"+strconv.Itoa(config.AuthServicePort),
 		grpc.WithInsecure(),
 	)
 	if err != nil {
 		log.Fatalf("cant connect to authGrcpConn")
 		return router, err
 	}
+	fmt.Printf("authGrcpConn: RedisHostname %s\n", config.RedisHostname)
 
 	sessManager := session.NewServiceClient(authGrcpConn)
 

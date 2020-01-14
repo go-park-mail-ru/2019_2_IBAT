@@ -102,7 +102,7 @@ services:
       - auth
       - recommends
       - base
-      # - notifications
+      - notifications
     networks:
       - uniting_net
     environment:
@@ -116,12 +116,7 @@ services:
       POSTGRES_DB: hh
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: newPassword
-      # LANG: ru_RU.UTF-8
-      # LANG: ja_JP.eucJP
-      # LANGUAGE: ja_JP.eucJP
-      # LC_ALL: ja_JP.eucJP
-      # POSTGRES_INITDB_ARGS: '-E UTF8 -T template0 --lc-collate=ru_RU.utf8 --lc-ctype=ru_RU.utf8'
-      # POSTGRES_INITDB_ARGS: '-E UTF8 -T template0 --lc-collate=ja_JP.UTF-8 --lc-ctype=ja_JP.UTF-8'
+
     volumes:
        - postgres:/data/postgres
     ports:
@@ -136,6 +131,8 @@ services:
         - "6379:6379"
       environment:
         - ALLOW_EMPTY_PASSWORD=yes
+      networks:
+        - uniting_net
   # redis:
   #   build: ./build/docker/images/redis/Dockerfile
   #   ports:

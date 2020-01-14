@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -14,7 +15,7 @@ import (
 	. "2019_2_IBAT/pkg/pkg/models"
 )
 
-func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
+func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	log.Println("Handle CreateSession: start")
@@ -46,8 +47,9 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) { //+
 	})
 
 	if err != nil {
-		log.Println("Handle CreateSession:  Create session failed")
-		SetError(w, http.StatusInternalServerError, InternalErrorMsg)
+		log.Printf("Handle CreateSession:  Create session failed: %s", err.Error())
+		fmt.Printf("Handle CreateSession:  Create session failed: %s", err.Error())
+		SetError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
