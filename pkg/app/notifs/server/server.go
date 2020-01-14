@@ -23,7 +23,7 @@ import (
 
 func RunServer() error {
 	authGrcpConn, err := grpc.Dial(
-		"127.0.0.1:"+strconv.Itoa(config.AuthServicePort),
+		config.AuthHostname+":"+strconv.Itoa(config.AuthServicePort),
 		grpc.WithInsecure(),
 	)
 	if err != nil {
@@ -34,7 +34,7 @@ func RunServer() error {
 	sessManager := session.NewServiceClient(authGrcpConn)
 
 	recomsGrcpConn, err := grpc.Dial(
-		"127.0.0.1:"+strconv.Itoa(config.RecommendsServicePort),
+		config.RecHostname+":"+strconv.Itoa(config.RecommendsServicePort),
 		grpc.WithInsecure(),
 	)
 

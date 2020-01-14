@@ -39,7 +39,7 @@ func RunServer() error {
 	loger := middleware.NewLogger()
 
 	authGrcpConn, err := grpc.Dial(
-		"127.0.0.1:"+strconv.Itoa(config.AuthServicePort),
+		config.AuthHostname+":"+strconv.Itoa(config.AuthServicePort),
 		grpc.WithInsecure(),
 	)
 	if err != nil {
@@ -54,7 +54,6 @@ func RunServer() error {
 	router.Use(authMiddleware)
 
 	// router.Use(middleware.CSRFMiddleware)
-	// router = router.PathPrefix("/api").Subrouter()
 
 	router.HandleFunc("/api/chat/{companion_id}", s.HandleCreateChat).Methods(http.MethodPost, http.MethodOptions)
 	router.HandleFunc("/api/chat/history/{id}", s.HandlerGetChatHistory).Methods(http.MethodGet, http.MethodOptions)
@@ -68,17 +67,4 @@ func RunServer() error {
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(config.ChatAppPort), router))
 
 	return nil
-}
-
-func serveHome(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.URL)
-	// if r.URL.Path != "/" {
-	// 	http.Error(w, "Not found", http.StatusNotFound)
-	// 	return
-	// }
-	// if r.Method != "GET" {
-	// 	http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-	// 	return
-	// }
-	http.ServeFile(w, r, "home.html")
 }

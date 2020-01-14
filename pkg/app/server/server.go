@@ -95,7 +95,7 @@ func NewRouter() (*mux.Router, error) {
 	sessManager := session.NewServiceClient(authGrcpConn)
 
 	recomsGrcpConn, err := grpc.Dial(
-		"127.0.0.1:"+strconv.Itoa(config.RecommendsServicePort),
+		config.RecHostname+":"+strconv.Itoa(config.RecommendsServicePort),
 		grpc.WithInsecure(),
 	)
 
@@ -107,7 +107,7 @@ func NewRouter() (*mux.Router, error) {
 	recommsManager := recomsproto.NewServiceClient(recomsGrcpConn)
 
 	notifGrcpConn, err := grpc.Dial(
-		"127.0.0.1:"+strconv.Itoa(config.NotifsServicePort),
+		config.NotifsHostname+":"+strconv.Itoa(config.NotifsServicePort),
 		grpc.WithInsecure(),
 	)
 
