@@ -13,3 +13,5 @@ pkg/cover.out
 pkg/cover.tmp
 db/rk3.sql
 cmd/notifications/testlogfile
+hh.conf
+pg_hba.conf
