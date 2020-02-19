@@ -125,20 +125,29 @@ services:
       - uniting_net
     restart: always
 
-  redis:
-      image: redis:alpine
-      ports:
-        - "6379:6379"
-      environment:
-        - ALLOW_EMPTY_PASSWORD=yes
-      networks:
-        - uniting_net
-      volumes:
-      - redis-data:/data
+  #redis:
+  #    image: redis:alpine
+  #    ports:
+  ##      - "6379:6379"
+ #     environment:
+  #      - ALLOW_EMPTY_PASSWORD=yes
+  #    networks:
+  ##      - uniting_net
+  #    volumes:
+  #    - redis-data:/data/redis
   # redis:
   #   build: ./build/docker/images/redis/Dockerfile
   #   ports:
   # #       - "6379:6379"
+
+  redis:
+    image: redis:4.0.5-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+  #  hostname: redis
+    networks:
+      - uniting_net
+    volumes:
+      - redis-data:/data
 
 volumes:
     postgres-data:

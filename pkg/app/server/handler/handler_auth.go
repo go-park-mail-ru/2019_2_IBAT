@@ -51,6 +51,8 @@ func (h *Handler) CreateSession(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("Handle CreateSession:  Create session failed: %s", err.Error())
 		SetError(w, http.StatusInternalServerError, err.Error())
 		return
+	} else {
+		log.Printf("Handle CreateSession:  Create session succeeded")
 	}
 
 	token, err := csrf.Tokens.Create(id.String(), sessInfo.Cookie, time.Now().Add(24*time.Hour).Unix())
