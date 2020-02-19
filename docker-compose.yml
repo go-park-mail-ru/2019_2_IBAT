@@ -142,7 +142,8 @@ services:
 
   redis:
     image: redis:4.0.5-alpine
-    command: ["redis-server", "--appendonly", "yes"]
+  #  command: ["redis-server", "--appendonly", "no"]
+    command: [sh, -c, "rm -f /data/dump.rdb && redis-server --save ''"]
   #  hostname: redis
     networks:
       - uniting_net
