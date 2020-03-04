@@ -6,7 +6,7 @@
 "type_of_employment"
 "work_schedule"
 
-/resumes/     GET
+/resumes     GET
 
 "region"
 "wage_from"
@@ -14,6 +14,8 @@
 "experience"
 "type_of_employment"
 "work_schedule"
+
+
 
 
 type Resume struct {

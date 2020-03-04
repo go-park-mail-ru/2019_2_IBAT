@@ -20,7 +20,6 @@
   - POST - регистрация пользователя
 
 - "/seeker"
-  - GET - получение текущих настроек кандидата
   - PUT - изменение текущих настроек кандидата
 
 - "/seeker"
@@ -31,7 +30,14 @@
 
 - "/resume/<id>"
   - PUT - изменение резюме
-  - DELETE - удаление резюме
+  - DELETE - удаление резюмеc
+
+- "/favorite_vacancies"
+  - GET 
+
+- "/favorite_vacancy/{id}"
+  - POST - создание избранной вакансии
+  - DELETE - удаление избранной вакансии (не сделано на бэке)
 
 ## EMPLOYER METHODS
 
@@ -39,7 +45,6 @@
   - POST - регистрация компании 
 
 - "/employer"
-  - GET - получение текущих настроек компании
   - PUT - изменение текущих настроек компании
 
 - "/employer"
@@ -51,8 +56,12 @@
 - "/vacancy/<id>"
   - PUT - изменение вакансии компании
   - DELETE - удаление вакансии компании
-  
+
+
 ## COMMON METHODS
+
+- "/profile/"
+  - GET - получение профиля пользователя
 
 - "/employer/<id>"
   - GET - персональная страница компании
@@ -75,8 +84,9 @@
 - "/vacancies"
   - GET - запрос списка вакансий(по фильтрам)
 
-  - "/responds"
+- "/responds"
   - GET - запрос списка вакансий(по фильтрам)
+
 
 
 # METHODS DESCRIPTION
@@ -157,38 +167,9 @@ POST - регистрация пользователя
         HTTP/1.1 400 
 
 
- 
-
-
-<!-- ## "/auth/"
-
-    TODO -->
-
-
 ### "/seeker" GET PUT
-GET - получение текущих настроек кандидата
 PUT - изменение текущих настроек кандидата
-
-GET
-Структура JSON тела запроса
-
-Ответ на запрос:
-
-    Положительный
-
-        HTTP/1.1 200 OK
-
-        {
-                "email": "somes@mail.com",
-                "first_name": "Grisha",
-                "second_name": "Zyablikov",
-                "password": "111111",
-                "resumes": {id, id} //array of ids
-        }
-
-    Отрицательный
-
-        HTTP/1.1 400   
+  
 
 PUT
 Структура JSON тела запроса
@@ -237,17 +218,21 @@ POST - создание резюме
     {
         "first_name": "Vova",
         "second_name": "Zyablikov",
-        "city": "Moscow",
+        "region": "Moscow",
         "number": "12345678910",
         "birth_date": "1994-21-08",
         "sex": "male",
         "citizenship": "Russia",
         "experience": "7 years",
-        "profession": "programmer",
-        "position": "middle",
+        "position": "programmer",
         "wage": "100500",
         "education": "MSU",
-        "about": "Hello employer"
+        "about": "Hello employer",
+        "spheres": [
+            {"first": "Бухгалтерия, управленческий учет, финансы предприятия", "second": "бухгалтер"},
+            {"first": "Бухгалтерия, управленческий учет, финансы предприятия", "second": "основные средства"}
+	    ]
+
     }
 
 
@@ -264,7 +249,7 @@ POST - создание резюме
 
         HTTP/1.1 400
 
-### "/resume/<id>"PUT DELETE
+### "/resume/<id>" PUT DELETE
 
 PUT - изменение резюме
 Структура JSON тела запроса
@@ -272,17 +257,20 @@ PUT - изменение резюме
     {
         "first_name": "Vova",
         "second_name": "Zyablikov",
-        "city": "Moscow",
+        "region": "Moscow",
         "number": "12345678910",
         "birth_date": "1994-21-08",
         "sex": "male",
         "citizenship": "Russia",
         "experience": "7 years",
-        "profession": "programmer",
         "position": "middle",
         "wage": "100500",
         "education": "MSU",
-        "about": "Hello employer"
+        "about": "Hello employer",
+        "spheres": [
+            {"first": "Бухгалтерия, управленческий учет, финансы предприятия", "second": "бухгалтер"},
+            {"first": "Бухгалтерия, управленческий учет, финансы предприятия", "second": "основные средства"}
+	    ]
     }
 
 Ответ на запрос:
@@ -311,6 +299,103 @@ DELETE - удаление резюме
 
         HTTP/1.1 204 
 
+### "/respond" POST
+
+POST - создание отклика
+
+Структура JSON тела запроса
+
+       {
+            "vacancy_id": "322",
+            "resume_id": "244",
+        }
+
+Ответ на запрос:
+
+    Положительный
+
+        HTTP/1.1 200 OK
+
+    Отрицательный
+
+        HTTP/1.1 400
+
+
+### "/respond/<id>" (не сделано на бэке)
+
+DELETE - удаление вакансии компании  
+
+Ответ на запрос:
+
+    Положительный
+
+        HTTP/1.1 200 OK
+
+    Отрицательный
+
+        HTTP/1.1 400
+
+
+### "/favorite_vacancies"
+
+GET 
+
+Ответ на запрос:
+
+    Положительный
+
+        {
+            {   
+                "id": uuid
+                "company_name": "BMSsTU",
+                "experience": "3 years and more",
+                "profession": "baker",
+                "position":  "mid",
+                "tasks": "writing test",
+                "requirements": "should be able writing good tests",
+                "wage_from": "100500",
+                "conditions": "nice team",
+                "about": "you will work in the best company"
+            }
+            
+            {
+                "id": uuid
+                "company_name": "BMSsTU",
+                "experience": "3 years and more",
+                "position":  "mid",
+                "tasks": "writing test",
+                "requirements": "should be able writing good tests",
+                "wage_from": "100500",
+                "conditions": "nice team",
+                "about": "you will work in the best company"
+            }
+        }
+
+    Отрицательный
+
+        HTTP/1.1 400
+
+
+###  "/favorite_vacancy/{id}"
+POST - создание избранной вакансии
+    
+Структура JSON тела запроса
+
+
+Ответ на запрос:
+
+    Положительный
+
+        HTTP/1.1 200 OK
+
+    Отрицательный
+
+        HTTP/1.1 400
+
+        
+DELETE - удаление избранной вакансии (не сделано на бэке)
+
+
 ## EMPLOYER METHODS
 
 ### "/employer" POST
@@ -327,7 +412,7 @@ POST - регистрация компании
             "password":"1234",
             "number": "12345678911",
             "extra_number": "12345678910",
-            "city": "Moscow",
+            "region": "Moscow",
             "empl_num": 1830
         }
 
@@ -345,7 +430,6 @@ POST - регистрация компании
         HTTP/1.1 400
 
 ### "/employer" GET PUT
-GET - получение текущих настроек работодателя
 PUT - изменение текущих настроек работодателя
 
 GET
@@ -366,7 +450,7 @@ GET
             "number": "12345678911",
             "extra_number": "12345678910",
             "password": "1234",
-            "city": "Moscow",
+            "region": "Moscow",
             "empl_num": 1830
         }
 
@@ -386,7 +470,7 @@ PUT
             "number": "12345678911",
             "extra_number": "12345678910",
             "password": "1234",
-            "city": "Moscow",
+            "region": "Moscow",
             "empl_num": 1830
         }
 
@@ -427,13 +511,16 @@ POST - создание вакансии
     {
         "company_name": "BMSsTU",
         "experience": "3 years and more",
-        "profession": "baker",
         "position":  "mid",
         "tasks": "writing test",
         "requirements": "should be able writing good tests",
         "wage": "100500",
         "conditions": "nice team",
         "about": "you will work in the best company"
+        "spheres": [
+            {"first": "Бухгалтерия, управленческий учет, финансы предприятия", "second": "бухгалтер"},
+            {"first": "Бухгалтерия, управленческий учет, финансы предприятия", "second": "основные средства"}
+	    ]
     }
 
 Ответ на запрос:
@@ -464,6 +551,10 @@ PUT - изменение вакансии
         "wage": "100500",
         "conditions": "nice team",
         "about": "you will work in the best company"
+        "spheres": [
+            {"first": "Бухгалтерия, управленческий учет, финансы предприятия", "second": "бухгалтер"},
+            {"first": "Бухгалтерия, управленческий учет, финансы предприятия", "second": "основные средства"}
+	    ]
     }
 
 
@@ -495,6 +586,39 @@ DELETE - удаление вакансии
 
 ## COMMON METHODS
 
+### "/profile"
+GET - профиль юзера
+ 
+    Ответ на запрос:  
+
+        Положительный (Вариант 1)
+
+            HTTP/1.1 200 OK
+
+            {
+                "company_name": "BMSsTU",
+                "site": "bmstu.ru",
+                "first_name": "Tolya",
+                "second_name": "Alex",
+                "email": "bmsstu@mail.com",
+                "number": "12345678911",
+                "extra_number": "12345678910",
+                "region": "Moscow",
+                "empl_num": 1830,
+                "vacancies": {"id1", "id2"}  //array of strings
+            }
+    
+        Положительный (Вариант 2)
+
+            HTTP/1.1 200 OK
+
+            {
+                "email": "somes@mail.com",
+                "first_name": "Grisha",
+                "second_name": "Zyablikov",
+                "resumes": {"id1", "id2"} //array of ids
+            }
+
 ### "/employer/<id>"
 GET - персональная страница компании
 
@@ -506,6 +630,7 @@ GET - персональная страница компании
         HTTP/1.1 200 OK
 
         {
+            "id": uuid
             "company_name": "BMSsTU",
             "site": "bmstu.ru",
             "first_name": "Tolya",
@@ -513,8 +638,7 @@ GET - персональная страница компании
             "email": "bmsstu@mail.com",
             "number": "12345678911",
             "extra_number": "12345678910",
-            "password": "",                     //field should be eliminated
-            "city": "Moscow",
+            "region": "Moscow",
             "empl_num": 1830,
             "vacancies": {"id1", "id2"}  //array of strings
         }
@@ -534,6 +658,7 @@ GET - персональная страница вакансии
         HTTP/1.1 200 OK
 
         {
+            "id": uuid
             "company_name": "BMSsTU",
             "experience": "3 years and more",
             "profession": "baker",
@@ -559,9 +684,10 @@ GET - резюме соискателя
         HTTP/1.1 200 OK
 
         {
+            "id": uuid
             "first_name": "Vova",
             "second_name": "Zyablikov",
-            "city": "Moscow",
+            "region": "Moscow",
             "number": "12345678910",
             "birth_date": "1994-21-08",
             "sex": "male",
@@ -602,7 +728,7 @@ GET - персональная страница соискателя
 ### "/employers"
 GET - запрос списка работодателей(по фильтрам)
 
-TODO describe possible GET request flags
+Параметры
 
 Ответ на запрос:
 
@@ -611,7 +737,8 @@ TODO describe possible GET request flags
         HTTP/1.1 200 OK
 
         {
-            id1: {
+            {
+                "id": uuid
                 "company_name": "BMSsTU",
                 "site": "bmstu.ru",
                 "first_name": "Tolya",
@@ -619,13 +746,13 @@ TODO describe possible GET request flags
                 "email": "bmsstu@mail.com",
                 "number": "12345678911",
                 "extra_number": "12345678910",
-                "password": "",                     //field should be eliminated
-                "city": "Moscow",
+                "region": "Moscow",
                 "empl_num": 1830,
                 "vacancies": {"id1", "id2"},  //array of strings
             }
             
-            id2: {
+            {
+                "id": uuid
                 "company_name": "BMSsTU",
                 "site": "bmstu.ru",
                 "first_name": "Tolya",
@@ -633,8 +760,7 @@ TODO describe possible GET request flags
                 "email": "bmsstu@mail.com",
                 "number": "12345678911",
                 "extra_number": "12345678910",
-                "password": "",                     //field should be eliminated
-                "city": "Moscow",
+                "region": "Moscow",
                 "empl_num": 1830,
                 "vacancies": {"id1", "id2"}  //array of strings
             }
@@ -648,7 +774,16 @@ TODO describe possible GET request flags
 ### "/resumes"
 GET - запрос списка резюме(по фильтрам)
 
-TODO describe possible GET request flags
+
+Возможные параметры
+
+"region"
+"wage_from"
+"wage_to"
+"experience"
+"type_of_employment"
+"work_schedule"
+
 
 Ответ на запрос:
 
@@ -657,10 +792,11 @@ TODO describe possible GET request flags
         HTTP/1.1 200 OK
 
         {
-            id: {
+            {
+                "id": uuid
                 "first_name": "Vova",
                 "second_name": "Zyablikov",
-                "city": "Moscow",
+                "region": "Moscow",
                 "number": "12345678910",
                 "birth_date": "1994-21-08",
                 "sex": "male",
@@ -673,10 +809,11 @@ TODO describe possible GET request flags
                 "about": "Hello employer"
             }
 
-            id: {
+            {
+                "id": uuid
                 "first_name": "Vova",
                 "second_name": "Zyablikov",
-                "city": "Moscow",
+                "region": "Moscow",
                 "number": "12345678910",
                 "birth_date": "1994-21-08",
                 "sex": "male",
@@ -699,7 +836,13 @@ TODO describe possible GET request flags
 ### "/vacancies"
 GET - запрос списка вакансий(по фильтрам)
 
-TODO describe possible GET request flags
+Возможные параметры
+
+"region"
+"wage"
+"experience"
+"type_of_employment"
+"work_schedule"
 
 Ответ на запрос:
 
@@ -708,7 +851,8 @@ TODO describe possible GET request flags
         HTTP/1.1 200 OK
 
         {
-            id: {
+            {   
+                "id": uuid
                 "company_name": "BMSsTU",
                 "experience": "3 years and more",
                 "profession": "baker",
@@ -720,7 +864,8 @@ TODO describe possible GET request flags
                 "about": "you will work in the best company"
             }
             
-            id: {
+            {
+                "id": uuid
                 "company_name": "BMSsTU",
                 "experience": "3 years and more",
                 "profession": "baker",
@@ -736,3 +881,53 @@ TODO describe possible GET request flags
     Отрицательный
 
         HTTP/1.1 400
+
+
+	router.HandleFunc("/responds", h.GetResponds).Methods(http.MethodGet, http.MethodOptions)
+
+### "/responds"
+GET - запрос списка вакансий(по фильтрам)
+
+
+Параметры
+
+    vacancy_id 
+        Возвращаются responds для конкретной вакансии
+        Запрос доступен для только для владельца вакансии
+
+    resume_id 
+        Возвращаются responds для конкретного резюме
+        Запрос доступен для только для владельца резюме
+    
+    При отсутствии параметров вернутся все responds на 
+    вакансии или резюме пользователя
+
+    Возможны три состояния respond
+        1. awaits
+        2. accepted
+        3. rejected
+
+Ответ на запрос:
+
+    Положительный
+
+        HTTP/1.1 200 OK
+
+        {
+            {
+                "status": awaits
+                "resume_id": uuid1
+                "vacancy_id": uuid2
+            }
+             {
+                "status": accepted
+                "resume_id": uuid3
+                "vacancy_id": uuid4
+            }
+        }
+
+    Отрицательный
+    
+        При наличии двух аргументов resume_id и vacancy_id 
+
+            HTTP/1.1 400
